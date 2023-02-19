@@ -28,11 +28,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const [mobileOpen, setMobileOpen] = React.useState(false);
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
   const drawer = (
     <div>
       <Toolbar />
@@ -94,15 +90,13 @@ export default function RootLayout({
             <Toolbar>
               <IconButton
                 color="inherit"
-                aria-label="open drawer"
                 edge="start"
-                onClick={handleDrawerToggle}
                 sx={{ mr: 2, display: { sm: 'none' } }}
               >
                 <MenuIcon />
               </IconButton>
               <Typography variant="h6" noWrap component="div">
-                Responsive drawer
+                JEAP
               </Typography>
             </Toolbar>
           </AppBar>

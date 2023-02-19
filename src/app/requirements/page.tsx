@@ -1,10 +1,13 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react';
-import { Avatar, Box, Typography } from '@mui/material';
+import { Avatar, Box, Typography, Stack, Button, Divider } from '@mui/material';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import DownloadIcon from '@mui/icons-material/Download';
 
-const requirements: any = [
+let requirements: any = new Array(47).fill(
     {
         active: true,
         name: 'generic req',
@@ -17,7 +20,7 @@ const requirements: any = [
         ltiov: '12.12.2023 12:00',
         _id: 1
     }
-]
+);
 
 function Home() {
     const [pageSize, setPageSize] = useState(5);
@@ -32,8 +35,8 @@ function Home() {
                 type: 'boolean',
                 editable: true,
             },
-            { field: 'name', headerName: 'Name', width: 170 },
-            { field: 'level', headerName: 'Level', width: 200 },
+            { field: 'name', headerName: 'Name', width: 200 },
+            { field: 'level', headerName: 'Level', width: 50 },
             {
                 field: 'type',
                 headerName: 'Type',
@@ -45,7 +48,7 @@ function Home() {
             {
                 field: 'gaoi',
                 headerName: 'GAOI',
-                width: 100,
+                width: 200,
                 type: 'singleSelect',
                 valueOptions: ['Europe', 'Asia', 'North America', 'South America', 'Africa', 'Oceania'],
                 editable: true,
@@ -53,7 +56,7 @@ function Home() {
             {
                 field: 'orbat_type',
                 headerName: 'ORBAT Type',
-                width: 100,
+                width: 200,
                 type: 'singleSelect',
                 valueOptions: ['Air', 'Ground', 'Navy', 'Air Defense'],
                 editable: true,
@@ -61,47 +64,104 @@ function Home() {
             {
                 field: 'status',
                 headerName: 'Status',
-                width: 100,
+                width: 150,
                 type: 'singleSelect',
                 valueOptions: ['Received', 'Pending', 'Submitted', 'Cancelled', 'Complete'],
                 editable: true,
             },
-            { field: 'requester', headerName: 'Requester', width: 170 },
-            { field: 'ltiov', headerName: 'LTIOV', width: 170 },
-            { field: '_id', headerName: 'Id', width: 220 },
+            { field: 'requester', headerName: 'Requester', width: 100 },
+            { field: 'ltiov', headerName: 'LTIOV', width: 200 },
+            { field: '_id', headerName: 'Id', width: 200 },
         ],
         [rowId]
     );
 
     return (
         <>
-            <Box
-                sx={{
-                    height: 400,
-                    width: '100%',
-                }}
-            >
-                <Typography
-                    variant="h3"
-                    component="h3"
-                    sx={{ textAlign: 'center', mt: 3, mb: 3 }}
+            <Stack>
+                <Box
+                    sx={{
+                        height: 450,
+                        width: '100%',
+                        overflow: 'hidden'
+                    }}
                 >
-                    Manage Users
-                </Typography>
-                <DataGrid
-                    columns={columns}
-                    rows={requirements}
-                    getRowId={(row) => row._id}
-                    rowsPerPageOptions={[5, 10, 20]}
-                    pageSize={pageSize}
-                    onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                    getRowSpacing={(params) => ({
-                        top: params.isFirstVisible ? 0 : 5,
-                        bottom: params.isLastVisible ? 0 : 5,
-                    })}
-                    onCellEditCommit={(params) => setRowId(params.id.toString())}
-                />
-            </Box>
+                    <Stack direction='row' justifyContent='space-between'>
+                        <Typography
+                            variant="h5"
+                            component="h5"
+                            sx={{ textAlign: 'left', mt: 0, mb: 3 }}
+                        >
+                            PED Requirement Overview
+                        </Typography>
+                        <Stack direction='row' spacing={2}>
+                            <RefreshIcon></RefreshIcon>
+                            <DownloadIcon></DownloadIcon>
+                            <MoreHorizIcon></MoreHorizIcon>
+                        </Stack>
+                    </Stack>
+                    <Button variant='contained' sx={{ mb: 2 }}>Add Selection to Plan</Button>
+                    <Box sx={{ height: 340, width: '100%', overflow: 'auto' }}>
+
+                        <DataGrid
+                            columns={columns}
+                            rows={requirements}
+                            getRowId={(row) => row._id}
+                            rowsPerPageOptions={[5, 10, 20]}
+                            pageSize={pageSize}
+                            onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+                            getRowSpacing={(params) => ({
+                                top: params.isFirstVisible ? 0 : 5,
+                                bottom: params.isLastVisible ? 0 : 5,
+                            })}
+                            onCellEditCommit={(params) => setRowId(params.id.toString())}
+                        />
+                    </Box>
+                </Box>
+                <Divider sx={{mb: 2, mt: 2, border: '1px blue solid'}}></Divider>
+                <Box
+                    sx={{
+                        height: 400,
+                        width: '100%',
+                        overflow: 'hidden'
+                    }}
+                >
+                    <Stack direction='row' justifyContent='space-between'>
+                        <Typography
+                            variant="h5"
+                            component="h5"
+                            sx={{ textAlign: 'left', mt: 0, mb: 3 }}
+                        >
+                            AAA
+                        </Typography>
+                        <Button variant='contained' sx={{ mb: 2 }}>Open Plan</Button>
+                        <Button variant='contained' sx={{ mb: 2 }}>New Plan</Button>
+                        <Stack direction='row' spacing={2}>
+                            <RefreshIcon></RefreshIcon>
+                            <DownloadIcon></DownloadIcon>
+                            <MoreHorizIcon></MoreHorizIcon>
+                        </Stack>
+                    </Stack>
+                    
+                    <Box sx={{ height: 340, width: '100%', overflow: 'auto' }}>
+
+                        <DataGrid
+                            columns={columns}
+                            rows={requirements}
+                            getRowId={(row) => row._id}
+                            rowsPerPageOptions={[5, 10, 20]}
+                            pageSize={pageSize}
+                            onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+                            getRowSpacing={(params) => ({
+                                top: params.isFirstVisible ? 0 : 5,
+                                bottom: params.isLastVisible ? 0 : 5,
+                            })}
+                            onCellEditCommit={(params) => setRowId(params.id.toString())}
+                        />
+                    </Box>
+                </Box>
+
+            </Stack>
         </>
     )
 }
