@@ -7,10 +7,25 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import DownloadIcon from '@mui/icons-material/Download';
 
-let requirements: any = new Array(47).fill(
-    {
-        active: true,
-        name: 'generic req',
+interface Requirement {
+    active: boolean,
+    name: string,
+    level: string,
+    type: string,
+    gaoi: string,
+    orbat_type: string,
+    status: string,
+    requester: string,
+    ltiov: string,
+    _id: number
+}
+
+let requirements: Requirement[] = []
+
+for (let i = 1; i <= 47; i++) {
+    requirements.push({
+        active: false,
+        name: `generic req ${i}`,
         level: '1',
         type: 'EO',
         gaoi: 'Europe',
@@ -18,13 +33,16 @@ let requirements: any = new Array(47).fill(
         status: 'Received',
         requester: 'ACO',
         ltiov: '12.12.2023 12:00',
-        _id: 1
-    }
-);
+        _id: i
+    })
+}
+
+let reqsInPlan: Requirement[] = []
 
 function Home() {
     const [pageSize, setPageSize] = useState(5);
     const [rowId, setRowId] = useState('0');
+    const [reqsInPlan, setReqsInPlan] = useState<Requirement[]>([]);
 
     const columns = useMemo(
         () => [
@@ -76,9 +94,16 @@ function Home() {
         [rowId]
     );
 
+    const addToPlanHandler = () => {
+        setReqsInPlan(requirements.filter((entry) => {
+            entry.active == true
+        }))
+        console.log(reqsInPlan)
+    }
+
     return (
         <>
-            <Stack>
+            <Stack sx={{p:3}}>
                 <Box
                     sx={{
                         height: 450,
@@ -100,7 +125,7 @@ function Home() {
                             <MoreHorizIcon></MoreHorizIcon>
                         </Stack>
                     </Stack>
-                    <Button variant='contained' sx={{ mb: 2 }}>Add Selection to Plan</Button>
+                    <Button variant='contained' sx={{ mb: 2 }} onClick={addToPlanHandler}>Add Selection to Plan</Button>
                     <Box sx={{ height: 340, width: '100%', overflow: 'auto' }}>
 
                         <DataGrid
@@ -118,7 +143,7 @@ function Home() {
                         />
                     </Box>
                 </Box>
-                <Divider sx={{mb: 2, mt: 2, border: '1px blue solid'}}></Divider>
+                <Divider sx={{ mb: 2, mt: 2, border: '1px blue solid' }}></Divider>
                 <Box
                     sx={{
                         height: 400,
@@ -142,7 +167,7 @@ function Home() {
                             <MoreHorizIcon></MoreHorizIcon>
                         </Stack>
                     </Stack>
-                    
+
                     <Box sx={{ height: 340, width: '100%', overflow: 'auto' }}>
 
                         <DataGrid
