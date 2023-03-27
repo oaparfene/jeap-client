@@ -87,9 +87,14 @@ function Home() {
         valueOptions: ['Received', 'Pending', 'Submitted', 'Cancelled', 'Complete'],
         editable: true,
       },
-      { field: 'requester', headerName: 'Requester', width: 100 },
-      { field: 'ltiov', headerName: 'LTIOV', width: 200 },
-      { field: '_id', headerName: 'Id', width: 200 },
+      {
+        field: 'assigned_cell',
+        headerName: 'Assigned Cell',
+        width: 100,
+        type: 'singleSelect',
+        valueOptions: ['Cell 1', 'Cell 2', 'Cell 3', ],
+        editable: true
+      },
     ],
     [rowId]
   );
@@ -103,13 +108,12 @@ function Home() {
 
   return (
     <>
-      <Stack sx={{ p: 3, border: '5px solid blue' }}>
+      <Stack sx={{ p: 3 }}>
         <Box
           sx={{
             height: 730,
             width: '100%',
-            overflow: 'hidden',
-            border: '5px solid red'
+            overflow: 'hidden'
           }}
         >
           <Stack direction='row' justifyContent='space-between'>
@@ -126,7 +130,7 @@ function Home() {
               <MoreHorizIcon></MoreHorizIcon>
             </Stack>
           </Stack>
-          <Button variant='contained' sx={{ mb: 2 }} onClick={addToPlanHandler}>Add Selection to Plan</Button>
+          {/*<Button variant='contained' sx={{ mb: 2 }} onClick={addToPlanHandler}>Add Selection to Plan</Button>*/}
           <Box sx={{ height: 630, width: '100%', overflow: 'auto' }}>
 
             <DataGrid

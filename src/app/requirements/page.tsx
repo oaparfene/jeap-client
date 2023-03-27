@@ -1,11 +1,16 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react';
-import { Avatar, Box, Typography, Stack, Button, Divider } from '@mui/material';
+import { Avatar, Box, Typography, Stack, Button, Divider, Modal, List, ListItemButton, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import DownloadIcon from '@mui/icons-material/Download';
+import MailIcon from '@mui/icons-material/Mail';
+
+const getData = () => {
+    fetch('')
+}
 
 interface Requirement {
     active: boolean,
@@ -39,10 +44,26 @@ for (let i = 1; i <= 47; i++) {
 
 let reqsInPlan: Requirement[] = []
 
+const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+};
+
 function Home() {
     const [pageSize, setPageSize] = useState(5);
     const [rowId, setRowId] = useState('0');
     const [reqsInPlan, setReqsInPlan] = useState<Requirement[]>([]);
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+    const [activePlan, setActivePlan] = useState('AAA')
 
     const columns = useMemo(
         () => [
@@ -103,7 +124,7 @@ function Home() {
 
     return (
         <>
-            <Stack sx={{p:3}}>
+            <Stack sx={{ p: 3 }}>
                 <Box
                     sx={{
                         height: 450,
@@ -157,9 +178,9 @@ function Home() {
                             component="h5"
                             sx={{ textAlign: 'left', mt: 0, mb: 3 }}
                         >
-                            AAA
+                            {activePlan}
                         </Typography>
-                        <Button variant='contained' sx={{ mb: 2 }}>Open Plan</Button>
+                        <Button variant='contained' sx={{ mb: 2 }} onClick={handleOpen}>Open Plan</Button>
                         <Button variant='contained' sx={{ mb: 2 }}>New Plan</Button>
                         <Stack direction='row' spacing={2}>
                             <RefreshIcon></RefreshIcon>
@@ -187,6 +208,38 @@ function Home() {
                 </Box>
 
             </Stack>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                        Select Plan:
+                    </Typography>
+
+                    <List>
+                        <ListItem disablePadding>
+                            <ListItemButton onClick={() => {setActivePlan('AAA'); handleClose()}}>
+                                <ListItemIcon>
+                                    <MailIcon />
+                                </ListItemIcon>
+                                <ListItemText primary={'AAA'} />
+                            </ListItemButton>
+                        </ListItem>
+                        <ListItem disablePadding>
+                            <ListItemButton onClick={() => {setActivePlan('AAB'); handleClose()}}>
+                                <ListItemIcon>
+                                    <MailIcon />
+                                </ListItemIcon>
+                                <ListItemText primary={'AAB'} />
+                            </ListItemButton>
+                        </ListItem>
+                    </List>
+
+                </Box>
+            </Modal>
         </>
     )
 }

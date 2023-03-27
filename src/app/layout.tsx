@@ -21,6 +21,7 @@ import Typography from '@mui/material/Typography';
 import { Avatar } from '@mui/material';
 import next from 'next';
 import Link from 'next/link';
+import Head from 'next/head';
 
 const drawerWidth = 240;
 export default function RootLayout({
@@ -40,7 +41,7 @@ export default function RootLayout({
 
       <Divider />
       <List>
-        {['Plans', 'Cells', 'Requirements', 'Assesment'].map((text, index) => (
+        {['Plans', 'Cells', 'Requirements', 'Assesment', 'Map'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <Link href={text.toLowerCase()} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
               <ListItemButton>
@@ -58,12 +59,14 @@ export default function RootLayout({
       <List>
         {['My PED Cell', 'My PED Tasks'].map((text, index) => (
           <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <MailIcon />
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
+            <Link href={text.replaceAll(' ', '').toLowerCase()} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
+              <ListItemButton>
+                <ListItemIcon>
+                  <MailIcon />
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </Link>
           </ListItem>
         ))}
       </List>
@@ -76,7 +79,12 @@ export default function RootLayout({
         <head /> will contain the components returned by the nearest parent
         head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
       */}
-      <head />
+      <Head>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+          integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+          crossOrigin=""></script>
+      </Head>
       <body>
         <Box sx={{ display: 'flex' }}>
           <CssBaseline />
