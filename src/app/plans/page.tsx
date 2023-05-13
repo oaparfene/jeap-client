@@ -92,7 +92,7 @@ function Home() {
         headerName: 'Assigned Cell',
         width: 100,
         type: 'singleSelect',
-        valueOptions: ['Cell 1', 'Cell 2', 'Cell 3', ],
+        valueOptions: ['Cell 1', 'Cell 2', 'Cell 3',],
         editable: true
       },
     ],
@@ -148,7 +148,11 @@ function Home() {
             />
           </Box>
         </Box>
-
+        <Stack direction='row' justifyContent='end'>
+          <Button variant='outlined' sx={{ mr: 2 }} onClick={addToPlanHandler}>Request Automated Allocation</Button>
+          <Button variant='outlined' sx={{ mr: 2 }} onClick={addToPlanHandler}>Save Draft Plan</Button>
+          <Button variant='contained' sx={{ mr: 2 }} onClick={addToPlanHandler}>Publish Plan</Button>
+        </Stack>
       </Stack>
     </>
   )

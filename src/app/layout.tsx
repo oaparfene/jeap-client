@@ -22,6 +22,7 @@ import { Avatar } from '@mui/material';
 import next from 'next';
 import Link from 'next/link';
 import Head from 'next/head';
+import JCAPContext, { Plan } from './context'
 
 const drawerWidth = 240;
 export default function RootLayout({
@@ -41,7 +42,7 @@ export default function RootLayout({
 
       <Divider />
       <List>
-        {['Plans', 'Cells', 'Requirements', 'Assesment', 'Map'].map((text, index) => (
+        {['Plans', 'Assets', 'Requirements', 'Assesment', 'Map'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <Link href={text.toLowerCase()} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
               <ListItemButton>
@@ -55,23 +56,10 @@ export default function RootLayout({
         ))}
       </List>
       <Divider />
-      <Typography sx={{ p: 1 }}>Personal:</Typography>
-      <List>
-        {['My PED Cell', 'My PED Tasks'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <Link href={text.replaceAll(' ', '').toLowerCase()} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
-              <ListItemButton>
-                <ListItemIcon>
-                  <MailIcon />
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </Link>
-          </ListItem>
-        ))}
-      </List>
     </div>
   );
+
+    const [plans, setPlans] = React.useState<Array<Plan>>([])
 
   return (
     <html lang="en">
@@ -86,53 +74,61 @@ export default function RootLayout({
           crossOrigin=""></script>
       </Head>
       <body>
-        <Box sx={{ display: 'flex' }}>
-          <CssBaseline />
-          <AppBar
-            position="fixed"
-            sx={{
-              width: { sm: `calc(100% - ${drawerWidth}px)` },
-              ml: { sm: `${drawerWidth}px` },
-            }}
-          >
-            <Toolbar>
-              <IconButton
-                color="inherit"
-                edge="start"
-                sx={{ mr: 2, display: { sm: 'none' } }}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6" noWrap component="div">
-                JEAP
-              </Typography>
-            </Toolbar>
-          </AppBar>
-          <Box
-            component="nav"
-            sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-            aria-label="mailbox folders"
-          >
-            <Drawer
-              variant="permanent"
-              sx={{
-                display: { xs: 'none', sm: 'block' },
-                '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-              }}
-              open
-            >
-              {drawer}
-            </Drawer>
-          </Box>
-          <Box
-            component="main"
-            sx={{ flexGrow: 1, p: 0, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
-          >
-            <Toolbar />
-            {children}
-          </Box>
-        </Box>
+        <JCAPContext.Provider
+        value={{
+          plans,
+          setPlans
+        }}
+        >
 
+          <Box sx={{ display: 'flex' }}>
+            <CssBaseline />
+            <AppBar
+              position="fixed"
+              sx={{
+                width: { sm: `calc(100% - ${drawerWidth}px)` },
+                ml: { sm: `${drawerWidth}px` },
+              }}
+            >
+              <Toolbar>
+                <IconButton
+                  color="inherit"
+                  edge="start"
+                  sx={{ mr: 2, display: { sm: 'none' } }}
+                >
+                  <MenuIcon />
+                </IconButton>
+                <Typography variant="h6" noWrap component="div">
+                  JCAP
+                </Typography>
+              </Toolbar>
+            </AppBar>
+            <Box
+              component="nav"
+              sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+              aria-label="mailbox folders"
+            >
+              <Drawer
+                variant="permanent"
+                sx={{
+                  display: { xs: 'none', sm: 'block' },
+                  '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                }}
+                open
+              >
+                {drawer}
+              </Drawer>
+            </Box>
+            <Box
+              component="main"
+              sx={{ flexGrow: 1, p: 0, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+            >
+              <Toolbar />
+              {children}
+            </Box>
+          </Box>
+
+        </JCAPContext.Provider>
       </body>
     </html>
   )

@@ -1,22 +1,23 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useContext } from 'react';
 import { Avatar, Box, Typography, Stack, Button, Divider, Modal, List, ListItemButton, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import DownloadIcon from '@mui/icons-material/Download';
 import MailIcon from '@mui/icons-material/Mail';
+import JCAPContext, { Plan } from '../context';
 
 const getData = () => {
     fetch('')
 }
 
-interface Requirement {
+export interface Requirement {
     active: boolean,
     name: string,
-    level: string,
     type: string,
+    location: string,
     gaoi: string,
     orbat_type: string,
     status: string,
@@ -31,8 +32,8 @@ for (let i = 1; i <= 47; i++) {
     requirements.push({
         active: false,
         name: `generic req ${i}`,
-        level: '1',
         type: 'EO',
+        location: '12.345N 45.678E',
         gaoi: 'Europe',
         orbat_type: 'Air',
         status: 'Received',
@@ -57,6 +58,7 @@ const style = {
 };
 
 function Home() {
+    const { plans, setPlans } = useContext(JCAPContext)
     const [pageSize, setPageSize] = useState(5);
     const [rowId, setRowId] = useState('0');
     const [reqsInPlan, setReqsInPlan] = useState<Requirement[]>([]);
@@ -75,7 +77,6 @@ function Home() {
                 editable: true,
             },
             { field: 'name', headerName: 'Name', width: 200 },
-            { field: 'level', headerName: 'Level', width: 50 },
             {
                 field: 'type',
                 headerName: 'Type',
@@ -83,6 +84,11 @@ function Home() {
                 type: 'singleSelect',
                 valueOptions: ['EO', 'IR', 'SAR', 'GMTI'],
                 editable: true,
+            },
+            {
+                field: 'location',
+                headername: 'Location',
+                width: 200
             },
             {
                 field: 'gaoi',
@@ -110,7 +116,7 @@ function Home() {
             },
             { field: 'requester', headerName: 'Requester', width: 100 },
             { field: 'ltiov', headerName: 'LTIOV', width: 200 },
-            { field: '_id', headerName: 'Id', width: 200 },
+            { field: '_id', headerName: 'Id', width: 100 },
         ],
         [rowId]
     );
@@ -120,6 +126,25 @@ function Home() {
             entry.active == true
         }))
         console.log(reqsInPlan)
+        var tempPlans = plans
+        var tempPlan: Plan | undefined = plans.find(e => e.name === activePlan)
+        if (!tempPlan) {
+            tempPlan = {
+                name: activePlan,
+                entries: reqsInPlan
+            }
+            tempPlans.push(tempPlan)
+            setPlans(tempPlans)
+        }
+        else {
+            tempPlan.entries.push(reqsInPlan)
+            tempPlan = {
+                name: activePlan,
+                entries: Array( new Set( ...tempPlan.entries))
+            }
+            tempPlans.push(tempPlan)
+            setPlans(tempPlans)
+        }
     }
 
     return (
@@ -138,7 +163,7 @@ function Home() {
                             component="h5"
                             sx={{ textAlign: 'left', mt: 0, mb: 3 }}
                         >
-                            PED Requirement Overview
+                            Collection Requirement Overview
                         </Typography>
                         <Stack direction='row' spacing={2}>
                             <RefreshIcon></RefreshIcon>
@@ -193,7 +218,7 @@ function Home() {
 
                         <DataGrid
                             columns={columns}
-                            rows={requirements}
+                            rows={plans.find(e => e.name === activePlan) ? plans.find(e => e.name === activePlan)?.entries! : []}
                             getRowId={(row) => row._id}
                             rowsPerPageOptions={[5, 10, 20]}
                             pageSize={pageSize}
