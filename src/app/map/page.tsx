@@ -50,7 +50,7 @@ function Home() {
                     />
                     {location_data.map((e) => {
                         return (
-                            <Marker position={e[1] as LatLngExpression}>
+                            <Marker key={e.toString()} position={e[1] as LatLngExpression}>
                                 <Popup>
                                     {e[0].toString().replace("_", " ")}
                                 </Popup>
