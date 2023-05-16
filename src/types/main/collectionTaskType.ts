@@ -1,5 +1,5 @@
-import { TaskType } from "./taskType";
-import { Role } from "./roleType";
+import { TaskType } from "../taskType";
+import { Role } from "../roleType";
 
 export interface CollectionTaskType extends TaskType {
   Role: Role;
