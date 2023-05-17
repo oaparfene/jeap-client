@@ -62,6 +62,8 @@ export default function RootLayout({
 
     const [CMPlans, setCMPlans] = React.useState<Array<CollectionExploitationPlanType>>([])
     const [PEDPlans, setPEDPlans] = React.useState<Array<CollectionExploitationPlanType>>([])
+    const [activePlan, setActivePlan] = React.useState<CollectionExploitationPlanType | null>(null)
+    const [requirements, setRequirements] = React.useState<Array<any>>([])
 
   return (
     <html lang="en">
@@ -80,6 +82,10 @@ export default function RootLayout({
         value={{
           CMPlans,
           PEDPlans,
+          activePlan,
+          requirements,
+          setRequirements,
+          setActivePlan,
           setCMPlans,
           setPEDPlans,
         }}

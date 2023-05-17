@@ -1,49 +1,51 @@
 'use client'
 
 import { useEffect, useMemo, useState, useContext } from 'react';
-import { Avatar, Box, Typography, Stack, Button, Divider, Modal, List, ListItemButton, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { Avatar, Box, Typography, Stack, Button, Divider, Modal, List, ListItemButton, ListItem, ListItemIcon, ListItemText, TextField } from '@mui/material';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import DownloadIcon from '@mui/icons-material/Download';
 import MailIcon from '@mui/icons-material/Mail';
-import JCAPContext, { Plan } from '../context';
+import JCAPContext from '../context';
+import { CollectionExploitationPlanType } from '@/types/main/collectionExploitationPlanType';
+import { createCMPlan } from '@/lib/helpers';
 
 const getData = () => {
     fetch('')
 }
 
-export interface Requirement {
-    active: boolean,
-    name: string,
-    type: string,
-    location: string,
-    gaoi: string,
-    orbat_type: string,
-    status: string,
-    requester: string,
-    ltiov: string,
-    _id: number
-}
+// export interface Requirement {
+//     active: boolean,
+//     name: string,
+//     type: string,
+//     location: string,
+//     gaoi: string,
+//     orbat_type: string,
+//     status: string,
+//     requester: string,
+//     ltiov: string,
+//     _id: number
+// }
 
-let requirements: Requirement[] = []
+// let requirements: Requirement[] = []
 
-for (let i = 1; i <= 47; i++) {
-    requirements.push({
-        active: false,
-        name: `generic req ${i}`,
-        type: 'EO',
-        location: '12.345N 45.678E',
-        gaoi: 'Europe',
-        orbat_type: 'Air',
-        status: 'Received',
-        requester: 'ACO',
-        ltiov: '12.12.2023 12:00',
-        _id: i
-    })
-}
+// for (let i = 1; i <= 47; i++) {
+//     requirements.push({
+//         active: false,
+//         name: `generic req ${i}`,
+//         type: 'EO',
+//         location: '12.345N 45.678E',
+//         gaoi: 'Europe',
+//         orbat_type: 'Air',
+//         status: 'Received',
+//         requester: 'ACO',
+//         ltiov: '12.12.2023 12:00',
+//         _id: i
+//     })
+// }
 
-let reqsInPlan: Requirement[] = []
+// let reqsInPlan: Requirement[] = []
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -58,14 +60,23 @@ const style = {
 };
 
 function Home() {
-    const { plans, setPlans } = useContext(JCAPContext)
+    const { CMPlans, setCMPlans, activePlan, setActivePlan, requirements } = useContext(JCAPContext)
     const [pageSize, setPageSize] = useState(5);
     const [rowId, setRowId] = useState('0');
-    const [reqsInPlan, setReqsInPlan] = useState<Requirement[]>([]);
-    const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-    const [activePlan, setActivePlan] = useState('AAA')
+    const [openPlan, setOpenPlan] = useState(false);
+    const handleOpenPlan = () => setOpenPlan(true);
+    const handleClosePlan = () => setOpenPlan(false);
+    const [openNewPlan, setOpenNewPlan] = useState(false);
+    const handleOpenNewPlan = () => setOpenNewPlan(true);
+    const handleCloseNewPlan = () => setOpenNewPlan(false);
+    const [newPlanName, setNewPlanName] = useState('');
+
+    const handleNewPlan = (name: string) => {
+        if (!name) return;
+        const newPlan = createCMPlan(name);
+        setCMPlans([...CMPlans, newPlan]);
+        setActivePlan(newPlan);
+    }
 
     const columns = useMemo(
         () => [
@@ -122,29 +133,6 @@ function Home() {
     );
 
     const addToPlanHandler = () => {
-        setReqsInPlan(requirements.filter((entry) => {
-            entry.active == true
-        }))
-        console.log(reqsInPlan)
-        var tempPlans = plans
-        var tempPlan: Plan | undefined = plans.find(e => e.name === activePlan)
-        if (!tempPlan) {
-            tempPlan = {
-                name: activePlan,
-                entries: reqsInPlan
-            }
-            tempPlans.push(tempPlan)
-            setPlans(tempPlans)
-        }
-        else {
-            tempPlan.entries.push(reqsInPlan)
-            tempPlan = {
-                name: activePlan,
-                entries: Array( new Set( ...tempPlan.entries))
-            }
-            tempPlans.push(tempPlan)
-            setPlans(tempPlans)
-        }
     }
 
     return (
@@ -177,7 +165,7 @@ function Home() {
                         <DataGrid
                             columns={columns}
                             rows={requirements}
-                            getRowId={(row) => row._id}
+                            getRowId={(row) => row.SerialNumber}
                             rowsPerPageOptions={[5, 10, 20]}
                             pageSize={pageSize}
                             onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
@@ -203,10 +191,10 @@ function Home() {
                             component="h5"
                             sx={{ textAlign: 'left', mt: 0, mb: 3 }}
                         >
-                            {activePlan}
+                            {activePlan?.Name}
                         </Typography>
-                        <Button variant='contained' sx={{ mb: 2 }} onClick={handleOpen}>Open Plan</Button>
-                        <Button variant='contained' sx={{ mb: 2 }}>New Plan</Button>
+                        <Button variant='contained' sx={{ mb: 2 }} onClick={handleOpenPlan}>Open Plan</Button>
+                        <Button variant='contained' sx={{ mb: 2 }} onClick={handleOpenNewPlan}>New Plan</Button>
                         <Stack direction='row' spacing={2}>
                             <RefreshIcon></RefreshIcon>
                             <DownloadIcon></DownloadIcon>
@@ -218,8 +206,8 @@ function Home() {
 
                         <DataGrid
                             columns={columns}
-                            rows={plans.find(e => e.name === activePlan) ? plans.find(e => e.name === activePlan)?.entries! : []}
-                            getRowId={(row) => row._id}
+                            rows={activePlan?.InformationRequirements ? activePlan.InformationRequirements : []}
+                            getRowId={(row) => row.InformationRequirement?.SerialNumber!}
                             rowsPerPageOptions={[5, 10, 20]}
                             pageSize={pageSize}
                             onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
@@ -233,9 +221,39 @@ function Home() {
                 </Box>
 
             </Stack>
+
             <Modal
-                open={open}
-                onClose={handleClose}
+                open={openNewPlan}
+                onClose={handleCloseNewPlan}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <Stack gap={2}>
+
+                        <Typography id="modal-modal-title" variant="h6" component="h2">
+                            Type a Name for the new Plan:
+                        </Typography>
+
+                        <TextField
+                            id="outlined-basic"
+                            label="Plan Name"
+                            variant="outlined"
+                            onChange={(e) => { setNewPlanName(e.target.value) }}
+                        />
+                        <Button variant='contained' sx={{ mb: 2 }} onClick={() => {
+                            handleNewPlan(newPlanName)
+                            handleCloseNewPlan()
+                        }}>Create Plan</Button>
+                    </Stack>
+
+
+                </Box>
+            </Modal>
+
+            <Modal
+                open={openPlan}
+                onClose={handleClosePlan}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
@@ -245,22 +263,16 @@ function Home() {
                     </Typography>
 
                     <List>
-                        <ListItem disablePadding>
-                            <ListItemButton onClick={() => {setActivePlan('AAA'); handleClose()}}>
-                                <ListItemIcon>
-                                    <MailIcon />
-                                </ListItemIcon>
-                                <ListItemText primary={'AAA'} />
-                            </ListItemButton>
-                        </ListItem>
-                        <ListItem disablePadding>
-                            <ListItemButton onClick={() => {setActivePlan('AAB'); handleClose()}}>
-                                <ListItemIcon>
-                                    <MailIcon />
-                                </ListItemIcon>
-                                <ListItemText primary={'AAB'} />
-                            </ListItemButton>
-                        </ListItem>
+                        {CMPlans.map((plan) => (
+                            <ListItem key={plan.Identifier} disablePadding>
+                                <ListItemButton onClick={() => { setActivePlan(plan); handleClosePlan() }}>
+                                    <ListItemIcon>
+                                        <MailIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary={plan.Name} />
+                                </ListItemButton>
+                            </ListItem>))
+                        }
                     </List>
 
                 </Box>

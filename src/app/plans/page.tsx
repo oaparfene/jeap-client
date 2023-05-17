@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Avatar, Box, Typography, Stack, Button, Divider } from '@mui/material';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import DownloadIcon from '@mui/icons-material/Download';
+import JCAPContext from '../context';
 
 interface Requirement {
   active: boolean,
@@ -43,6 +44,7 @@ function Home() {
   const [pageSize, setPageSize] = useState(5);
   const [rowId, setRowId] = useState('0');
   const [reqsInPlan, setReqsInPlan] = useState<Requirement[]>([]);
+  const { activePlan } = React.useContext(JCAPContext)
 
   const columns = useMemo(
     () => [
@@ -109,50 +111,62 @@ function Home() {
   return (
     <>
       <Stack sx={{ p: 3 }}>
-        <Box
-          sx={{
-            height: 730,
-            width: '100%',
-            overflow: 'hidden'
-          }}
-        >
-          <Stack direction='row' justifyContent='space-between'>
-            <Typography
-              variant="h5"
-              component="h5"
-              sx={{ textAlign: 'left', mt: 0, mb: 3 }}
+        {activePlan ? (
+          <>
+            <Box
+              sx={{
+                height: 730,
+                width: '100%',
+                overflow: 'hidden'
+              }}
             >
-              PED Plan Overview: AAA
-            </Typography>
-            <Stack direction='row' spacing={2}>
-              <RefreshIcon></RefreshIcon>
-              <DownloadIcon></DownloadIcon>
-              <MoreHorizIcon></MoreHorizIcon>
-            </Stack>
-          </Stack>
-          {/*<Button variant='contained' sx={{ mb: 2 }} onClick={addToPlanHandler}>Add Selection to Plan</Button>*/}
-          <Box sx={{ height: 630, width: '100%', overflow: 'auto' }}>
+              <Stack direction='row' justifyContent='space-between'>
+                <Typography
+                  variant="h5"
+                  component="h5"
+                  sx={{ textAlign: 'left', mt: 0, mb: 3 }}
+                >
+                  Plan Overview: {activePlan.Name}
+                </Typography>
+                <Stack direction='row' spacing={2}>
+                  <RefreshIcon></RefreshIcon>
+                  <DownloadIcon></DownloadIcon>
+                  <MoreHorizIcon></MoreHorizIcon>
+                </Stack>
+              </Stack>
+              {/*<Button variant='contained' sx={{ mb: 2 }} onClick={addToPlanHandler}>Add Selection to Plan</Button>*/}
+              <Box sx={{ height: 630, width: '100%', overflow: 'auto' }}>
 
-            <DataGrid
-              columns={columns}
-              rows={requirements}
-              getRowId={(row) => row._id}
-              rowsPerPageOptions={[5, 10, 20]}
-              pageSize={pageSize}
-              onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-              getRowSpacing={(params) => ({
-                top: params.isFirstVisible ? 0 : 5,
-                bottom: params.isLastVisible ? 0 : 5,
-              })}
-              onCellEditCommit={(params) => setRowId(params.id.toString())}
-            />
-          </Box>
-        </Box>
-        <Stack direction='row' justifyContent='end'>
-          <Button variant='outlined' sx={{ mr: 2 }} onClick={addToPlanHandler}>Request Automated Allocation</Button>
-          <Button variant='outlined' sx={{ mr: 2 }} onClick={addToPlanHandler}>Save Draft Plan</Button>
-          <Button variant='contained' sx={{ mr: 2 }} onClick={addToPlanHandler}>Publish Plan</Button>
-        </Stack>
+                <DataGrid
+                  columns={columns}
+                  rows={requirements}
+                  getRowId={(row) => row._id}
+                  rowsPerPageOptions={[5, 10, 20]}
+                  pageSize={pageSize}
+                  onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+                  getRowSpacing={(params) => ({
+                    top: params.isFirstVisible ? 0 : 5,
+                    bottom: params.isLastVisible ? 0 : 5,
+                  })}
+                  onCellEditCommit={(params) => setRowId(params.id.toString())}
+                />
+              </Box>
+            </Box>
+            <Stack direction='row' justifyContent='end'>
+              <Button variant='outlined' sx={{ mr: 2 }} onClick={addToPlanHandler}>Request Automated Allocation</Button>
+              <Button variant='outlined' sx={{ mr: 2 }} onClick={addToPlanHandler}>Save Draft Plan</Button>
+              <Button variant='contained' sx={{ mr: 2 }} onClick={addToPlanHandler}>Publish Plan</Button>
+            </Stack>
+          </>
+        ) : (
+          <Typography
+            variant="h5"
+            component="h5"
+            sx={{ textAlign: 'left', mt: 0, mb: 3 }}
+          >
+            No Plan Selected
+          </Typography>
+        )}
       </Stack>
     </>
   )

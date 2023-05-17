@@ -21,6 +21,7 @@ import Typography from '@mui/material/Typography';
 import { Avatar } from '@mui/material';
 import next from 'next';
 import Link from 'next/link';
+import JCAPContext from '../context';
 
 const drawerWidth = 240;
 export default function PlanLayout({
@@ -29,26 +30,26 @@ export default function PlanLayout({
     children: React.ReactNode
 }) {
 
+    const { CMPlans, setActivePlan } = React.useContext(JCAPContext)
+
     const drawer = (
         <div>
             <Toolbar />
             <Box sx={{ p: 1 }}>
-                <Typography variant='h5'>PED Plans</Typography>
-                <Typography>Showing 2 out of 2</Typography>
+                <Typography variant='h5'>Plans</Typography>
+                <Typography>Showing {CMPlans.length} out of {CMPlans.length}</Typography>
             </Box>
 
             <Divider />
             <List>
-                {['AAA', 'AAB'].map((text, index) => (
-                    <ListItem key={text} disablePadding>
-                        <Link href={text.toLowerCase()} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <MailIcon />
-                                </ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItemButton>
-                        </Link>
+                {CMPlans.map((plan, index) => (
+                    <ListItem key={index} disablePadding>
+                        <ListItemButton onClick={() => {setActivePlan(plan)}}>
+                            <ListItemIcon>
+                                <MailIcon />
+                            </ListItemIcon>
+                            <ListItemText primary={plan.Name} />
+                        </ListItemButton>
                     </ListItem>
                 ))}
             </List>
