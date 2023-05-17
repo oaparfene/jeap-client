@@ -1,12 +1,12 @@
 //#region AngularOData Imports
-import { GAOIStatusEnum } from "./GAOIStatusEnum";
-import { FunctionalCategoryCodeType } from "./functionalCategoryCodeType";
-import { GeographicAreaCategoryType } from "./geographicAreaCategoryType";
-import { CountryCodeType } from "./countryCodeType";
-import { GeographicAreaType } from "./geographicAreaType";
-import { DateTimeZuluType } from "./dateTimeZuluType";
-import { EntityCreatorType } from "./entityCreatorType";
-import { SecurityType } from "./securityType";
+import { GAOIStatusEnum } from "../GAOIStatusEnum";
+import { FunctionalCategoryCodeType } from "../functionalCategoryCodeType";
+import { GeographicAreaCategoryType } from "../geographicAreaCategoryType";
+import { CountryCodeType } from "../countryCodeType";
+import { GeographicAreaType } from "../geographicAreaType";
+import { DateTimeZuluType } from "../dateTimeZuluType";
+import { EntityCreatorType } from "../entityCreatorType";
+import { SecurityType } from "../securityType";
 
 export interface GeographicAreaOfInterestType {
   //#region ODataApi Properties
