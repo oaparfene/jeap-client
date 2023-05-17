@@ -22,7 +22,8 @@ import { Avatar } from '@mui/material';
 import next from 'next';
 import Link from 'next/link';
 import Head from 'next/head';
-import JCAPContext, { Plan } from './context'
+import JCAPContext from './context'
+import { CollectionExploitationPlanType } from '@/types/main/collectionExploitationPlanType';
 
 const drawerWidth = 240;
 export default function RootLayout({
@@ -59,7 +60,8 @@ export default function RootLayout({
     </div>
   );
 
-    const [plans, setPlans] = React.useState<Array<Plan>>([])
+    const [CMPlans, setCMPlans] = React.useState<Array<CollectionExploitationPlanType>>([])
+    const [PEDPlans, setPEDPlans] = React.useState<Array<CollectionExploitationPlanType>>([])
 
   return (
     <html lang="en">
@@ -71,13 +73,15 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
         <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
           integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
-          crossOrigin=""></script>
+          crossOrigin="" defer></script>
       </Head>
       <body>
         <JCAPContext.Provider
         value={{
-          plans,
-          setPlans
+          CMPlans,
+          PEDPlans,
+          setCMPlans,
+          setPEDPlans,
         }}
         >
 

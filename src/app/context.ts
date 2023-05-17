@@ -1,16 +1,16 @@
 import { createContext } from "react";
-
-export interface Plan {
-    name: string,
-    entries: Array<any>
-}
+import { CollectionExploitationPlanType } from "@/types/main/collectionExploitationPlanType";
 
 export type JCAPContextType = {
-    plans: Array<Plan>,
-    setPlans: (plans: Array<Plan>) => void
+    CMPlans: Array<CollectionExploitationPlanType>,
+    PEDPlans: Array<CollectionExploitationPlanType>,
+    setCMPlans: (plans: Array<CollectionExploitationPlanType>) => void
+    setPEDPlans: (plans: Array<CollectionExploitationPlanType>) => void
 }
 
 export default createContext<JCAPContextType>({
-    plans: [],
-    setPlans: (plans: Array<Plan>) => plans
+    CMPlans: [],
+    PEDPlans: [],
+    setCMPlans: (plans: Array<CollectionExploitationPlanType>) => plans,
+    setPEDPlans: (plans: Array<CollectionExploitationPlanType>) => plans
 })
