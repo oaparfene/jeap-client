@@ -87,19 +87,25 @@ function Home() {
                 type: 'boolean',
                 editable: true,
             },
-            { field: 'name', headerName: 'Name', width: 200 },
+            { field: 'Name', headerName: 'Name', width: 150 },
+            { field: 'Priority', headerName: 'Priority', width: 100 },
             {
-                field: 'type',
-                headerName: 'Type',
-                width: 100,
-                type: 'singleSelect',
-                valueOptions: ['EO', 'IR', 'SAR', 'GMTI'],
-                editable: true,
+                field: 'RequiredInformation',
+                headerName: 'Description',
+                width: 300,
             },
             {
-                field: 'location',
-                headername: 'Location',
-                width: 200
+                field: 'IntelCollectionDiscipline',
+                headerName: 'Intel Type',
+                width: 100,
+            },
+            {
+                field: 'RequiredProduct',
+                headerName: 'Product',
+                width: 100,
+                valueGetter: (params: any) => {
+                    return params.value[0].Product.ProductTypeType;
+                  }
             },
             {
                 field: 'gaoi',
@@ -110,24 +116,20 @@ function Home() {
                 editable: true,
             },
             {
-                field: 'orbat_type',
-                headerName: 'ORBAT Type',
-                width: 200,
-                type: 'singleSelect',
-                valueOptions: ['Air', 'Ground', 'Navy', 'Air Defense'],
-                editable: true,
-            },
-            {
-                field: 'status',
+                field: 'Status',
                 headerName: 'Status',
                 width: 150,
-                type: 'singleSelect',
-                valueOptions: ['Received', 'Pending', 'Submitted', 'Cancelled', 'Complete'],
-                editable: true,
             },
-            { field: 'requester', headerName: 'Requester', width: 100 },
+            {
+                field: 'Originator',
+                headername: 'Requestor',
+                width: 100,
+                valueGetter: (params: any) => {
+                    return params.value.Requestor;
+                  }
+            },
             { field: 'ltiov', headerName: 'LTIOV', width: 200 },
-            { field: '_id', headerName: 'Id', width: 100 },
+            { field: 'Identifier', headerName: 'Id', width: 300 },
         ],
         [rowId]
     );

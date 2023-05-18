@@ -7,44 +7,45 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import DownloadIcon from '@mui/icons-material/Download';
 import JCAPContext from '../context';
+import { InformationRequirementType } from '@/types/main/informationRequirementType';
 
-interface Requirement {
-  active: boolean,
-  name: string,
-  level: string,
-  type: string,
-  gaoi: string,
-  orbat_type: string,
-  status: string,
-  requester: string,
-  ltiov: string,
-  _id: number
-}
+// interface Requirement {
+//   active: boolean,
+//   name: string,
+//   level: string,
+//   type: string,
+//   gaoi: string,
+//   orbat_type: string,
+//   status: string,
+//   requester: string,
+//   ltiov: string,
+//   _id: number
+// }
 
-let requirements: Requirement[] = []
+// let requirements: Requirement[] = []
 
-for (let i = 1; i <= 47; i++) {
-  requirements.push({
-    active: false,
-    name: `generic req ${i}`,
-    level: '1',
-    type: 'EO',
-    gaoi: 'Europe',
-    orbat_type: 'Air',
-    status: 'Received',
-    requester: 'ACO',
-    ltiov: '12.12.2023 12:00',
-    _id: i
-  })
-}
+// for (let i = 1; i <= 47; i++) {
+//   requirements.push({
+//     active: false,
+//     name: `generic req ${i}`,
+//     level: '1',
+//     type: 'EO',
+//     gaoi: 'Europe',
+//     orbat_type: 'Air',
+//     status: 'Received',
+//     requester: 'ACO',
+//     ltiov: '12.12.2023 12:00',
+//     _id: i
+//   })
+// }
 
-let reqsInPlan: Requirement[] = []
+// let reqsInPlan: Requirement[] = []
 
 function Home() {
+  const { CMPlans, setCMPlans, activePlan, requirements } = React.useContext(JCAPContext)
   const [pageSize, setPageSize] = useState(5);
   const [rowId, setRowId] = useState('0');
-  const [reqsInPlan, setReqsInPlan] = useState<Requirement[]>([]);
-  const { activePlan } = React.useContext(JCAPContext)
+  const [reqsInPlan, setReqsInPlan] = useState<InformationRequirementType[]>([]);
 
   const columns = useMemo(
     () => [
@@ -102,10 +103,10 @@ function Home() {
   );
 
   const addToPlanHandler = () => {
-    setReqsInPlan(requirements.filter((entry) => {
-      entry.active == true
-    }))
-    console.log(reqsInPlan)
+    // setReqsInPlan(requirements.filter((entry) => {
+    //   entry.active == true
+    // }))
+    // console.log(reqsInPlan)
   }
 
   return (
@@ -139,8 +140,8 @@ function Home() {
 
                 <DataGrid
                   columns={columns}
-                  rows={requirements}
-                  getRowId={(row) => row._id}
+                  rows={activePlan?.InformationRequirements ? activePlan.InformationRequirements : []}
+                  getRowId={(row) => row.InformationRequirement?.SerialNumber!}
                   rowsPerPageOptions={[5, 10, 20]}
                   pageSize={pageSize}
                   onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}

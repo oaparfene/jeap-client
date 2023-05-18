@@ -24,6 +24,7 @@ import Link from 'next/link';
 import Head from 'next/head';
 import JCAPContext from './context'
 import { CollectionExploitationPlanType } from '@/types/main/collectionExploitationPlanType';
+import { createCMPlan, generateRandomTasks, addTasksToPEDPlan } from '@/lib/helpers';
 
 const drawerWidth = 240;
 export default function RootLayout({
@@ -64,6 +65,12 @@ export default function RootLayout({
     const [PEDPlans, setPEDPlans] = React.useState<Array<CollectionExploitationPlanType>>([])
     const [activePlan, setActivePlan] = React.useState<CollectionExploitationPlanType | null>(null)
     const [requirements, setRequirements] = React.useState<Array<any>>([])
+
+    React.useEffect(() => {
+      setRequirements(generateRandomTasks(100))
+      setCMPlans([addTasksToPEDPlan(createCMPlan('AAA'), requirements.slice(0, 10))])
+      setActivePlan(CMPlans[0])
+    }, [])
 
   return (
     <html lang="en">

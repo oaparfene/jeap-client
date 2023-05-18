@@ -10,6 +10,36 @@ import { PublishedStatusType } from "@/types/publishedStatusType";
 import { SecurityClassificationType } from "@/types/securityClassificationType";
 import { uuid } from 'uuidv4';
 
+export const addTasksToCMPlan = (plan: CollectionExploitationPlanType, tasks: InformationRequirementType[]): CollectionExploitationPlanType => {
+    plan.InformationRequirements = [];
+    for (let i = 0; i < tasks.length; i++) {
+        plan.InformationRequirements?.push({
+            ownedId: i,
+            InformationRequirement: tasks[i]
+        });
+    }
+    return plan;
+}
+
+export const addTasksToPEDPlan = (plan: CollectionExploitationPlanType, tasks: InformationRequirementType[]): CollectionExploitationPlanType => {
+    plan.InformationRequirements = [];
+    for (let i = 0; i < tasks.length; i++) {
+        plan.InformationRequirements?.push({
+            ownedId: i,
+            InformationRequirement: tasks[i]
+        });
+    }
+    return plan;
+}
+
+export const generateRandomTasks = (amount: number): InformationRequirementType[] => {
+    const tasks: InformationRequirementType[] = [];
+    for (let i = 0; i < amount; i++) {
+        tasks.push(createCollectionTask(`Task ${i}`));
+    }
+    return tasks;
+}
+
 export const createCMPlan = (name: string): CollectionExploitationPlanType => {
     return {
         Identifier: uuid(),
