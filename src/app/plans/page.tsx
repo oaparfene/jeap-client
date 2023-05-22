@@ -49,58 +49,69 @@ function Home() {
 
   const columns = useMemo(
     () => [
-      {
-        field: 'active',
-        headerName: 'Active',
-        width: 100,
-        type: 'boolean',
-        editable: true,
-      },
-      { field: 'name', headerName: 'Name', width: 200 },
-      { field: 'level', headerName: 'Level', width: 50 },
-      {
-        field: 'type',
-        headerName: 'Type',
-        width: 100,
-        type: 'singleSelect',
-        valueOptions: ['EO', 'IR', 'SAR', 'GMTI'],
-        editable: true,
-      },
-      {
-        field: 'gaoi',
-        headerName: 'GAOI',
-        width: 200,
-        type: 'singleSelect',
-        valueOptions: ['Europe', 'Asia', 'North America', 'South America', 'Africa', 'Oceania'],
-        editable: true,
-      },
-      {
-        field: 'orbat_type',
-        headerName: 'ORBAT Type',
-        width: 200,
-        type: 'singleSelect',
-        valueOptions: ['Air', 'Ground', 'Navy', 'Air Defense'],
-        editable: true,
-      },
-      {
-        field: 'status',
-        headerName: 'Status',
-        width: 150,
-        type: 'singleSelect',
-        valueOptions: ['Received', 'Pending', 'Submitted', 'Cancelled', 'Complete'],
-        editable: true,
-      },
-      {
-        field: 'assigned_cell',
-        headerName: 'Assigned Cell',
-        width: 100,
-        type: 'singleSelect',
-        valueOptions: ['Cell 1', 'Cell 2', 'Cell 3',],
-        editable: true
-      },
+        {
+            field: 'active',
+            headerName: 'Active',
+            width: 100,
+            type: 'boolean',
+            editable: false
+        },
+        { field: 'Name', headerName: 'Name', width: 150 },
+        { field: 'Priority', headerName: 'Priority', width: 100 },
+        {
+            field: 'RequiredInformation',
+            headerName: 'Description',
+            width: 300,
+        },
+        {
+            field: 'IntelCollectionDiscipline',
+            headerName: 'Intel Type',
+            width: 100,
+        },
+        {
+            field: 'RequiredProduct',
+            headerName: 'Product',
+            width: 100,
+            valueGetter: (params: any) => {
+                return params.value[0].Product.ProductTypeType;
+            }
+        },
+        {
+            field: 'GeographicAreaOfInterestReference',
+            headerName: 'GAOI',
+            width: 300,
+            valueGetter: (params: any) => {
+                if (!params.value) return
+                return params.value[0].GeographicAreaOfInterest.Identifier;
+            }
+        },
+        {
+            field: 'Status',
+            headerName: 'Status',
+            width: 150,
+        },
+        {
+            field: 'Originator',
+            headername: 'Requestor',
+            width: 100,
+            valueGetter: (params: any) => {
+              if (!params.value) return
+                return params.value.Requestor;
+            }
+        },
+        {
+            field: 'LatestDateTimeZuluOfInformationValue',
+            headerName: 'LTIOV',
+            width: 200,
+            valueGetter: (params: any) => {
+              if (!params.value) return
+                return params.value.EndDateTimeZulu.Value;
+            }
+        },
+        { field: 'Identifier', headerName: 'Id', width: 300 },
     ],
     [rowId]
-  );
+);
 
   const addToPlanHandler = () => {
     // setReqsInPlan(requirements.filter((entry) => {
@@ -140,8 +151,12 @@ function Home() {
 
                 <DataGrid
                   columns={columns}
-                  rows={activePlan?.InformationRequirements ? activePlan.InformationRequirements : []}
-                  getRowId={(row) => row.InformationRequirement?.SerialNumber!}
+                  rows={activePlan?.InformationRequirements ? activePlan.InformationRequirements.map(
+                    (entry) => {
+                        return {...entry.InformationRequirement}
+                    }
+                ) : []}
+                getRowId={(row) => row.Identifier!}
                   rowsPerPageOptions={[5, 10, 20]}
                   pageSize={pageSize}
                   onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}

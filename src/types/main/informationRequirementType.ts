@@ -14,6 +14,7 @@ import { GeographicAreaOfInterestOrReferenceType } from "../geographicAreaOfInte
 
 export interface InformationRequirementType {
   //#region ODataApi Properties
+  active: boolean;
   Identifier: string;
   CollectionInterval?: CalendarClockIntervalZuluType;
   RequiredInformation: string;

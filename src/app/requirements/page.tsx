@@ -9,7 +9,8 @@ import DownloadIcon from '@mui/icons-material/Download';
 import MailIcon from '@mui/icons-material/Mail';
 import JCAPContext from '../context';
 import { CollectionExploitationPlanType } from '@/types/main/collectionExploitationPlanType';
-import { createCMPlan } from '@/lib/helpers';
+import { addTasksToCMPlan, createCMPlan } from '@/lib/helpers';
+import { InformationRequirementType } from '@/types/main/informationRequirementType';
 
 const getData = () => {
     fetch('')
@@ -60,7 +61,7 @@ const style = {
 };
 
 function Home() {
-    const { CMPlans, setCMPlans, activePlan, setActivePlan, requirements } = useContext(JCAPContext)
+    const { CMPlans, setCMPlans, activePlan, setActivePlan, requirements, setRequirements } = useContext(JCAPContext)
     const [pageSize, setPageSize] = useState(5);
     const [rowId, setRowId] = useState('0');
     const [openPlan, setOpenPlan] = useState(false);
@@ -70,6 +71,7 @@ function Home() {
     const handleOpenNewPlan = () => setOpenNewPlan(true);
     const handleCloseNewPlan = () => setOpenNewPlan(false);
     const [newPlanName, setNewPlanName] = useState('');
+    const [selectedReqs, setSelectedReqs] = useState<InformationRequirementType[]>([]);
 
     const handleNewPlan = (name: string) => {
         if (!name) return;
@@ -86,6 +88,22 @@ function Home() {
                 width: 100,
                 type: 'boolean',
                 editable: true,
+                valueSetter: (params: any) => {
+                    console.log(params)
+                    if (!params.row) return
+                    const rowData = params.row
+                    //console.log(rowData.Identifier)
+                    if (params.value == true) {
+                        const temp = selectedReqs
+                        temp.push(params.row)
+                        setSelectedReqs(temp)
+                    } else {
+                        setSelectedReqs(selectedReqs.filter((entry) => {
+                            entry.Identifier != rowData.Identifier
+                        }))
+                    }
+                    return {...params.row, active: params.value}
+                  },
             },
             { field: 'Name', headerName: 'Name', width: 150 },
             { field: 'Priority', headerName: 'Priority', width: 100 },
@@ -105,15 +123,16 @@ function Home() {
                 width: 100,
                 valueGetter: (params: any) => {
                     return params.value[0].Product.ProductTypeType;
-                  }
+                }
             },
             {
-                field: 'gaoi',
+                field: 'GeographicAreaOfInterestReference',
                 headerName: 'GAOI',
-                width: 200,
-                type: 'singleSelect',
-                valueOptions: ['Europe', 'Asia', 'North America', 'South America', 'Africa', 'Oceania'],
-                editable: true,
+                width: 300,
+                valueGetter: (params: any) => {
+                    if (!params.value) return
+                    return params.value[0].GeographicAreaOfInterest.Identifier;
+                }
             },
             {
                 field: 'Status',
@@ -126,15 +145,26 @@ function Home() {
                 width: 100,
                 valueGetter: (params: any) => {
                     return params.value.Requestor;
-                  }
+                }
             },
-            { field: 'ltiov', headerName: 'LTIOV', width: 200 },
+            {
+                field: 'LatestDateTimeZuluOfInformationValue',
+                headerName: 'LTIOV',
+                width: 200,
+                valueGetter: (params: any) => {
+                    return params.value.EndDateTimeZulu.Value;
+                }
+            },
             { field: 'Identifier', headerName: 'Id', width: 300 },
         ],
         [rowId]
     );
 
     const addToPlanHandler = () => {
+        console.log(selectedReqs)
+        const newPlan = addTasksToCMPlan(activePlan!, selectedReqs)
+        setActivePlan(newPlan)
+        console.log(newPlan)
     }
 
     return (
@@ -161,13 +191,13 @@ function Home() {
                             <MoreHorizIcon></MoreHorizIcon>
                         </Stack>
                     </Stack>
-                    <Button variant='contained' sx={{ mb: 2 }} onClick={addToPlanHandler}>Add Selection to Plan</Button>
+                    <Button variant='contained' sx={{ mb: 2 }} disabled={!activePlan} onClick={addToPlanHandler}>Add Selection to Plan</Button>
                     <Box sx={{ height: 340, width: '100%', overflow: 'auto' }}>
 
                         <DataGrid
                             columns={columns}
                             rows={requirements}
-                            getRowId={(row) => row.SerialNumber}
+                            getRowId={(row) => row.Identifier}
                             rowsPerPageOptions={[5, 10, 20]}
                             pageSize={pageSize}
                             onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
@@ -208,8 +238,12 @@ function Home() {
 
                         <DataGrid
                             columns={columns}
-                            rows={activePlan?.InformationRequirements ? activePlan.InformationRequirements : []}
-                            getRowId={(row) => row.InformationRequirement?.SerialNumber!}
+                            rows={activePlan?.InformationRequirements ? activePlan.InformationRequirements.map(
+                                (entry) => {
+                                    return {...entry.InformationRequirement}
+                                }
+                            ) : []}
+                            getRowId={(row) => row.Identifier!}
                             rowsPerPageOptions={[5, 10, 20]}
                             pageSize={pageSize}
                             onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
