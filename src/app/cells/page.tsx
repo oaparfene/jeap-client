@@ -39,7 +39,7 @@ for (let i = 1; i <= 47; i++) {
 
 
 function Home() {
-    const [pageSize, setPageSize] = useState(5);
+    const [pageSize, setPageSize] = useState(10);
     const [rowId, setRowId] = useState('0');
 
     const columns = useMemo(
