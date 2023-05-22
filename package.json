@@ -26,7 +26,8 @@
     "react-dom": "18.2.0",
     "react-google-charts": "^4.0.0",
     "react-leaflet": "^4.2.1",
-    "typescript": "4.9.5"
+    "typescript": "4.9.5",
+    "uuidv4": "^6.2.13"
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.3"

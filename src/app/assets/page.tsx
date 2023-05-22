@@ -10,13 +10,11 @@ import DownloadIcon from '@mui/icons-material/Download';
 interface Cell {
     active: boolean,
     name: string,
-    level: string,
-    type: string,
-    gaoi: string,
-    orbat_type: string,
-    capacity: string,
-    owner: string,
-    schedule: string,
+    systemDescription: string,
+    capability: 'EO' | 'IR' | 'SAR' | 'GMTI',
+    battlespaceDimension: "AIR" | "GROUND" | "SUBSURFACE" | "SURFACE" | "SPACE" | "SOF" | "OTHER" | "TASKS" | "CONTROLMEASURES" | "OPERATIONSOTHERTHANWAR",
+    contactInfo: string,
+    presenceAtLocation: string,
     _id: number
 }
 
@@ -25,14 +23,12 @@ let cells: Cell[] = []
 for (let i = 1; i <= 47; i++) {
     cells.push({
         active: false,
-        name: `generic cell ${i}`,
-        level: '1',
-        type: 'EO',
-        gaoi: 'Europe',
-        orbat_type: 'Air',
-        capacity: '2/4',
-        owner: 'John Doe',
-        schedule: 'Mon-Fri 0800-1600',
+        name: `generic asset ${i}`,
+        systemDescription: 'Asset description',
+        capability: 'EO',
+        battlespaceDimension: 'AIR',
+        contactInfo: 'john@doe.com',
+        presenceAtLocation: 'Europe',
         _id: i
     })
 }
@@ -51,39 +47,40 @@ function Home() {
                 type: 'boolean',
                 editable: true,
             },
-            { field: 'name', headerName: 'Name', width: 200 },
-            { field: 'level', headerName: 'Level', width: 50 },
+            { field: 'name', headerName: 'Name', width: 200, editable: true, },
             {
-                field: 'type',
-                headerName: 'Type',
+                field: 'systemDescription',
+                headerName: "Description",
+                width: 200,
+                editable: true,
+            },
+            {
+                field: 'capability',
+                headerName: 'Capability',
                 width: 100,
                 type: 'singleSelect',
                 valueOptions: ['EO', 'IR', 'SAR', 'GMTI'],
                 editable: true,
             },
             {
-                field: 'gaoi',
-                headerName: 'GAOI',
-                width: 200,
+                field: 'battlespaceDimension',
+                headerName: 'Dimension',
+                width: 100,
                 type: 'singleSelect',
-                valueOptions: ['Europe', 'Asia', 'North America', 'South America', 'Africa', 'Oceania'],
+                valueOptions: ["AIR" , "GROUND" , "SUBSURFACE" , "SURFACE" , "SPACE" , "SOF" , "OTHER" , "TASKS" , "CONTROLMEASURES" , "OPERATIONSOTHERTHANWAR"],
                 editable: true,
             },
             {
-                field: 'orbat_type',
-                headerName: 'ORBAT Type',
-                width: 200,
-                type: 'singleSelect',
-                valueOptions: ['Air', 'Ground', 'Navy', 'Air Defense'],
+                field: 'contactInfo',
+                headerName: 'Contact Info',
+                width: 150,
                 editable: true,
             },
             {
-                field: 'capacity',
-                headerName: 'Capacity',
+                field: 'presenceAtLocation',
+                headerName: 'Location',
                 width: 150,
             },
-            { field: 'owner', headerName: 'Owner', width: 100 },
-            { field: 'schedule', headerName: 'Schedule', width: 200 },
             { field: '_id', headerName: 'Id', width: 200 },
         ],
         [rowId]
@@ -91,12 +88,13 @@ function Home() {
 
     return (
         <>
-            <Stack sx={{p:3}}>
+            <Stack sx={{ p: 5 }}>
                 <Box
                     sx={{
                         height: 850,
                         width: '100%',
-                        overflow: 'hidden'
+                        overflow: 'hidden',
+                        px: 8
                     }}
                 >
                     <Stack direction='row' justifyContent='space-between'>
@@ -105,7 +103,7 @@ function Home() {
                             component="h5"
                             sx={{ textAlign: 'left', mt: 0, mb: 3 }}
                         >
-                            PED Cell Overview
+                            Collection Asset Overview
                         </Typography>
                         <Stack direction='row' spacing={2}>
                             <RefreshIcon></RefreshIcon>
@@ -114,7 +112,7 @@ function Home() {
                         </Stack>
                     </Stack>
                     <Button variant='contained' sx={{ mb: 2 }}>Add Selection to Plan</Button>
-                    <Box sx={{ height: 740, width: '100%', overflow: 'auto' }}>
+                    <Box sx={{ height: 740, width: 'auto', overflow: 'auto' }}>
 
                         <DataGrid
                             columns={columns}

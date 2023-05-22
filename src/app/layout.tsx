@@ -22,6 +22,11 @@ import { Avatar } from '@mui/material';
 import next from 'next';
 import Link from 'next/link';
 import Head from 'next/head';
+import JCAPContext from './context'
+import { CollectionExploitationPlanType } from '@/types/main/collectionExploitationPlanType';
+import { createCMPlan, generateRandomTasks, addTasksToPEDPlan, generateRandomGAOIs, generateRandomTasksWithGAOI } from '@/lib/helpers';
+import { GeographicAreaOfInterestType } from '@/types/main/geographicAreaOfInterestType';
+import { InformationRequirementType } from '@/types/main/informationRequirementType';
 
 const drawerWidth = 240;
 export default function RootLayout({
@@ -41,7 +46,7 @@ export default function RootLayout({
 
       <Divider />
       <List>
-        {['Plans', 'Cells', 'Requirements', 'Assesment', 'Map'].map((text, index) => (
+        {['Plans', 'Assets', 'Requirements', 'Assesment', 'Map'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <Link href={text.toLowerCase()} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
               <ListItemButton>
@@ -55,23 +60,22 @@ export default function RootLayout({
         ))}
       </List>
       <Divider />
-      <Typography sx={{ p: 1 }}>Personal:</Typography>
-      <List>
-        {['My PED Cell', 'My PED Tasks'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <Link href={text.replaceAll(' ', '').toLowerCase()} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
-              <ListItemButton>
-                <ListItemIcon>
-                  <MailIcon />
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </Link>
-          </ListItem>
-        ))}
-      </List>
     </div>
   );
+
+    const [CMPlans, setCMPlans] = React.useState<Array<CollectionExploitationPlanType>>([])
+    const [PEDPlans, setPEDPlans] = React.useState<Array<CollectionExploitationPlanType>>([])
+    const [activePlan, setActivePlan] = React.useState<CollectionExploitationPlanType | null>(null)
+    const [requirements, setRequirements] = React.useState<Array<InformationRequirementType>>([])
+    const [GAOIs, setGAOIs] = React.useState<Array<GeographicAreaOfInterestType>>([])
+
+    React.useEffect(() => {
+      const gaois = generateRandomGAOIs(100)
+      setGAOIs(gaois)
+      setRequirements(generateRandomTasksWithGAOI(gaois))
+      setCMPlans([addTasksToPEDPlan(createCMPlan('AAA'), requirements.slice(0, 10))])
+      setActivePlan(CMPlans[0])
+    }, [])
 
   return (
     <html lang="en">
@@ -83,56 +87,72 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
         <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
           integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
-          crossOrigin=""></script>
+          crossOrigin="" defer></script>
       </Head>
       <body>
-        <Box sx={{ display: 'flex' }}>
-          <CssBaseline />
-          <AppBar
-            position="fixed"
-            sx={{
-              width: { sm: `calc(100% - ${drawerWidth}px)` },
-              ml: { sm: `${drawerWidth}px` },
-            }}
-          >
-            <Toolbar>
-              <IconButton
-                color="inherit"
-                edge="start"
-                sx={{ mr: 2, display: { sm: 'none' } }}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6" noWrap component="div">
-                JEAP
-              </Typography>
-            </Toolbar>
-          </AppBar>
-          <Box
-            component="nav"
-            sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-            aria-label="mailbox folders"
-          >
-            <Drawer
-              variant="permanent"
-              sx={{
-                display: { xs: 'none', sm: 'block' },
-                '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-              }}
-              open
-            >
-              {drawer}
-            </Drawer>
-          </Box>
-          <Box
-            component="main"
-            sx={{ flexGrow: 1, p: 0, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
-          >
-            <Toolbar />
-            {children}
-          </Box>
-        </Box>
+        <JCAPContext.Provider
+        value={{
+          CMPlans,
+          PEDPlans,
+          activePlan,
+          requirements,
+          GAOIs,
+          setGAOIs,
+          setRequirements,
+          setActivePlan,
+          setCMPlans,
+          setPEDPlans,
+        }}
+        >
 
+          <Box sx={{ display: 'flex' }}>
+            <CssBaseline />
+            <AppBar
+              position="fixed"
+              sx={{
+                width: { sm: `calc(100% - ${drawerWidth}px)` },
+                ml: { sm: `${drawerWidth}px` },
+              }}
+            >
+              <Toolbar>
+                <IconButton
+                  color="inherit"
+                  edge="start"
+                  sx={{ mr: 2, display: { sm: 'none' } }}
+                >
+                  <MenuIcon />
+                </IconButton>
+                <Typography variant="h6" noWrap component="div">
+                  JCAP
+                </Typography>
+              </Toolbar>
+            </AppBar>
+            <Box
+              component="nav"
+              sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+              aria-label="mailbox folders"
+            >
+              <Drawer
+                variant="permanent"
+                sx={{
+                  display: { xs: 'none', sm: 'block' },
+                  '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                }}
+                open
+              >
+                {drawer}
+              </Drawer>
+            </Box>
+            <Box
+              component="main"
+              sx={{ flexGrow: 1, p: 0, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+            >
+              <Toolbar />
+              {children}
+            </Box>
+          </Box>
+
+        </JCAPContext.Provider>
       </body>
     </html>
   )
