@@ -46,7 +46,7 @@ export default function RootLayout({
 
       <Divider />
       <List>
-        {['Plans', 'Assets', 'Requirements', 'Assesment', 'Map'].map((text, index) => (
+        {['Requirements', 'Cells', 'Plans', 'Map'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <Link href={text.toLowerCase()} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
               <ListItemButton>
@@ -60,6 +60,20 @@ export default function RootLayout({
         ))}
       </List>
       <Divider />
+      <List>
+        {['My Tasks', 'My PED Cell'].map((text, index) => (
+          <ListItem key={text} disablePadding>
+            <Link href={text === 'My Tasks' ? 'mytasks' : 'mycell'} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
+              <ListItemButton>
+                <ListItemIcon>
+                  <MailIcon />
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </Link>
+          </ListItem>
+        ))}
+      </List>
     </div>
   );
 
@@ -70,7 +84,7 @@ export default function RootLayout({
     const [GAOIs, setGAOIs] = React.useState<Array<GeographicAreaOfInterestType>>([])
 
     React.useEffect(() => {
-      const gaois = generateRandomGAOIs(100)
+      const gaois = generateRandomGAOIs(10)
       setGAOIs(gaois)
       setRequirements(generateRandomTasksWithGAOI(gaois))
       setCMPlans([addTasksToPEDPlan(createCMPlan('AAA'), requirements.slice(0, 10))])
@@ -123,7 +137,7 @@ export default function RootLayout({
                   <MenuIcon />
                 </IconButton>
                 <Typography variant="h6" noWrap component="div">
-                  JCAP
+                  JEAP
                 </Typography>
               </Toolbar>
             </AppBar>

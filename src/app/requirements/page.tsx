@@ -9,8 +9,9 @@ import DownloadIcon from '@mui/icons-material/Download';
 import MailIcon from '@mui/icons-material/Mail';
 import JCAPContext from '../context';
 import { CollectionExploitationPlanType } from '@/types/main/collectionExploitationPlanType';
-import { addTasksToCMPlan, createCMPlan } from '@/lib/helpers';
+import { addTasksToCMPlan, createCMPlan, getReqsFromPlan, removeTasksFromCMPlan } from '@/lib/helpers';
 import { InformationRequirementType } from '@/types/main/informationRequirementType';
+import { uuid } from 'uuidv4';
 
 const getData = () => {
     fetch('')
@@ -62,6 +63,7 @@ const style = {
 
 function Home() {
     const { CMPlans, setCMPlans, activePlan, setActivePlan, requirements, setRequirements } = useContext(JCAPContext)
+    const [localActivePlan, setLocalActivePlan] = useState<CollectionExploitationPlanType>(activePlan!)
     const [pageSize, setPageSize] = useState(5);
     const [rowId, setRowId] = useState('0');
     const [openPlan, setOpenPlan] = useState(false);
@@ -71,7 +73,14 @@ function Home() {
     const handleOpenNewPlan = () => setOpenNewPlan(true);
     const handleCloseNewPlan = () => setOpenNewPlan(false);
     const [newPlanName, setNewPlanName] = useState('');
-    const [selectedReqs, setSelectedReqs] = useState<InformationRequirementType[]>([]);
+
+    const [selectionModel, setSelectionModel] = useState([]);
+    const [selectionModelBot, setSelectionModelBot] = useState([]);
+
+    useEffect(() => {
+        setLocalActivePlan(activePlan!)
+    }, [activePlan])
+
 
     const handleNewPlan = (name: string) => {
         if (!name) return;
@@ -82,29 +91,6 @@ function Home() {
 
     const columns = useMemo(
         () => [
-            {
-                field: 'active',
-                headerName: 'Active',
-                width: 100,
-                type: 'boolean',
-                editable: true,
-                valueSetter: (params: any) => {
-                    console.log(params)
-                    if (!params.row) return
-                    const rowData = params.row
-                    //console.log(rowData.Identifier)
-                    if (params.value == true) {
-                        const temp = selectedReqs
-                        temp.push(params.row)
-                        setSelectedReqs(temp)
-                    } else {
-                        setSelectedReqs(selectedReqs.filter((entry) => {
-                            entry.Identifier != rowData.Identifier
-                        }))
-                    }
-                    return {...params.row, active: params.value}
-                  },
-            },
             { field: 'Name', headerName: 'Name', width: 150 },
             { field: 'Priority', headerName: 'Priority', width: 100 },
             {
@@ -161,11 +147,28 @@ function Home() {
     );
 
     const addToPlanHandler = () => {
-        console.log(selectedReqs)
-        const newPlan = addTasksToCMPlan(activePlan!, selectedReqs)
+        if (!selectionModel) return
+        console.log('model:', selectionModel)
+        // @ts-ignore
+        const newPlan = addTasksToCMPlan(localActivePlan!, requirements.filter((e) => selectionModel.includes(e.Identifier)))
+        // @ts-ignore
+        setRequirements(requirements.filter((e) => !selectionModel.includes(e.Identifier)))
+        //setLocalActivePlan(newPlan)
         setActivePlan(newPlan)
         console.log(newPlan)
     }
+
+    const removeFromPlanHandler = () => {
+        if (!selectionModelBot) return
+        // @ts-ignore
+        setRequirements(requirements.concat(localActivePlan?.InformationRequirements.filter((e) => selectionModelBot.includes(e.InformationRequirement.Identifier))))
+        // @ts-ignore
+        const newPlan = removeTasksFromCMPlan(localActivePlan, localActivePlan?.InformationRequirements.filter((e) => selectionModelBot.includes(e.InformationRequirement.Identifier)))
+        setActivePlan(newPlan)
+        console.log('check')
+    }
+
+    const rowsBot = localActivePlan ? getReqsFromPlan(localActivePlan) : []
 
     return (
         <>
@@ -183,7 +186,7 @@ function Home() {
                             component="h5"
                             sx={{ textAlign: 'left', mt: 0, mb: 3 }}
                         >
-                            Collection Requirement Overview
+                            PED Requirement Overview
                         </Typography>
                         <Stack direction='row' spacing={2}>
                             <RefreshIcon></RefreshIcon>
@@ -191,10 +194,16 @@ function Home() {
                             <MoreHorizIcon></MoreHorizIcon>
                         </Stack>
                     </Stack>
-                    <Button variant='contained' sx={{ mb: 2 }} disabled={!activePlan} onClick={addToPlanHandler}>Add Selection to Plan</Button>
+                    <Button variant='contained' sx={{ mb: 2 }} disabled={!localActivePlan} onClick={addToPlanHandler}>Add Selection to Plan</Button>
                     <Box sx={{ height: 340, width: '100%', overflow: 'auto' }}>
 
                         <DataGrid
+                            checkboxSelection
+                            onSelectionModelChange={(newSelectionModel) => {
+                                // @ts-ignore
+                                setSelectionModel(newSelectionModel);
+                            }}
+                            selectionModel={selectionModel}
                             columns={columns}
                             rows={requirements}
                             getRowId={(row) => row.Identifier}
@@ -223,8 +232,10 @@ function Home() {
                             component="h5"
                             sx={{ textAlign: 'left', mt: 0, mb: 3 }}
                         >
-                            {activePlan?.Name}
+                            {localActivePlan?.Name}
                         </Typography>
+                        {/* <Button variant='contained' sx={{ mb: 2 }} disabled={!localActivePlan} onClick={removeFromPlanHandler}>Remove Selection from Plan</Button> */}
+
                         <Button variant='contained' sx={{ mb: 2 }} onClick={handleOpenPlan}>Open Plan</Button>
                         <Button variant='contained' sx={{ mb: 2 }} onClick={handleOpenNewPlan}>New Plan</Button>
                         <Stack direction='row' spacing={2}>
@@ -237,13 +248,15 @@ function Home() {
                     <Box sx={{ height: 340, width: '100%', overflow: 'auto' }}>
 
                         <DataGrid
+                            checkboxSelection
+                            onSelectionModelChange={(newSelectionModel) => {
+                                // @ts-ignore
+                                setSelectionModelBot(newSelectionModel);
+                            }}
+                            selectionModel={selectionModelBot}
                             columns={columns}
-                            rows={activePlan?.InformationRequirements ? activePlan.InformationRequirements.map(
-                                (entry) => {
-                                    return {...entry.InformationRequirement}
-                                }
-                            ) : []}
-                            getRowId={(row) => row.Identifier!}
+                            rows={rowsBot}
+                            getRowId={(row) => row.Identifier}
                             rowsPerPageOptions={[5, 10, 20]}
                             pageSize={pageSize}
                             onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}

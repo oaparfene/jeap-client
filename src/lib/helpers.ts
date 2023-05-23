@@ -11,24 +11,37 @@ import { MissionType } from "@/types/missionType";
 import { ProductTypeType } from "@/types/productTypeType";
 import { PublishedStatusType } from "@/types/publishedStatusType";
 import { SecurityClassificationType } from "@/types/securityClassificationType";
+import { ISRSystemType } from "@/types/main/ISRSystemType";
 import { uuid } from 'uuidv4';
 
 export const addTasksToCMPlan = (plan: CollectionExploitationPlanType, tasks: InformationRequirementType[]): CollectionExploitationPlanType => {
-    plan.InformationRequirements = [];
+    if (!plan.InformationRequirements)
+        plan.InformationRequirements = [];
     for (let i = 0; i < tasks.length; i++) {
         plan.InformationRequirements?.push({
-            ownedId: i,
+            id: i,
             InformationRequirement: tasks[i]
         });
     }
     return plan;
 }
 
+export const removeTasksFromCMPlan = (plan: CollectionExploitationPlanType, tasks: InformationRequirementType[]): CollectionExploitationPlanType => {
+    plan?.InformationRequirements?.filter((e) => {
+        !tasks.includes(e.InformationRequirement!)
+    })
+    return plan;
+}
+
+export const getReqsFromPlan = (plan: CollectionExploitationPlanType): InformationRequirementType[] => {
+    return plan.InformationRequirements.map((e) => e.InformationRequirement)
+}
+
 export const addTasksToPEDPlan = (plan: CollectionExploitationPlanType, tasks: InformationRequirementType[]): CollectionExploitationPlanType => {
     plan.InformationRequirements = [];
     for (let i = 0; i < tasks.length; i++) {
         plan.InformationRequirements?.push({
-            ownedId: i,
+            id: i,
             InformationRequirement: tasks[i]
         });
     }
@@ -130,9 +143,23 @@ export const createCMPlan = (name: string): CollectionExploitationPlanType => {
     }
 }
 
+const getResourceAvailableInitData = () => {
+    const temp = Math.floor(Math.random()*3)
+    if (temp == 0)
+        return 'not planned'
+    if (temp == 1)
+        return 'planned'
+    if (temp == 2)
+        return 'collected'
+    return 'collected'
+}
+
 export const createCollectionTask = (name: string, gaoi?: GeographicAreaOfInterestType): InformationRequirementType => {
     return {
         active: false,
+        assignedUnit: '',
+        id: uuid(),
+        resourceAvailable: getResourceAvailableInitData(),
         Identifier: uuid(),
         RequiredInformation: "Example Required Information",
         LatestDateTimeZuluOfInformationValue: {
@@ -221,4 +248,67 @@ export const createPEDPlan = (name: string): CollectionExploitationPlanType => {
         Deleted: false,
         InformationRequirements: [],
     }
+}
+
+export const createISRSystemType = (params: any): ISRSystemType => {
+    const temp: ISRSystemType = {
+        Identifier: uuid(),
+        Identifiers: {
+            UniquePlatformIdentification: {
+                CountryCode: CountryCodeType.NLD,
+                PlatformID: uuid()
+            },
+            NIC: '',
+            RIC: ''
+        },
+        SystemDescription: 'Sample Description',
+        Capability: {
+            Exploitation: {
+                GMTIAnalysis: params.gmti,
+                ImageAnalysis: params.image,
+                VideoAnalysis: params.video,
+                ESMAnalysis: params.esm,
+                HUMINT: params.humint,
+                Reporting: {
+                    RECCEXREP: true
+                },
+            }
+        },
+        PresenceAtLocation: {
+            GeographicLocation: {
+                AreaDescription: 'area description'
+            },
+            StartDateTimeZulu: {
+                Value: new Date()
+            }
+        },
+        ContactInfo: {
+            LastName: params.lastName,
+            FirstName: params.firstName,
+            Mail: params.email,
+            PhoneNumbers: [params.phoneNumber]
+        },
+        EnglishName: params.name,
+        Name: params.name,
+        CreationDateTime: {
+            Value: new Date()
+        },
+        Creator: {
+            MilitaryUnit: {
+                UnitIdentifier: "1",
+                Nation: CountryCodeType.NLD
+            },
+            UniquePlatformIdentification: {
+                CountryCode: CountryCodeType.NLD,
+                PlatformID: "1"
+            },
+            Author: "admin"
+        },
+        Security: {
+            Policy: "NATO",
+            Classification: SecurityClassificationType.UNCLASSIFIED,
+        },
+        Deleted: false,
+    }
+    return temp
 }

@@ -17,15 +17,6 @@ function Home() {
   const { CMPlans, setCMPlans, activePlan, requirements, setRequirements } = React.useContext(JCAPContext)
   const [pageSize, setPageSize] = useState(10);
   const [rowId, setRowId] = useState('0');
-  const [localActivePlan, setLocalActivePlan] = useState<CollectionExploitationPlanType | null>()
-
-  useEffect(() => {
-    setLocalActivePlan(activePlan)
-  }, [])
-
-  useEffect(() => {
-    setLocalActivePlan(activePlan)
-  }, [activePlan])
 
   const columns = useMemo(
     () => [
@@ -42,32 +33,10 @@ function Home() {
           } label="Status" />]
       },
       {
-        field: 'assignedUnit',
-        headerName: 'Assigned Cell',
-        width: 200,
-        type: 'singleSelect',
-        valueOptions: [
-          '',
-          'Cell 1',
-          'Cell 2',
-          'Cell 3',
-        ],
+        field: 'ReportedProduct',
+        headerName: 'ReportedProduct',
         editable: true,
-        valueSetter: (params: GridValueSetterParams) => {
-          if (!params.value) return
-          console.log(params)
-          var temp = params.row
-          temp.assignedUnit = params.value
-          console.log(localActivePlan)
-          const newPlan = addTasksToCMPlan(localActivePlan!, localActivePlan?.InformationRequirements?.map((e) => {
-            if (e.InformationRequirement?.Identifier === temp.Identifier)
-              return params.row as InformationRequirementType
-            else
-              return e.InformationRequirement as InformationRequirementType
-          })!)
-          setLocalActivePlan(newPlan)
-          return { ...params.row }
-        }
+        width: 300
       },
       { field: 'Name', headerName: 'Name', width: 150 },
       { field: 'Priority', headerName: 'Priority', width: 100 },
@@ -136,7 +105,6 @@ function Home() {
   return (
     <>
       <Stack sx={{ p: 3 }}>
-        {localActivePlan ? (
           <>
             <Box
               sx={{
@@ -151,7 +119,7 @@ function Home() {
                   component="h5"
                   sx={{ textAlign: 'left', mt: 0, mb: 3 }}
                 >
-                  Plan Overview: {localActivePlan.Name}
+                  My Assigned Tasks
                 </Typography>
                 <Stack direction='row' spacing={2}>
                   <RefreshIcon></RefreshIcon>
@@ -165,11 +133,7 @@ function Home() {
                 <DataGrid
                   // @ts-ignore
                   columns={columns}
-                  rows={localActivePlan?.InformationRequirements ? localActivePlan.InformationRequirements.map(
-                    (entry) => {
-                      return { ...entry.InformationRequirement }
-                    }
-                  ) : []}
+                  rows={requirements}
                   getRowId={(row) => row.Identifier}
                   rowsPerPageOptions={[5, 10, 20]}
                   pageSize={pageSize}
@@ -183,20 +147,9 @@ function Home() {
               </Box>
             </Box>
             <Stack direction='row' justifyContent='end'>
-              <Button variant='outlined' sx={{ mr: 2 }} onClick={addToPlanHandler}>Request Automated Allocation</Button>
-              <Button variant='outlined' sx={{ mr: 2 }} onClick={addToPlanHandler}>Save Draft Plan</Button>
-              <Button variant='contained' sx={{ mr: 2 }} onClick={addToPlanHandler}>Publish Plan</Button>
+              <Button variant='contained' sx={{ mr: 2 }} onClick={addToPlanHandler}>Save</Button>
             </Stack>
           </>
-        ) : (
-          <Typography
-            variant="h5"
-            component="h5"
-            sx={{ textAlign: 'left', mt: 0, mb: 3 }}
-          >
-            No Plan Selected
-          </Typography>
-        )}
       </Stack>
     </>
   )

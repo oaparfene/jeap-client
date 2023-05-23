@@ -23,7 +23,7 @@ let cells: Cell[] = []
 for (let i = 1; i <= 47; i++) {
     cells.push({
         active: false,
-        name: `generic asset ${i}`,
+        name: `generic cell ${i}`,
         systemDescription: 'Asset description',
         capability: 'EO',
         battlespaceDimension: 'AIR',
@@ -40,13 +40,6 @@ function Home() {
 
     const columns = useMemo(
         () => [
-            {
-                field: 'active',
-                headerName: 'Active',
-                width: 100,
-                type: 'boolean',
-                editable: true,
-            },
             { field: 'name', headerName: 'Name', width: 200, editable: true, },
             {
                 field: 'systemDescription',
@@ -103,7 +96,7 @@ function Home() {
                             component="h5"
                             sx={{ textAlign: 'left', mt: 0, mb: 3 }}
                         >
-                            Collection Asset Overview
+                            PED Cell Overview
                         </Typography>
                         <Stack direction='row' spacing={2}>
                             <RefreshIcon></RefreshIcon>
@@ -111,7 +104,7 @@ function Home() {
                             <MoreHorizIcon></MoreHorizIcon>
                         </Stack>
                     </Stack>
-                    <Button variant='contained' sx={{ mb: 2 }}>Add Selection to Plan</Button>
+                    {/* <Button variant='contained' sx={{ mb: 2 }}>Add Selection to Plan</Button> */}
                     <Box sx={{ height: 740, width: 'auto', overflow: 'auto' }}>
 
                         <DataGrid
