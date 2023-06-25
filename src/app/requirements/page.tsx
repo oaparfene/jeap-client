@@ -186,7 +186,7 @@ function Home() {
                             component="h5"
                             sx={{ textAlign: 'left', mt: 0, mb: 3 }}
                         >
-                            PED Requirement Overview
+                            Collection Requirement Overview
                         </Typography>
                         <Stack direction='row' spacing={2}>
                             <RefreshIcon></RefreshIcon>

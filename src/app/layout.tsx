@@ -27,6 +27,7 @@ import { CollectionExploitationPlanType } from '@/types/main/collectionExploitat
 import { createCMPlan, generateRandomTasks, addTasksToPEDPlan, generateRandomGAOIs, generateRandomTasksWithGAOI } from '@/lib/helpers';
 import { GeographicAreaOfInterestType } from '@/types/main/geographicAreaOfInterestType';
 import { InformationRequirementType } from '@/types/main/informationRequirementType';
+import { generateDataFromORBAT } from '@/constants';
 
 const drawerWidth = 240;
 export default function RootLayout({
@@ -46,7 +47,7 @@ export default function RootLayout({
 
       <Divider />
       <List>
-        {['Requirements', 'Cells', 'Plans', 'Map'].map((text, index) => (
+        {['Requirements', 'Assets', 'Plans', 'Map', 'Assesment'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <Link href={text.toLowerCase()} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
               <ListItemButton>
@@ -60,7 +61,7 @@ export default function RootLayout({
         ))}
       </List>
       <Divider />
-      <List>
+      {/* <List>
         {['My Tasks', 'My PED Cell'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <Link href={text === 'My Tasks' ? 'mytasks' : 'mycell'} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
@@ -73,7 +74,7 @@ export default function RootLayout({
             </Link>
           </ListItem>
         ))}
-      </List>
+      </List> */}
     </div>
   );
 
@@ -89,6 +90,7 @@ export default function RootLayout({
       setRequirements(generateRandomTasksWithGAOI(gaois))
       setCMPlans([addTasksToPEDPlan(createCMPlan('AAA'), requirements.slice(0, 10))])
       setActivePlan(CMPlans[0])
+      console.log(generateDataFromORBAT())
     }, [])
 
   return (
@@ -137,7 +139,7 @@ export default function RootLayout({
                   <MenuIcon />
                 </IconButton>
                 <Typography variant="h6" noWrap component="div">
-                  JEAP
+                  JAP
                 </Typography>
               </Toolbar>
             </AppBar>
