@@ -6,7 +6,7 @@ import { DataGrid, GridActionsCellItem, gridClasses, GridRowParams, GridValueSet
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import DownloadIcon from '@mui/icons-material/Download';
-import JCAPContext from '../context';
+//import JCAPContext from '../context';
 import { InformationRequirementType } from '@/types/main/informationRequirementType';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { uuid } from 'uuidv4';
@@ -14,86 +14,86 @@ import { CollectionExploitationPlanType } from '@/types/main/collectionExploitat
 import { addTasksToCMPlan } from '@/lib/helpers';
 
 function Home() {
-  const { CMPlans, setCMPlans, activePlan, requirements, setRequirements } = React.useContext(JCAPContext)
+  //const { requirements } = React.useContext(JCAPContext)
   const [pageSize, setPageSize] = useState(10);
   const [rowId, setRowId] = useState('0');
 
-  const columns = useMemo(
-    () => [
-      {
-        field: 'status',
-        type: 'actions',
-        headerName: 'Status',
-        getActions: (params: GridRowParams) => [
-          <GridActionsCellItem icon={
-            <Tooltip title={params.row.resourceAvailable === 'not planned' ? 'Collect Not Planned' : params.row.resourceAvailable === 'not planned' ? 'Collect Planned' : 'Collect Available'}>
-              <FiberManualRecordIcon
-                sx={params.row.resourceAvailable === 'not planned' ? { color: 'gray' } : params.row.resourceAvailable === 'planned' ? { color: 'yellow' } : { color: 'green' }} />
-            </Tooltip>
-          } label="Status" />]
-      },
-      {
-        field: 'ReportedProduct',
-        headerName: 'ReportedProduct',
-        editable: true,
-        width: 300
-      },
-      { field: 'Name', headerName: 'Name', width: 150 },
-      { field: 'Priority', headerName: 'Priority', width: 100 },
-      {
-        field: 'RequiredInformation',
-        headerName: 'Description',
-        width: 300,
-      },
-      {
-        field: 'IntelCollectionDiscipline',
-        headerName: 'Intel Type',
-        width: 100,
-      },
-      {
-        field: 'RequiredProduct',
-        headerName: 'Product',
-        width: 100,
-        valueGetter: (params: any) => {
-          return params.value[0].Product.ProductTypeType;
-        }
-      },
-      {
-        field: 'GeographicAreaOfInterestReference',
-        headerName: 'GAOI',
-        width: 300,
-        valueGetter: (params: any) => {
-          if (!params.value) return
-          return params.value[0].GeographicAreaOfInterest.Identifier;
-        }
-      },
-      {
-        field: 'Status',
-        headerName: 'Status',
-        width: 150,
-      },
-      {
-        field: 'Originator',
-        headername: 'Requestor',
-        width: 100,
-        valueGetter: (params: any) => {
-          if (!params.value) return
-          return params.value.Requestor;
-        }
-      },
-      {
-        field: 'LatestDateTimeZuluOfInformationValue',
-        headerName: 'LTIOV',
-        width: 200,
-        valueGetter: (params: any) => {
-          if (!params.value) return
-          return params.value.EndDateTimeZulu.Value;
-        }
-      },
-      { field: 'Identifier', headerName: 'Id', width: 300 },
-    ],
-    [rowId]
-  );
+  // const columns = useMemo(
+  //   () => [
+  //     {
+  //       field: 'status',
+  //       type: 'actions',
+  //       headerName: 'Status',
+  //       getActions: (params: GridRowParams) => [
+  //         <GridActionsCellItem icon={
+  //           <Tooltip title={params.row.resourceAvailable === 'not planned' ? 'Collect Not Planned' : params.row.resourceAvailable === 'not planned' ? 'Collect Planned' : 'Collect Available'}>
+  //             <FiberManualRecordIcon
+  //               sx={params.row.resourceAvailable === 'not planned' ? { color: 'gray' } : params.row.resourceAvailable === 'planned' ? { color: 'yellow' } : { color: 'green' }} />
+  //           </Tooltip>
+  //         } label="Status" />]
+  //     },
+  //     {
+  //       field: 'ReportedProduct',
+  //       headerName: 'ReportedProduct',
+  //       editable: true,
+  //       width: 300
+  //     },
+  //     { field: 'Name', headerName: 'Name', width: 150 },
+  //     { field: 'Priority', headerName: 'Priority', width: 100 },
+  //     {
+  //       field: 'RequiredInformation',
+  //       headerName: 'Description',
+  //       width: 300,
+  //     },
+  //     {
+  //       field: 'IntelCollectionDiscipline',
+  //       headerName: 'Intel Type',
+  //       width: 100,
+  //     },
+  //     {
+  //       field: 'RequiredProduct',
+  //       headerName: 'Product',
+  //       width: 100,
+  //       valueGetter: (params: any) => {
+  //         return params.value[0].Product.ProductTypeType;
+  //       }
+  //     },
+  //     {
+  //       field: 'GeographicAreaOfInterestReference',
+  //       headerName: 'GAOI',
+  //       width: 300,
+  //       valueGetter: (params: any) => {
+  //         if (!params.value) return
+  //         return params.value[0].GeographicAreaOfInterest.Identifier;
+  //       }
+  //     },
+  //     {
+  //       field: 'Status',
+  //       headerName: 'Status',
+  //       width: 150,
+  //     },
+  //     {
+  //       field: 'Originator',
+  //       headername: 'Requestor',
+  //       width: 100,
+  //       valueGetter: (params: any) => {
+  //         if (!params.value) return
+  //         return params.value.Requestor;
+  //       }
+  //     },
+  //     {
+  //       field: 'LatestDateTimeZuluOfInformationValue',
+  //       headerName: 'LTIOV',
+  //       width: 200,
+  //       valueGetter: (params: any) => {
+  //         if (!params.value) return
+  //         return params.value.EndDateTimeZulu.Value;
+  //       }
+  //     },
+  //     { field: 'Identifier', headerName: 'Id', width: 300 },
+  //   ],
+  //   [rowId]
+  // );
 
   const addToPlanHandler = () => {
     // setReqsInPlan(requirements.filter((entry) => {
@@ -104,7 +104,7 @@ function Home() {
 
   return (
     <>
-      <Stack sx={{ p: 3 }}>
+      {/* <Stack sx={{ p: 3 }}>
           <>
             <Box
               sx={{
@@ -127,13 +127,13 @@ function Home() {
                   <MoreHorizIcon></MoreHorizIcon>
                 </Stack>
               </Stack>
-              {/*<Button variant='contained' sx={{ mb: 2 }} onClick={addToPlanHandler}>Add Selection to Plan</Button>*/}
+              <Button variant='contained' sx={{ mb: 2 }} onClick={addToPlanHandler}>Add Selection to Plan</Button>
               <Box sx={{ height: 630, width: '100%', overflow: 'auto' }}>
 
                 <DataGrid
                   // @ts-ignore
                   columns={columns}
-                  rows={requirements}
+                  rows={[]}
                   getRowId={(row) => row.Identifier}
                   rowsPerPageOptions={[5, 10, 20]}
                   pageSize={pageSize}
@@ -150,7 +150,7 @@ function Home() {
               <Button variant='contained' sx={{ mr: 2 }} onClick={addToPlanHandler}>Save</Button>
             </Stack>
           </>
-      </Stack>
+      </Stack> */}
     </>
   )
 }
