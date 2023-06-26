@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 
-interface Plan {
+export interface Plan {
     name: string,
     assets: any[],
     requirements: any[]
 }
 
-interface Asset {
+export interface Asset {
     UniquePlatformID: string,
     Description: string,
     AvailableFrom: string,
@@ -16,7 +16,7 @@ interface Asset {
     Capacity: string
 }
 
-interface Requirement {
+export interface Requirement {
     ID: number,
     Operation: string,
     Requester: string,
@@ -72,6 +72,8 @@ export const usePlan = () => {
         tempPlans.push(plan)
         setPlans(tempPlans)
         setActivePlanIndex(tempPlans.length - 1)
+        console.log('plans: ', plans)
+        console.log('activePlanIndex: ', activePlanIndex)
     }
 
     const addCRsToPlan = (CRsToAdd: Requirement[]) => {
@@ -80,7 +82,7 @@ export const usePlan = () => {
         const updatedPlan = {
             name: plan.name,
             assets: plan.assets,
-            requirements: Array.from(new Set(plan.requirements.concat(CRsToAdd)))
+            requirements: [...new Set(plan.requirements.concat(CRsToAdd))]
         }
         tempPlans[activePlanIndex] = updatedPlan
         setPlans(tempPlans)
@@ -89,13 +91,23 @@ export const usePlan = () => {
     const addAssetsToPlan = (assetsToAdd: Asset[]) => {
         var tempPlans = plans
         var plan = tempPlans[activePlanIndex]
+        console.log('plan', plan)
         const updatedPlan = {
             name: plan.name,
-            assets: Array.from(new Set(plan.assets.concat(assetsToAdd))) ,
+            assets: addAssetsWithNoDuplicates(plan.assets, assetsToAdd) ,
             requirements: plan.requirements
         }
         tempPlans[activePlanIndex] = updatedPlan
         setPlans(tempPlans)
+    }
+
+    const addAssetsWithNoDuplicates = (array: Asset[], items: Asset[]) => {
+        var tempArray = array
+        items.forEach(item => {
+            if (!tempArray.includes(item)) //to fix: adding duplicates
+                tempArray.push(item)
+        })
+        return tempArray
     }
 
     useEffect(() => {

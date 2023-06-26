@@ -22,12 +22,14 @@ import { Avatar } from '@mui/material';
 import next from 'next';
 import Link from 'next/link';
 import Head from 'next/head';
-import JCAPContext from './context'
+import { JCAPContext } from './context'
+import { JAPContext } from './context';
 import { CollectionExploitationPlanType } from '@/types/main/collectionExploitationPlanType';
 import { createCMPlan, generateRandomTasks, addTasksToPEDPlan, generateRandomGAOIs, generateRandomTasksWithGAOI } from '@/lib/helpers';
 import { GeographicAreaOfInterestType } from '@/types/main/geographicAreaOfInterestType';
 import { InformationRequirementType } from '@/types/main/informationRequirementType';
 import { generateDataFromORBAT } from '@/constants';
+import { usePlan } from '@/hooks/usePlan';
 
 const drawerWidth = 240;
 export default function RootLayout({
@@ -35,6 +37,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+
+  const { getPlan, addCRsToPlan, addAssetsToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex } = usePlan()
 
   const drawer = (
     <div>
@@ -46,8 +50,13 @@ export default function RootLayout({
       </Box>
 
       <Divider />
+      <Typography
+        variant="h6"
+        component="h6"
+        sx={{ textAlign: 'left', mt: 1, ml: 2 }}
+      >Planning:</Typography>
       <List>
-        {['Requirements', 'Assets', 'Plans', 'Map', 'Assesment'].map((text, index) => (
+        {['Requirements', 'Assets', 'Plans'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <Link href={text.toLowerCase()} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
               <ListItemButton>
@@ -61,10 +70,15 @@ export default function RootLayout({
         ))}
       </List>
       <Divider />
-      {/* <List>
-        {['My Tasks', 'My PED Cell'].map((text, index) => (
+      <Typography
+        variant="h6"
+        component="h6"
+        sx={{ textAlign: 'left', mt: 1, ml: 2 }}
+      >Allocation:</Typography>
+      <List>
+        {['Assesment', 'Map'].map((text, index) => (
           <ListItem key={text} disablePadding>
-            <Link href={text === 'My Tasks' ? 'mytasks' : 'mycell'} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
+            <Link href={text.toLowerCase()} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
               <ListItemButton>
                 <ListItemIcon>
                   <MailIcon />
@@ -74,24 +88,24 @@ export default function RootLayout({
             </Link>
           </ListItem>
         ))}
-      </List> */}
+      </List>
     </div>
   );
 
-    const [CMPlans, setCMPlans] = React.useState<Array<CollectionExploitationPlanType>>([])
-    const [PEDPlans, setPEDPlans] = React.useState<Array<CollectionExploitationPlanType>>([])
-    const [activePlan, setActivePlan] = React.useState<CollectionExploitationPlanType | null>(null)
-    const [requirements, setRequirements] = React.useState<Array<InformationRequirementType>>([])
-    const [GAOIs, setGAOIs] = React.useState<Array<GeographicAreaOfInterestType>>([])
+  // const [CMPlans, setCMPlans] = React.useState<Array<CollectionExploitationPlanType>>([])
+  // const [PEDPlans, setPEDPlans] = React.useState<Array<CollectionExploitationPlanType>>([])
+  // const [activePlan, setActivePlan] = React.useState<CollectionExploitationPlanType | null>(null)
+  // const [requirements, setRequirements] = React.useState<Array<InformationRequirementType>>([])
+  // const [GAOIs, setGAOIs] = React.useState<Array<GeographicAreaOfInterestType>>([])
 
-    React.useEffect(() => {
-      const gaois = generateRandomGAOIs(10)
-      setGAOIs(gaois)
-      setRequirements(generateRandomTasksWithGAOI(gaois))
-      setCMPlans([addTasksToPEDPlan(createCMPlan('AAA'), requirements.slice(0, 10))])
-      setActivePlan(CMPlans[0])
-      console.log(generateDataFromORBAT())
-    }, [])
+  // React.useEffect(() => {
+  //   const gaois = generateRandomGAOIs(10)
+  //   setGAOIs(gaois)
+  //   setRequirements(generateRandomTasksWithGAOI(gaois))
+  //   setCMPlans([addTasksToPEDPlan(createCMPlan('AAA'), requirements.slice(0, 10))])
+  //   setActivePlan(CMPlans[0])
+  //   console.log(generateDataFromORBAT())
+  // }, [])
 
   return (
     <html lang="en">
@@ -106,7 +120,7 @@ export default function RootLayout({
           crossOrigin="" defer></script>
       </Head>
       <body>
-        <JCAPContext.Provider
+        {/* <JCAPContext.Provider
         value={{
           CMPlans,
           PEDPlans,
@@ -119,6 +133,17 @@ export default function RootLayout({
           setCMPlans,
           setPEDPlans,
         }}
+        > */}
+        <JAPContext.Provider
+          value={{
+            getPlan,
+            plans,
+            newPlan,
+            activePlanIndex,
+            setActivePlanIndex,
+            addCRsToPlan,
+            addAssetsToPlan
+          }}
         >
 
           <Box sx={{ display: 'flex' }}>
@@ -167,8 +192,8 @@ export default function RootLayout({
               {children}
             </Box>
           </Box>
-
-        </JCAPContext.Provider>
+        </JAPContext.Provider>
+        {/* </JCAPContext.Provider> */}
       </body>
     </html>
   )

@@ -10074,7 +10074,8 @@ export interface tempSystem {
     Capacity: string
 }
 
-export interface System {
+export interface Asset {
+    ID: number,
     UniquePlatformID: string,
     Description: string,
     Capacity: string,
@@ -10087,7 +10088,7 @@ export interface System {
 
 export const generateDataFromORBAT = (_orbat = orbat) => {
     if (!_orbat) return;
-    var data: System[] = [];
+    var data: Asset[] = [];
     for (let entry of _orbat.OrbatDocument.Units) {
         if (entry['d2p1:UnitLocatedAt']) {
             var location_id =
@@ -10101,6 +10102,7 @@ export const generateDataFromORBAT = (_orbat = orbat) => {
             if (systems) {
                 for (let system of systems) {
                     data.push({
+                        ID: data.length,
                         ...system,
                         Unit: entry['d2p1:MilitaryUnitName'][0].Name[0]._,
                         AvailableFrom: start_time,
@@ -10116,6 +10118,7 @@ export const generateDataFromORBAT = (_orbat = orbat) => {
             if (systems) {
                 for (let system of systems) {
                     data.push({
+                        ID: data.length,
                         ...system,
                         Unit: entry['d2p1:MilitaryUnitName'][0].Name[0]._,
                         AvailableFrom: 'undefined',
