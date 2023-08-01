@@ -3,10 +3,12 @@ import { useEffect, useState } from "react";
 export interface Plan {
     name: string,
     assets: any[],
-    requirements: any[]
+    requirements: any[],
+    allocation?: any[]
 }
 
 export interface Asset {
+    ID: number,
     UniquePlatformID: string,
     Description: string,
     AvailableFrom: string,
@@ -85,7 +87,19 @@ export const usePlan = () => {
             requirements: [...new Set(plan.requirements.concat(CRsToAdd))]
         }
         tempPlans[activePlanIndex] = updatedPlan
-        setPlans(tempPlans)
+        //setPlans(tempPlans)
+    }
+
+    const removeCRsFromPlan = (CRsToRemove: Requirement[]) => {
+        var tempPlans = plans
+        var plan = tempPlans[activePlanIndex]
+        const updatedPlan = {
+            name: plan.name,
+            assets: plan.assets,
+            requirements: plan.requirements.filter(el => !CRsToRemove.includes(el))
+        }
+        tempPlans[activePlanIndex] = updatedPlan
+        //setPlans(tempPlans)
     }
 
     const addAssetsToPlan = (assetsToAdd: Asset[]) => {
@@ -98,14 +112,28 @@ export const usePlan = () => {
             requirements: plan.requirements
         }
         tempPlans[activePlanIndex] = updatedPlan
-        setPlans(tempPlans)
+        //setPlans(tempPlans)
+    }
+
+    const removeAssetsFromPlan = (assetsToRemove: Asset[]) => {
+        var tempPlans = plans
+        var plan = tempPlans[activePlanIndex]
+        const updatedPlan = {
+            name: plan.name,
+            assets: plan.assets.filter(el => !assetsToRemove.includes(el)),
+            requirements: plan.requirements
+        }
+        tempPlans[activePlanIndex] = updatedPlan
+        //setPlans(tempPlans)
     }
 
     const addAssetsWithNoDuplicates = (array: Asset[], items: Asset[]) => {
         var tempArray = array
+        console.log('existing items', tempArray)
         items.forEach(item => {
-            if (!tempArray.includes(item)) //to fix: adding duplicates
-                tempArray.push(item)
+            console.log('item to add:', item)
+            if (!tempArray.find(el => el.ID === item.ID))
+                tempArray = [ ...tempArray, item]
         })
         return tempArray
     }
@@ -118,7 +146,9 @@ export const usePlan = () => {
         plans,
         getPlan,
         addAssetsToPlan,
+        removeAssetsFromPlan,
         addCRsToPlan,
+        removeCRsFromPlan,
         newPlan,
         activePlanIndex,
         setActivePlanIndex

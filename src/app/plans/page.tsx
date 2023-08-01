@@ -7,6 +7,7 @@ import { JAPContext } from "../context"
 import { Alert, Box, Button, Snackbar, Stack, Typography } from "@mui/material"
 import { DataGrid, GridColDef, GridRowId } from "@mui/x-data-grid"
 import { useState } from "react"
+import { Requirement } from "@/hooks/usePlan"
 
 const reqColumns: GridColDef[] = [
     {
@@ -204,12 +205,14 @@ const assetColumns: GridColDef[] = [
 ]
 
 export default function Home() {
-    const { addCRsToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex } = useContext(JAPContext)
+    const { addCRsToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex, removeAssetsFromPlan, removeCRsFromPlan } = useContext(JAPContext)
     const [pageSize, setPageSize] = useState(10);
     const [selectedCRRows, setSelectedCRRows] = useState<string[]>([])
     const [selectedAssetRows, setSelectedAssetRows] = useState<string[]>([])
-    const [amountOfAssetsAdded, setAmountOfAssetsAdded] = useState<number>(0)
-    const [open, setOpen] = useState(false);
+    const [amountOfAssetsRemoved, setAmountOfAssetsRemoved] = useState<number>(0)
+    const [amountOfCRsRemoved, setAmountOfCRsRemoved] = useState<number>(0)
+    const [openCR, setOpenCR] = useState(false);
+    const [openAsset, setOpenAsset] = useState(false);
 
     const planReqs = plans[activePlanIndex] ? plans[activePlanIndex].requirements : []
     const planAssets = plans[activePlanIndex] ? plans[activePlanIndex].assets : []
@@ -217,9 +220,31 @@ export default function Home() {
     const addToPlanHandler = () => {
         addCRsToPlan(selectedCRRows.map((id) => planReqs.find(asset => asset.ID.toString() === id)!))
         console.log('plans', plans)
-        setAmountOfAssetsAdded(selectedCRRows.length)
-        setOpen(true);
+        //setAmountOfAssetsAdded(selectedCRRows.length)
+        //setOpen(true);
         setSelectedCRRows([])
+    }
+
+    const removeReqsFromPlanHandler = () => {
+        if (!plans[activePlanIndex]) return
+        if (selectedCRRows.length === 0) return
+        const CRsToRemove = selectedCRRows.map((id) => planReqs.find(asset => asset.ID.toString() === id)) as Requirement[]
+        console.log('CRsToRemove', CRsToRemove)
+        removeCRsFromPlan(CRsToRemove)
+        setAmountOfCRsRemoved(selectedCRRows.length)
+        setOpenCR(true);
+        setSelectedCRRows([])
+    }
+
+    const removeAssetsFromPlanHandler = () => {
+        if (!plans[activePlanIndex]) return
+        if (selectedAssetRows.length === 0) return
+        const assetsToRemove = selectedAssetRows.map((id) => planAssets.find(asset => asset.ID.toString() === id)) as Asset[]
+        console.log('assetsToRemove', assetsToRemove)
+        removeAssetsFromPlan(assetsToRemove)
+        setAmountOfAssetsRemoved(selectedAssetRows.length)
+        setOpenAsset(true);
+        setSelectedAssetRows([])
     }
 
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
@@ -227,7 +252,8 @@ export default function Home() {
             return;
         }
 
-        setOpen(false);
+        setOpenCR(false);
+        setOpenAsset(false);
     };
 
 
@@ -250,7 +276,7 @@ export default function Home() {
                     sx={{ textAlign: 'left', mt: 0, mb: 3 }}
                 >Plan Requirements:</Typography>
 
-                <Button variant='contained' sx={{ mb: 2 }}>Remove Selected Requirements</Button>
+                <Button variant='contained' sx={{ mb: 2 }} onClick={removeReqsFromPlanHandler}>Remove Selected Requirements</Button>
 
             </Box>
 
@@ -280,7 +306,7 @@ export default function Home() {
                     sx={{ textAlign: 'left', mt: 0, mb: 3 }}
                 >Plan Assets:</Typography>
 
-                <Button variant='contained' sx={{ mb: 2 }}>Remove Selected Assets</Button>
+                <Button variant='contained' sx={{ mb: 2 }} onClick={removeAssetsFromPlanHandler}>Remove Selected Assets</Button>
 
             </Box>
 
@@ -303,13 +329,18 @@ export default function Home() {
             </Box>
 
             <Stack direction='row' justifyContent='end' sx={{ mt: 2 }}>
-              <Button variant='outlined' sx={{ mr: 2 }} onClick={addToPlanHandler}>Request Automated Allocation</Button>
-              <Button variant='outlined' sx={{ mr: 2 }} onClick={addToPlanHandler}>Save Draft Plan</Button>
-              <Button variant='contained' sx={{ mr: 2 }} onClick={addToPlanHandler}>Publish Plan</Button>
+              <Button variant='outlined' sx={{ mr: 2 }} onClick={()  => {}}>Request Automated Allocation</Button>
+              <Button variant='outlined' sx={{ mr: 2 }} onClick={() => {}}>Save Draft Plan</Button>
+              <Button variant='contained' sx={{ mr: 2 }} onClick={() => {}}>Publish Plan</Button>
             </Stack>
-            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+            <Snackbar open={openCR} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
                 <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                    Added {amountOfAssetsAdded} Requirements to Plan {plans[activePlanIndex]?.name}
+                    Removed {amountOfCRsRemoved} Requirements from Plan {plans[activePlanIndex]?.name}
+                </Alert>
+            </Snackbar>
+            <Snackbar open={openAsset} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                    Removed {amountOfAssetsRemoved} Assets from Plan {plans[activePlanIndex]?.name}
                 </Alert>
             </Snackbar>
         </Box>

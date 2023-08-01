@@ -173,7 +173,7 @@ export default function Home() {
     const [amountOfAssetsAdded, setAmountOfAssetsAdded] = useState<number>(0)
     const [open, setOpen] = useState(false);
 
-    const rows = crs
+    const rows = crs.filter((cr) => !plans[activePlanIndex]?.requirements.find(req => req.ID === cr.ID ))
 
     const addToPlanHandler = () => {
         addCRsToPlan(selectedRows.map((id) => rows.find(asset => asset.ID.toString() === id)!))

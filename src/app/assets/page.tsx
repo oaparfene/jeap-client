@@ -52,10 +52,16 @@ export default function Home() {
     const [amountOfAssetsAdded, setAmountOfAssetsAdded] = useState<number>(0)
     const [open, setOpen] = useState(false);
 
-    const rows = generateDataFromORBAT()!
+    const allRows = generateDataFromORBAT()!
+    const rows = allRows.filter((asset) => !plans[activePlanIndex]?.assets.find(el => el.ID === asset.ID ))
 
     const addToPlanHandler = () => {
-        addAssetsToPlan(selectedRows.map((id) => rows.find(asset => asset.ID === id)!))
+        if (!plans[activePlanIndex]) return
+        console.log('selectedRows', selectedRows)
+        if (selectedRows.length === 0) return
+        const assetsToAdd = selectedRows.map((id) => rows.find(asset => asset.ID === id)) as Asset[]
+        console.log('assetsToAdd', assetsToAdd)
+        addAssetsToPlan(assetsToAdd)
         console.log('plans', plans)
         setAmountOfAssetsAdded(selectedRows.length)
         setOpen(true);

@@ -38,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
 
-  const { getPlan, addCRsToPlan, addAssetsToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex } = usePlan()
+  const { getPlan, addCRsToPlan, removeCRsFromPlan, addAssetsToPlan, removeAssetsFromPlan, plans, newPlan, activePlanIndex, setActivePlanIndex } = usePlan()
 
   const drawer = (
     <div>
@@ -142,7 +142,9 @@ export default function RootLayout({
             activePlanIndex,
             setActivePlanIndex,
             addCRsToPlan,
-            addAssetsToPlan
+            addAssetsToPlan,
+            removeCRsFromPlan,
+            removeAssetsFromPlan,
           }}
         >
 

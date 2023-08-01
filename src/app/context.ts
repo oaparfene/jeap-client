@@ -8,7 +8,9 @@ export type JAPContextType = {
     plans: Plan[],
     getPlan: () => Plan,
     addAssetsToPlan: (assetsToAdd: Asset[]) => void,
+    removeAssetsFromPlan: (assetsToRemove: Asset[]) => void,
     addCRsToPlan: (CRsToAdd: Requirement[]) => void,
+    removeCRsFromPlan: (CRsToRemove: Requirement[]) => void,
     newPlan: (name: string) => void,
     activePlanIndex: number,
     setActivePlanIndex: (index: number) => void
@@ -31,7 +33,9 @@ export const JAPContext = createContext<JAPContextType>({
     plans: [],
     getPlan: () => { return { name: 'No Plan', assets: [], requirements: [] } },
     addAssetsToPlan: (assetsToAdd: Asset[]) => { },
+    removeAssetsFromPlan: (assetsToRemove: Asset[]) => { },
     addCRsToPlan: (CRsToAdd: Requirement[]) => { },
+    removeCRsFromPlan: (CRsToRemove: Requirement[]) => { },
     newPlan: (name: string) => { },
     activePlanIndex: 0,
     setActivePlanIndex: (index: number) => { }
