@@ -40,9 +40,9 @@ export const PlanSelector = (props: PlanSelectorProps) => {
                 <Typography>
                     Active Plan: {props.plans[props.activePlanIndex]?.name ? props.plans[props.activePlanIndex].name : 'No Plan selected'}
                 </Typography>
-                <Box sx={{ display: 'flex', flexDir: 'row', gap: 2}}>
+                <Box sx={{ display: 'flex', flexDir: 'row', gap: 2 }}>
                     <Button variant='contained' sx={{ mb: 0 }} onClick={() => setOpenPlan(true)}>Open Plan</Button>
-                    <Button variant='contained' sx={{ mb: 0 }} onClick={() => setOpenNewPlan(true)}>New Plan</Button>
+                    {/* <Button variant='contained' sx={{ mb: 0 }} onClick={() => setOpenNewPlan(true)}>New Plan</Button> */}
                 </Box>
             </Box>
             <Modal
@@ -97,6 +97,10 @@ export const PlanSelector = (props: PlanSelectorProps) => {
                             </ListItem>))
                         }
                     </List>
+                    <Button variant='contained' sx={{ mb: 0 }} onClick={() => {
+                        setOpenPlan(false)
+                        setOpenNewPlan(true)
+                    }}>New Plan</Button>
 
                 </Box>
             </Modal>
