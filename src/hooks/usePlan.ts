@@ -2,9 +2,17 @@ import { useEffect, useState } from "react";
 
 export interface Plan {
     name: string,
-    assets: any[],
-    requirements: any[],
-    allocation?: any[]
+    assets: Asset[],
+    requirements: Requirement[],
+    allocation?: Task[]
+}
+
+export interface Task {
+    ID: number,
+    Asset_Used: string,
+    Requirement_to_Collect: string,
+    Start: Date,
+    End: Date
 }
 
 export interface Asset {
@@ -127,6 +135,19 @@ export const usePlan = () => {
         //setPlans(tempPlans)
     }
 
+    const addTasksToPlan = (tasksToAdd: Task[]) => {
+        var tempPlans = plans
+        var plan = tempPlans[activePlanIndex]
+        const updatedPlan = {
+            name: plan.name,
+            assets: plan.assets,
+            requirements: plan.requirements,
+            allocation: tasksToAdd
+        }
+        tempPlans[activePlanIndex] = updatedPlan
+        //setPlans(tempPlans)
+    }
+
     const addAssetsWithNoDuplicates = (array: Asset[], items: Asset[]) => {
         var tempArray = array
         console.log('existing items', tempArray)
@@ -149,6 +170,7 @@ export const usePlan = () => {
         removeAssetsFromPlan,
         addCRsToPlan,
         removeCRsFromPlan,
+        addTasksToPlan,
         newPlan,
         activePlanIndex,
         setActivePlanIndex

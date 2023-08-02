@@ -2,9 +2,9 @@
 
 import { PlanSelector } from "@/components/PlanSelector"
 import { generateDataFromORBAT, Asset, crs } from "@/constants"
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import { JAPContext } from "../context"
-import { Alert, Box, Button, Snackbar, Stack, Typography } from "@mui/material"
+import { Alert, Box, Button, CircularProgress, Snackbar, Stack, Typography } from "@mui/material"
 import { DataGrid, GridColDef, GridRowId } from "@mui/x-data-grid"
 import { useState } from "react"
 import { Requirement } from "@/hooks/usePlan"
@@ -206,8 +206,8 @@ const assetColumns: GridColDef[] = [
 ]
 
 export default function Home() {
-    const { addCRsToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex, removeAssetsFromPlan, removeCRsFromPlan } = useContext(JAPContext)
-    const { prepareAllocation } = useMiniZinc()
+    const { addTasksToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex, removeAssetsFromPlan, removeCRsFromPlan } = useContext(JAPContext)
+    const { prepareAllocation, loading, allocation } = useMiniZinc()
     const [pageSize, setPageSize] = useState(10);
     const [selectedCRRows, setSelectedCRRows] = useState<string[]>([])
     const [selectedAssetRows, setSelectedAssetRows] = useState<string[]>([])
@@ -215,17 +215,10 @@ export default function Home() {
     const [amountOfCRsRemoved, setAmountOfCRsRemoved] = useState<number>(0)
     const [openCR, setOpenCR] = useState(false);
     const [openAsset, setOpenAsset] = useState(false);
+    const [openAllocation, setOpenAllocation] = useState(false);
 
     const planReqs = plans[activePlanIndex] ? plans[activePlanIndex].requirements : []
     const planAssets = plans[activePlanIndex] ? plans[activePlanIndex].assets : []
-
-    const addToPlanHandler = () => {
-        addCRsToPlan(selectedCRRows.map((id) => planReqs.find(asset => asset.ID.toString() === id)!))
-        console.log('plans', plans)
-        //setAmountOfAssetsAdded(selectedCRRows.length)
-        //setOpen(true);
-        setSelectedCRRows([])
-    }
 
     const removeReqsFromPlanHandler = () => {
         if (!plans[activePlanIndex]) return
@@ -256,13 +249,24 @@ export default function Home() {
 
         setOpenCR(false);
         setOpenAsset(false);
+        setOpenAllocation(false);
     };
 
     const handleRequestAllocation = () => {
         console.log('handleRequestAllocation')
         if (!plans[activePlanIndex]) return
-        prepareAllocation(plans[activePlanIndex])
+        prepareAllocation(plans[activePlanIndex]).then(() => {
+            setOpenAllocation(true)
+        }
+        )
     }
+
+    useEffect(() => {
+        if (allocation.length > 0) {
+            console.log('allocation', allocation) // todo: look into allocation not properly updating
+            addTasksToPlan(allocation)
+        }
+    }, [allocation])
 
     return (
         <Box sx={{ p: 8 }}>
@@ -336,7 +340,7 @@ export default function Home() {
             </Box>
 
             <Stack direction='row' justifyContent='end' sx={{ mt: 2 }}>
-              <Button variant='outlined' sx={{ mr: 2 }} onClick={handleRequestAllocation}>Request Automated Allocation</Button>
+              <Button variant='outlined' sx={{ mr: 2 }} onClick={handleRequestAllocation}>Request Automated Allocation{loading && <CircularProgress sx={{p:1}} />}</Button>
               <Button variant='outlined' sx={{ mr: 2 }} onClick={() => {}}>Save Draft Plan</Button>
               <Button variant='contained' sx={{ mr: 2 }} onClick={() => {}}>Publish Plan</Button>
             </Stack>
@@ -348,6 +352,11 @@ export default function Home() {
             <Snackbar open={openAsset} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
                 <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
                     Removed {amountOfAssetsRemoved} Assets from Plan {plans[activePlanIndex]?.name}
+                </Alert>
+            </Snackbar>
+            <Snackbar open={openAllocation} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                    Received Allocation for Plan {plans[activePlanIndex]?.name}
                 </Alert>
             </Snackbar>
         </Box>

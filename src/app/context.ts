@@ -2,7 +2,7 @@ import { createContext } from "react";
 import { CollectionExploitationPlanType } from "@/types/main/collectionExploitationPlanType";
 import { InformationRequirementType } from "@/types/main/informationRequirementType";
 import { GeographicAreaOfInterestType } from "@/types/main/geographicAreaOfInterestType";
-import { Plan, Asset, Requirement } from "@/hooks/usePlan";
+import { Plan, Asset, Requirement, Task } from "@/hooks/usePlan";
 
 export type JAPContextType = {
     plans: Plan[],
@@ -11,6 +11,7 @@ export type JAPContextType = {
     removeAssetsFromPlan: (assetsToRemove: Asset[]) => void,
     addCRsToPlan: (CRsToAdd: Requirement[]) => void,
     removeCRsFromPlan: (CRsToRemove: Requirement[]) => void,
+    addTasksToPlan: (tasksToAdd: Task[]) => void,
     newPlan: (name: string) => void,
     activePlanIndex: number,
     setActivePlanIndex: (index: number) => void
@@ -36,6 +37,7 @@ export const JAPContext = createContext<JAPContextType>({
     removeAssetsFromPlan: (assetsToRemove: Asset[]) => { },
     addCRsToPlan: (CRsToAdd: Requirement[]) => { },
     removeCRsFromPlan: (CRsToRemove: Requirement[]) => { },
+    addTasksToPlan: (tasksToAdd: Task[]) => { },
     newPlan: (name: string) => { },
     activePlanIndex: 0,
     setActivePlanIndex: (index: number) => { }
