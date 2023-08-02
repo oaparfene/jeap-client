@@ -8,6 +8,7 @@ import { Alert, Box, Button, Snackbar, Stack, Typography } from "@mui/material"
 import { DataGrid, GridColDef, GridRowId } from "@mui/x-data-grid"
 import { useState } from "react"
 import { Requirement } from "@/hooks/usePlan"
+import { useMiniZinc } from "@/hooks/useMiniZinc"
 
 const reqColumns: GridColDef[] = [
     {
@@ -206,6 +207,7 @@ const assetColumns: GridColDef[] = [
 
 export default function Home() {
     const { addCRsToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex, removeAssetsFromPlan, removeCRsFromPlan } = useContext(JAPContext)
+    const { prepareAllocation } = useMiniZinc()
     const [pageSize, setPageSize] = useState(10);
     const [selectedCRRows, setSelectedCRRows] = useState<string[]>([])
     const [selectedAssetRows, setSelectedAssetRows] = useState<string[]>([])
@@ -256,6 +258,11 @@ export default function Home() {
         setOpenAsset(false);
     };
 
+    const handleRequestAllocation = () => {
+        console.log('handleRequestAllocation')
+        if (!plans[activePlanIndex]) return
+        prepareAllocation(plans[activePlanIndex])
+    }
 
     return (
         <Box sx={{ p: 8 }}>
@@ -329,7 +336,7 @@ export default function Home() {
             </Box>
 
             <Stack direction='row' justifyContent='end' sx={{ mt: 2 }}>
-              <Button variant='outlined' sx={{ mr: 2 }} onClick={()  => {}}>Request Automated Allocation</Button>
+              <Button variant='outlined' sx={{ mr: 2 }} onClick={handleRequestAllocation}>Request Automated Allocation</Button>
               <Button variant='outlined' sx={{ mr: 2 }} onClick={() => {}}>Save Draft Plan</Button>
               <Button variant='contained' sx={{ mr: 2 }} onClick={() => {}}>Publish Plan</Button>
             </Stack>
