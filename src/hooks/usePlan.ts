@@ -5,6 +5,7 @@ export interface Plan {
     assets: Asset[],
     requirements: Requirement[],
     allocation: Task[]
+    flightPlans: FlightPlan[]
 }
 
 export interface Task {
@@ -14,6 +15,12 @@ export interface Task {
     Coordinates: string,
     Start: Date,
     End: Date
+}
+
+export interface FlightPlan {
+    ID: number,
+    Asset_Used: string,
+    Flight_Path: string[],
 }
 
 export interface Asset {
@@ -70,7 +77,7 @@ export const usePlan = () => {
     const getPlan = () => {
         if (plans)
             return plans[activePlanIndex]
-        return { name: 'No Plan', assets: [], requirements: [], allocation: [] }
+        return { name: 'No Plan', assets: [], requirements: [], allocation: [], flightPlans: [] }
     }
 
     const newPlan = (name: string) => {
@@ -78,7 +85,8 @@ export const usePlan = () => {
             name: name,
             assets: [],
             requirements: [],
-            allocation: []
+            allocation: [],
+            flightPlans: []
         }
         var tempPlans = plans
         tempPlans.push(plan)
@@ -95,7 +103,8 @@ export const usePlan = () => {
             name: plan.name,
             assets: plan.assets,
             requirements: [...new Set(plan.requirements.concat(CRsToAdd))],
-            allocation: plan.allocation
+            allocation: plan.allocation,
+            flightPlans: plan.flightPlans
         }
         tempPlans[activePlanIndex] = updatedPlan
         //setPlans(tempPlans)
@@ -108,7 +117,8 @@ export const usePlan = () => {
             name: plan.name,
             assets: plan.assets,
             requirements: plan.requirements.filter(el => !CRsToRemove.includes(el)),
-            allocation: plan.allocation
+            allocation: plan.allocation,
+            flightPlans: plan.flightPlans
         }
         tempPlans[activePlanIndex] = updatedPlan
         //setPlans(tempPlans)
@@ -122,7 +132,8 @@ export const usePlan = () => {
             name: plan.name,
             assets: addAssetsWithNoDuplicates(plan.assets, assetsToAdd) ,
             requirements: plan.requirements,
-            allocation: plan.allocation
+            allocation: plan.allocation,
+            flightPlans: plan.flightPlans
         }
         tempPlans[activePlanIndex] = updatedPlan
         //setPlans(tempPlans)
@@ -135,7 +146,8 @@ export const usePlan = () => {
             name: plan.name,
             assets: plan.assets.filter(el => !assetsToRemove.includes(el)),
             requirements: plan.requirements,
-            allocation: plan.allocation
+            allocation: plan.allocation,
+            flightPlans: plan.flightPlans
         }
         tempPlans[activePlanIndex] = updatedPlan
         //setPlans(tempPlans)
@@ -148,7 +160,22 @@ export const usePlan = () => {
             name: plan.name,
             assets: plan.assets,
             requirements: plan.requirements,
-            allocation: tasksToAdd
+            allocation: tasksToAdd,
+            flightPlans: plan.flightPlans
+        }
+        tempPlans[activePlanIndex] = updatedPlan
+        //setPlans(tempPlans)
+    }
+
+    const addFlightPlansToPlan = (flightPlansToAdd: FlightPlan[]) => {
+        var tempPlans = plans
+        var plan = tempPlans[activePlanIndex]
+        const updatedPlan = {
+            name: plan.name,
+            assets: plan.assets,
+            requirements: plan.requirements,
+            allocation: plan.allocation,
+            flightPlans: flightPlansToAdd
         }
         tempPlans[activePlanIndex] = updatedPlan
         //setPlans(tempPlans)
@@ -177,6 +204,7 @@ export const usePlan = () => {
         addCRsToPlan,
         removeCRsFromPlan,
         addTasksToPlan,
+        addFlightPlansToPlan,
         newPlan,
         activePlanIndex,
         setActivePlanIndex

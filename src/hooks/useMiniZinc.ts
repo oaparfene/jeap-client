@@ -1,4 +1,4 @@
-import { Plan, Requirement, Task } from "./usePlan"
+import { FlightPlan, Plan, Requirement, Task } from "./usePlan"
 import { useState } from "react"
 
 export const useMiniZinc = () => {
@@ -6,17 +6,19 @@ export const useMiniZinc = () => {
     const [allocation, setAllocation] = useState<Task[]>([])
     const [loading, setLoading] = useState<boolean>(false)
 
+    const [flightPlans, setFlightPlans] = useState<FlightPlan[]>([])
+
 
     const generateCostMatrix = (plan: Plan) => {
-        const locationList = [...new Set(plan.requirements.map((requirement) => requirement.Coordinates.split(";")[0])), ...new Set(plan.assets.map((asset) => asset.Location))]
-        console.log("locationList: ", locationList)
-        const len = locationList.length
+        const _locationList = [...new Set(plan.requirements.map((requirement) => requirement.Coordinates.split(";")[0])), ...new Set(plan.assets.map((asset) => asset.Location))]
+        console.log("locationList: ", _locationList)
+        const len = _locationList.length
         var costMatrix = []
         for (var i = 0; i < len; i++) {
             costMatrix[i] = []
             for (var j = 0; j < len; j++) {
                 // @ts-ignore
-                costMatrix[i].push(Math.ceil(distBetweenCoords(locationList[i], locationList[j]) / 313 * 60))
+                costMatrix[i].push(Math.ceil(distBetweenCoords(_locationList[i], _locationList[j]) / 313 * 60))
             }
         }
         console.log("costMatrix: ", costMatrix)
@@ -85,13 +87,13 @@ export const useMiniZinc = () => {
         const re = /[01](?=,)/g;
 
         var m;
-        var temparray = [];
+        var ctl_binary_array = [];
         do {
             m = re.exec(s);
-            if (m) temparray.push(m[0]);
+            if (m) ctl_binary_array.push(m[0]);
         } while (m);
 
-        console.log(temparray) // ok
+        console.log(ctl_binary_array) // ok
 
         //console.log(results)
         //console.log(typeof(_allocation))
@@ -101,8 +103,8 @@ export const useMiniZinc = () => {
         console.log(len);
         const today = new Date();
         var count = 0;
-        for (var i = 0; i < temparray.length; i++) {
-            if (temparray[i] === '1') {
+        for (var i = 0; i < ctl_binary_array.length; i++) {
+            if (ctl_binary_array[i] === '1') {
                 const startMins = collectionStart[Math.floor(i / len)];
                 const durationMins = collectionDuration[Math.floor(i / len)];
                 tasks.push({
@@ -127,7 +129,50 @@ export const useMiniZinc = () => {
                 });
             }
         }
-        console.log("tasks: ",tasks);
+        console.log("tasks: ", tasks);
+
+        //
+
+        const temp2 = _allocation
+        let _s = temp2.replace(/travel = array3d\(.*, \[|\]\)\;\ncr_collected/g, ',+').split('+')[1];
+        console.log("_s: ", _s)
+        const _re = /[01](?=,)/g;
+
+        var _m;
+        var travel_array = [];
+        do {
+            _m = _re.exec(_s);
+            if (_m) travel_array.push(_m[0]);
+        } while (_m);
+
+        console.log(travel_array) // ok
+
+        let _flightPlans: FlightPlan[] = [];
+        const _locationList = [...new Set(plan.requirements.map((requirement) => requirement.Coordinates.split(";")[0])), ...new Set(plan.assets.map((asset) => asset.Location))]
+        const location_len = _locationList.length;
+        console.log(location_len);
+        var count = 0;
+        for (var i = 0; i < travel_array.length; i = i + location_len ** 2) {
+            const flightLocations = [];
+            for (var j = 0; j < location_len ** 2; j++) {
+                if (travel_array[i + j] === '1') {
+                    flightLocations.push(_locationList[Math.floor(j / location_len)]);
+                    flightLocations.push(_locationList[Math.floor(j % location_len)]);
+                }
+            }
+
+            _flightPlans.push({
+                ID: count++,
+                Asset_Used: plan.assets[i / (location_len**2)].UniquePlatformID,
+                Flight_Path: flightLocations,
+            });
+
+        }
+        console.log("flightplans: ", _flightPlans);
+        setFlightPlans(_flightPlans)
+
+        //
+
         //setAllocation(tasks)
         setLoading(false)
         return tasks;
@@ -323,5 +368,5 @@ export const useMiniZinc = () => {
         })
     }
 
-    return { prepareAllocation, allocation, loading }
+    return { prepareAllocation, allocation, flightPlans, loading }
 }

@@ -2,7 +2,7 @@ import { createContext } from "react";
 import { CollectionExploitationPlanType } from "@/types/main/collectionExploitationPlanType";
 import { InformationRequirementType } from "@/types/main/informationRequirementType";
 import { GeographicAreaOfInterestType } from "@/types/main/geographicAreaOfInterestType";
-import { Plan, Asset, Requirement, Task } from "@/hooks/usePlan";
+import { Plan, Asset, Requirement, Task, FlightPlan } from "@/hooks/usePlan";
 
 export type JAPContextType = {
     plans: Plan[],
@@ -12,6 +12,7 @@ export type JAPContextType = {
     addCRsToPlan: (CRsToAdd: Requirement[]) => void,
     removeCRsFromPlan: (CRsToRemove: Requirement[]) => void,
     addTasksToPlan: (tasksToAdd: Task[]) => void,
+    addFlightPlansToPlan: (flightPlansToAdd: FlightPlan[]) => void,
     newPlan: (name: string) => void,
     activePlanIndex: number,
     setActivePlanIndex: (index: number) => void
@@ -32,12 +33,13 @@ export type JCAPContextType = {
 
 export const JAPContext = createContext<JAPContextType>({
     plans: [],
-    getPlan: () => { return { name: 'No Plan', assets: [], requirements: [], allocation: [] } },
+    getPlan: () => { return { name: 'No Plan', assets: [], requirements: [], allocation: [], flightPlans: [] } },
     addAssetsToPlan: (assetsToAdd: Asset[]) => { },
     removeAssetsFromPlan: (assetsToRemove: Asset[]) => { },
     addCRsToPlan: (CRsToAdd: Requirement[]) => { },
     removeCRsFromPlan: (CRsToRemove: Requirement[]) => { },
     addTasksToPlan: (tasksToAdd: Task[]) => { },
+    addFlightPlansToPlan: (flightPlansToAdd: FlightPlan[]) => { },
     newPlan: (name: string) => { },
     activePlanIndex: 0,
     setActivePlanIndex: (index: number) => { }

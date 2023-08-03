@@ -206,8 +206,8 @@ const assetColumns: GridColDef[] = [
 ]
 
 export default function Home() {
-    const { addTasksToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex, removeAssetsFromPlan, removeCRsFromPlan } = useContext(JAPContext)
-    const { prepareAllocation, loading, allocation } = useMiniZinc()
+    const { addFlightPlansToPlan, addTasksToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex, removeAssetsFromPlan, removeCRsFromPlan } = useContext(JAPContext)
+    const { prepareAllocation, loading, allocation, flightPlans } = useMiniZinc()
     const [pageSize, setPageSize] = useState(10);
     const [selectedCRRows, setSelectedCRRows] = useState<string[]>([])
     const [selectedAssetRows, setSelectedAssetRows] = useState<string[]>([])
@@ -265,10 +265,17 @@ export default function Home() {
 
     useEffect(() => {
         if (allocation.length > 0) {
-            console.log('allocation', allocation) // todo: look into allocation not properly updating
+            console.log('allocation', allocation)
             addTasksToPlan(allocation)
         }
     }, [allocation])
+
+    useEffect(() => {
+        if (flightPlans.length > 0) {
+            console.log('flightPlans', flightPlans)
+            addFlightPlansToPlan(flightPlans)
+        }
+    }, [flightPlans])
 
     return (
         <Box sx={{ p: 8 }}>
