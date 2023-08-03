@@ -4,13 +4,14 @@ export interface Plan {
     name: string,
     assets: Asset[],
     requirements: Requirement[],
-    allocation?: Task[]
+    allocation: Task[]
 }
 
 export interface Task {
     ID: number,
     Asset_Used: string,
     Requirement_to_Collect: string,
+    Coordinates: string,
     Start: Date,
     End: Date
 }
@@ -69,14 +70,15 @@ export const usePlan = () => {
     const getPlan = () => {
         if (plans)
             return plans[activePlanIndex]
-        return { name: 'No Plan', assets: [], requirements: [] }
+        return { name: 'No Plan', assets: [], requirements: [], allocation: [] }
     }
 
     const newPlan = (name: string) => {
         const plan = {
             name: name,
             assets: [],
-            requirements: []
+            requirements: [],
+            allocation: []
         }
         var tempPlans = plans
         tempPlans.push(plan)
@@ -92,7 +94,8 @@ export const usePlan = () => {
         const updatedPlan = {
             name: plan.name,
             assets: plan.assets,
-            requirements: [...new Set(plan.requirements.concat(CRsToAdd))]
+            requirements: [...new Set(plan.requirements.concat(CRsToAdd))],
+            allocation: plan.allocation
         }
         tempPlans[activePlanIndex] = updatedPlan
         //setPlans(tempPlans)
@@ -104,7 +107,8 @@ export const usePlan = () => {
         const updatedPlan = {
             name: plan.name,
             assets: plan.assets,
-            requirements: plan.requirements.filter(el => !CRsToRemove.includes(el))
+            requirements: plan.requirements.filter(el => !CRsToRemove.includes(el)),
+            allocation: plan.allocation
         }
         tempPlans[activePlanIndex] = updatedPlan
         //setPlans(tempPlans)
@@ -117,7 +121,8 @@ export const usePlan = () => {
         const updatedPlan = {
             name: plan.name,
             assets: addAssetsWithNoDuplicates(plan.assets, assetsToAdd) ,
-            requirements: plan.requirements
+            requirements: plan.requirements,
+            allocation: plan.allocation
         }
         tempPlans[activePlanIndex] = updatedPlan
         //setPlans(tempPlans)
@@ -129,7 +134,8 @@ export const usePlan = () => {
         const updatedPlan = {
             name: plan.name,
             assets: plan.assets.filter(el => !assetsToRemove.includes(el)),
-            requirements: plan.requirements
+            requirements: plan.requirements,
+            allocation: plan.allocation
         }
         tempPlans[activePlanIndex] = updatedPlan
         //setPlans(tempPlans)

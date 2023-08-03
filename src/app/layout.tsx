@@ -167,7 +167,7 @@ export default function RootLayout({
                   <MenuIcon />
                 </IconButton>
                 <Typography variant="h6" noWrap component="div">
-                  JAP
+                  JCAP
                 </Typography>
               </Toolbar>
             </AppBar>

@@ -32,7 +32,7 @@ export type JCAPContextType = {
 
 export const JAPContext = createContext<JAPContextType>({
     plans: [],
-    getPlan: () => { return { name: 'No Plan', assets: [], requirements: [] } },
+    getPlan: () => { return { name: 'No Plan', assets: [], requirements: [], allocation: [] } },
     addAssetsToPlan: (assetsToAdd: Asset[]) => { },
     removeAssetsFromPlan: (assetsToRemove: Asset[]) => { },
     addCRsToPlan: (CRsToAdd: Requirement[]) => { },

@@ -101,13 +101,14 @@ export const useMiniZinc = () => {
         console.log(len);
         const today = new Date();
         var count = 0;
-        for (var i = 0; i < allocation.length; i++) {
+        for (var i = 0; i < temparray.length; i++) {
             if (temparray[i] === '1') {
                 const startMins = collectionStart[Math.floor(i / len)];
                 const durationMins = collectionDuration[Math.floor(i / len)];
                 tasks.push({
                     ID: count++,
                     Asset_Used: plan.assets[i % len].UniquePlatformID,
+                    Coordinates: plan.requirements[Math.floor(i / len)].Coordinates,
                     Requirement_to_Collect: plan.requirements[Math.floor(i / len)].ID.toString(),
                     Start: new Date(
                         today.getFullYear(),
@@ -127,8 +128,9 @@ export const useMiniZinc = () => {
             }
         }
         console.log("tasks: ",tasks);
-        setAllocation(tasks)
+        //setAllocation(tasks)
         setLoading(false)
+        return tasks;
     }
 
     const prepareAllocation = async (plan: Plan) => {
@@ -316,8 +318,8 @@ export const useMiniZinc = () => {
         })
         response.text().then((data) => {
             console.log("data: ", data)
-            const allocation = MZNResult_to_AllocationObject(plan, data)
-            return allocation
+            const _allocation = MZNResult_to_AllocationObject(plan, data)
+            setAllocation(_allocation)
         })
     }
 

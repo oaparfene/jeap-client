@@ -2,50 +2,43 @@
 import { Box, Typography } from "@mui/material";
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { LatLngExpression } from "leaflet";
+import { JAPContext } from "../context";
+import { PlanSelector } from "@/components/PlanSelector";
 
 function Home() {
 
-    const location_data = [['Mannheim', [49.50004032, 8.50207514]],
-    ['Karlsruhe', [49.0158491, 8.40953385]],
-    ['Baden_Baden', [48.75732995, 8.21440805]],
-    ['Buehl', [48.69282575, 8.14527]],
-    ['Offenburg', [48.4747585, 7.94506255]],
-    ['Lahr_Schwarzwald', [48.33432035, 7.88272955]],
-    ['Loerrach', [48.33432035, 7.88272955]],
-    ['Heidelberg', [49.4057284, 8.68361415]],
-    ['Freiburg_im_Breisgau', [47.98731115, 7.79642005]]]
+    const { plans, activePlanIndex, setActivePlanIndex, newPlan } = useContext(JAPContext)
 
 
-    // const [location, setLocation] = useState<[number, number][]>([[0, 0]])
 
-    // const onSuccess = (pos: any) => {
-    //     const lat = pos.coords.latitude
-    //     const lng = pos.coords.longitude
-    //     const accuracy = pos.coords.accuracy
-    //     setLocation([lat, lng])
-    //     console.log(location)
-    // }
-    // const onError = (err: any) => {
-    //     console.error(err)
-    // }
+    const location_data = [] as [string, [number, number]][]
 
-    // navigator.geolocation.watchPosition(onSuccess, onError);
+    plans[activePlanIndex].allocation.forEach((task, i) => {
+        location_data.push(['CR' + task.Requirement_to_Collect, [Number(task.Coordinates.split("N")[0]), Number(task.Coordinates.split(" ")[1].split("E")[0])]])
+    })
 
 
     if (typeof window == 'undefined') {
         return <></>
     } else
         return (
-            <>
-                <Box sx={{ width: '95%', height: 1000, p: 3, m: 3 }}>
+            <Box sx={{ p: 8 }}>
+                <Typography
+                    variant="h4"
+                    component="h4"
+                    sx={{ textAlign: 'left', mt: 0, mb: 3 }}
+                >Allocations:</Typography>
+
+                <PlanSelector plans={plans} newPlan={newPlan} activePlanIndex={activePlanIndex} setActivePlanIndex={setActivePlanIndex} />
+                <Box sx={{ width: '95%', height: 1000, p: 0, m: 3 }}>
                     <Typography
                         variant="h5"
                         component="h5"
-                        sx={{ textAlign: 'left', mt: 0, mb: 3 }}
+                        sx={{ textAlign: 'center', mt: 0, mb: 3 }}
                     >
-                        Map View
+                        Map View:
                     </Typography>
                     <MapContainer style={{ height: '900px', width: '80wh' }} center={[48.69282575, 8.14527]} zoom={9} scrollWheelZoom={true}>
                         <TileLayer
@@ -67,7 +60,7 @@ function Home() {
                         <Polyline pathOptions={{ color: "red" }} positions={[[48.75732995, 8.21440805], [49.4057284, 8.68361415], [49.50004032, 8.50207514]]}></Polyline>
                     </MapContainer>
                 </Box>
-            </>
+            </Box>
         )
 }
 

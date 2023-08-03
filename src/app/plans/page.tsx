@@ -217,6 +217,8 @@ export default function Home() {
     const [openAsset, setOpenAsset] = useState(false);
     const [openAllocation, setOpenAllocation] = useState(false);
 
+    console.log('plans', plans)
+
     const planReqs = plans[activePlanIndex] ? plans[activePlanIndex].requirements : []
     const planAssets = plans[activePlanIndex] ? plans[activePlanIndex].assets : []
 
