@@ -89,6 +89,26 @@ export default function RootLayout({
           </ListItem>
         ))}
       </List>
+      <Divider />
+      <Typography
+        variant="h6"
+        component="h6"
+        sx={{ textAlign: 'left', mt: 1, ml: 2 }}
+      >Generation:</Typography>
+      <List>
+        {['Create Requirement', 'Create Asset'].map((text, index) => (
+          <ListItem key={text} disablePadding>
+            <Link href={text.toLowerCase().replaceAll(" ","")} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
+              <ListItemButton>
+                <ListItemIcon>
+                  <MailIcon />
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </Link>
+          </ListItem>
+        ))}
+      </List>
     </div>
   );
 
