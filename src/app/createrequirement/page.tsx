@@ -1,8 +1,14 @@
 "use client";
-import { Box, TextField, Typography } from "@mui/material";
-import { useState } from "react";
+import { Requirement } from "@/hooks/usePlan";
+import { Alert, Box, Button, Snackbar, TextField, Typography } from "@mui/material";
+import { useContext, useState } from "react";
+import { JAPContext } from "../context";
 
 function Home() {
+
+  const [open, setOpen] = useState(false);
+
+
   const [operation, setOperation] = useState("");
   const [requester, setRequester] = useState("");
   const [CR_Rank, setCR_Rank] = useState("");
@@ -13,8 +19,57 @@ function Home() {
   const [locationCategory, setLocationCategory] = useState("");
   const [collStartTime, setCollStartTime] = useState("");
   const [collEndTime, setCollEndTime] = useState("");
+  const [sensorVisibility, setSensorVisibility] = useState("");
+  const [ltiov, setLtiov] = useState("");
+  const [requiredInformation, setRequiredInformation] = useState("");
+  const [intelDiscipline, setIntelDiscipline] = useState("");
+  const [requiredProduct, setRequiredProduct] = useState("");
+  const [reportFrequency, setReportFrequency] = useState("");
+  const [recurrance, setRecurrance] = useState("");
+  const [maxClassification, setMaxClassification] = useState("");
+  const [reportingInstructions, setReportingInstructions] = useState("");
+  const [remarks, setRemarks] = useState("");
+
+  const { allRequirements, addCRs } = useContext(JAPContext)
 
   console.log(collEndTime);
+
+  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  const handleCreateRequirement = () => {
+    const newCR: Requirement = {
+      ID: allRequirements.length + 1,
+      Operation: operation,
+      Requester: requester,
+      CR_Rank: CR_Rank,
+      Justification: justification,
+      Location: `Target ${allRequirements.length} - Point Location`,
+      Status: status,
+      Coordinates: coordinates,
+      Target_ID: targetID,
+      Location_Category: locationCategory,
+      Coll_Start_Time: collStartTime,
+      Coll_End_Time: collEndTime,
+      Sensor_Visibility: sensorVisibility,
+      LTIOV: ltiov,
+      Required_Information: requiredInformation,
+      Intel_Discipline: intelDiscipline,
+      Required_Product: requiredProduct,
+      ER_Report_Frequency: reportFrequency,
+      Recurrance: recurrance,
+      RP_Remarks: maxClassification,
+      Reporting_Instructions: reportingInstructions,
+      ER_Remarks: remarks,
+    }
+    addCRs([newCR])
+    setOpen(true);
+  }
 
   return (
     <Box sx={{ p: 8 }}>
@@ -26,7 +81,7 @@ function Home() {
         Create Requirement:
       </Typography>
 
-      <Box sx={{display: "grid", gap: "12px", gridTemplateColumns: "auto auto auto"}}>
+      <Box sx={{ display: "grid", gap: "12px", gridTemplateColumns: "auto auto auto" }}>
         <TextField
           id="operation"
           required
@@ -101,24 +156,183 @@ function Home() {
           onChange={(e) => setLocationCategory(e.target.value)}
         />
         <TextField
-          id="coll_start_time"
+          id="sensor_visibility"
           required
-          label=""
+          label="Sensor Visibility"
           variant="outlined"
-          type={"datetime-local"}
-          value={collStartTime}
-          onChange={(e) => setCollStartTime(e.target.value)}
+          placeholder="LOW"
+          value={sensorVisibility}
+          onChange={(e) => setSensorVisibility(e.target.value)}
+        />
+
+        <TextField
+          sx={{ gridColumn: "1 / span 3" }}
+          multiline
+          id="required_informtion"
+          required
+          label="Required Information"
+          variant="outlined"
+          placeholder="Which indications exist of OF hostile activities?"
+          value={requiredInformation}
+          onChange={(e) => setRequiredInformation(e.target.value)}
         />
         <TextField
-          id="coll_end_time"
+          id="intel_discipliine"
           required
-          label=""
+          select
+          SelectProps={{
+            native: true,
+          }}
+          label="Intel Discipline"
           variant="outlined"
-          type={"datetime-local"}
-          value={collEndTime}
-          onChange={(e) => setCollEndTime(e.target.value)}
+          value={intelDiscipline}
+          onChange={(e) => setIntelDiscipline(e.target.value)}
+        >
+          <option value=""></option>
+          <option value="IMINT">IMINT</option>
+          <option value="SIGINT">SIGINT</option>
+          <option value="HUMINT">HUMINT</option>
+          <option value="MASINT">MASINT</option>
+          <option value="OSINT">OSINT</option>
+          <option value="OSINT">ELINT</option>
+        </TextField>
+        <TextField
+          id="required_product"
+          required
+          label="Required Product"
+          variant="outlined"
+          placeholder="ISREXREP"
+          value={requiredProduct}
+          onChange={(e) => setRequiredProduct(e.target.value)}
+        />
+        <TextField
+          id="report_frequency"
+          required
+          label="Report Frequency"
+          variant="outlined"
+          placeholder="POST MISSION"
+          value={reportFrequency}
+          onChange={(e) => setReportFrequency(e.target.value)}
+        />
+        <TextField
+          id="recurrance"
+          required
+          label="Recurrance"
+          variant="outlined"
+          placeholder="none"
+          value={recurrance}
+          onChange={(e) => setRecurrance(e.target.value)}
+        />
+        <TextField
+          id="max_classification"
+          required
+          select
+          SelectProps={{
+            native: true,
+          }}
+          label="Max Classification"
+          variant="outlined"
+          placeholder=""
+          value={maxClassification}
+          onChange={(e) => setMaxClassification(e.target.value)}
+        >
+          <option value=""></option>
+          <option value="NU">NU</option>
+          <option value="NR">NR</option>
+          <option value="NC">NC</option>
+          <option value="NS">NS</option>
+          <option value="CTS">CTS</option>
+        </TextField>
+        <TextField
+          id="remarks"
+          required
+          label="Remarks"
+          variant="outlined"
+          placeholder="none"
+          value={remarks}
+          onChange={(e) => setRemarks(e.target.value)}
+        />
+        <TextField
+          sx={{ gridColumn: "1 / span 3" }}
+          multiline
+          id="reporting_instructions"
+          required
+          label="Reporting Instructions"
+          variant="outlined"
+          placeholder="Send copy of report to..."
+          value={reportingInstructions}
+          onChange={(e) => setReportingInstructions(e.target.value)}
         />
       </Box>
+      <Box sx={{ display: "flex", gap: "12px", flexDirection: "column", mt: "12px" }}>
+        <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
+
+          <Box sx={{ display: "flex", flexDirection: "column", width: "30%" }}>
+            <Typography
+              variant="h6"
+              component="h6"
+              sx={{ textAlign: "left", mt: 0, mb: 3 }}
+            >
+              Collection Start Time:
+            </Typography>
+
+            <TextField
+              id="coll_start_time"
+              required
+              label=""
+              variant="outlined"
+              type={"datetime-local"}
+              value={collStartTime}
+              onChange={(e) => setCollStartTime(e.target.value)}
+            />
+          </Box>
+          <Box sx={{ display: "flex", flexDirection: "column", width: "30%" }}>
+            <Typography
+              variant="h6"
+              component="h6"
+              sx={{ textAlign: "left", mt: 0, mb: 3 }}
+            >
+              Collection End Time:
+            </Typography>
+            <TextField
+              id="coll_end_time"
+              required
+              label=""
+              variant="outlined"
+              type={"datetime-local"}
+              value={collEndTime}
+              onChange={(e) => setCollEndTime(e.target.value)}
+            />
+          </Box>
+          <Box sx={{ display: "flex", flexDirection: "column", width: "30%" }}>
+            <Typography
+              variant="h6"
+              component="h6"
+              sx={{ textAlign: "left", mt: 0, mb: 3 }}
+            >
+              LTIOV:
+            </Typography>
+            <TextField
+              id="ltiov"
+              required
+              label=""
+              variant="outlined"
+              type={"datetime-local"}
+              value={ltiov}
+              onChange={(e) => setLtiov(e.target.value)}
+            />
+          </Box>
+        </Box>
+      </Box>
+      <Box sx={{ display: "flex", justifyContent: "end", m: "12px" }}>
+
+        <Button variant='contained' sx={{ mr: 2 }} onClick={handleCreateRequirement}>Create</Button>
+      </Box>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+          Created Requirement! Don't forget to add it to a plan.
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

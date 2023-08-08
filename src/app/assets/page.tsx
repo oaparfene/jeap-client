@@ -7,6 +7,7 @@ import { JAPContext } from "../context"
 import { Alert, Box, Button, Snackbar, Typography } from "@mui/material"
 import { DataGrid, GridColDef, GridRowId } from "@mui/x-data-grid"
 import { useState } from "react"
+import { useData } from "@/hooks/useData"
 
 const columns: GridColDef[] = [
     {
@@ -46,13 +47,15 @@ const columns: GridColDef[] = [
     },
 ]
 export default function Home() {
-    const { addAssetsToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex } = useContext(JAPContext)
+    const { allAssets, addAssetsToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex } = useContext(JAPContext)
     const [pageSize, setPageSize] = useState(10);
     const [selectedRows, setSelectedRows] = useState<any[]>([])
     const [amountOfAssetsAdded, setAmountOfAssetsAdded] = useState<number>(0)
     const [open, setOpen] = useState(false);
 
-    const allRows = generateDataFromORBAT()!
+    console.log('allAssets', allAssets)
+
+    const allRows = allAssets
     const rows = allRows.filter((asset) => !plans[activePlanIndex]?.assets.find(el => el.ID === asset.ID ))
 
     const addToPlanHandler = () => {

@@ -150,24 +150,42 @@ export const useMiniZinc = () => {
         let _flightPlans: FlightPlan[] = [];
         const _locationList = [...new Set(plan.requirements.map((requirement) => requirement.Coordinates.split(";")[0])), ...new Set(plan.assets.map((asset) => asset.Location))]
         const location_len = _locationList.length;
+        const asset_len = travel_array.length / location_len ** 2;
         console.log(location_len);
         var count = 0;
-        for (var i = 0; i < travel_array.length; i = i + location_len ** 2) {
+
+        for (var i = 0; i < asset_len; i++) {
             const flightLocations = [];
-            for (var j = 0; j < location_len ** 2; j++) {
-                if (travel_array[i + j] === '1') {
-                    flightLocations.push(_locationList[Math.floor(j / location_len)]);
-                    flightLocations.push(_locationList[Math.floor(j % location_len)]);
+            for (var j = 0; j < location_len; j++) {
+                for (var k = 0; k < location_len; k++) {
+                    if (travel_array[asset_len*(j*location_len+k) + i] === '1') {
+                        flightLocations.push(_locationList[j]);
+                    }       
                 }
             }
-
             _flightPlans.push({
                 ID: count++,
-                Asset_Used: plan.assets[i / (location_len**2)].UniquePlatformID,
-                Flight_Path: flightLocations,
+                Asset_Used: plan.assets[i].UniquePlatformID,
+                Flight_Path: [...flightLocations],
             });
-
         }
+
+        // for (var i = 0; i < travel_array.length; i = i + location_len ** 2) {
+        //     const flightLocations = [];
+        //     for (var j = 0; j < location_len ** 2; j++) {
+        //         if (travel_array[i + j] === '1') {
+        //             flightLocations.push(_locationList[Math.floor(j / location_len)]);
+        //             flightLocations.push(_locationList[Math.floor(j % location_len)]);
+        //         }
+        //     }
+
+        //     _flightPlans.push({
+        //         ID: count++,
+        //         Asset_Used: plan.assets[i / (location_len**2)].UniquePlatformID,
+        //         Flight_Path: flightLocations,
+        //     });
+
+        // }
         console.log("flightplans: ", _flightPlans);
         setFlightPlans(_flightPlans)
 

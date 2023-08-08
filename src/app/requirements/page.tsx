@@ -167,13 +167,15 @@ const columns: GridColDef[] = [
 ];
 
 export default function Home() {
-    const { addCRsToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex } = useContext(JAPContext)
+    const { allRequirements, addCRsToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex } = useContext(JAPContext)
     const [pageSize, setPageSize] = useState(10);
     const [selectedRows, setSelectedRows] = useState<string[]>([])
     const [amountOfAssetsAdded, setAmountOfAssetsAdded] = useState<number>(0)
     const [open, setOpen] = useState(false);
 
-    const rows = crs.filter((cr) => !plans[activePlanIndex]?.requirements.find(req => req.ID === cr.ID ))
+    const rows = allRequirements.filter((cr) => !plans[activePlanIndex]?.requirements.find(req => req.ID === cr.ID ))
+
+    console.log(allRequirements)
 
     const addToPlanHandler = () => {
         addCRsToPlan(selectedRows.map((id) => rows.find(asset => asset.ID.toString() === id)!))

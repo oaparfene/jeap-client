@@ -349,7 +349,7 @@ export default function Home() {
             </Box>
 
             <Stack direction='row' justifyContent='end' sx={{ mt: 2 }}>
-              <Button variant='outlined' sx={{ mr: 2 }} onClick={handleRequestAllocation}>Request Automated Allocation{loading && <CircularProgress sx={{p:1}} />}</Button>
+              <Button variant='outlined' sx={{ mr: 2 }} onClick={handleRequestAllocation}>Generate Plan{loading && <CircularProgress sx={{p:1}} />}</Button>
               <Button variant='outlined' sx={{ mr: 2 }} onClick={() => {}}>Save Draft Plan</Button>
               <Button variant='contained' sx={{ mr: 2 }} onClick={() => {}}>Publish Plan</Button>
             </Stack>

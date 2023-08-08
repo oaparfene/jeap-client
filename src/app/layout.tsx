@@ -30,6 +30,7 @@ import { GeographicAreaOfInterestType } from '@/types/main/geographicAreaOfInter
 import { InformationRequirementType } from '@/types/main/informationRequirementType';
 import { generateDataFromORBAT } from '@/constants';
 import { usePlan } from '@/hooks/usePlan';
+import { useData } from '@/hooks/useData';
 
 const drawerWidth = 240;
 export default function RootLayout({
@@ -39,6 +40,7 @@ export default function RootLayout({
 }) {
 
   const { getPlan, addCRsToPlan, removeCRsFromPlan, addAssetsToPlan, removeAssetsFromPlan, addTasksToPlan, addFlightPlansToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex } = usePlan()
+  const { allAssets, allRequirements, addAssets, addCRs, removeAssets, removeCRs } = useData()
 
   const drawer = (
     <div>
@@ -166,7 +168,13 @@ export default function RootLayout({
             removeCRsFromPlan,
             removeAssetsFromPlan,
             addTasksToPlan,
-            addFlightPlansToPlan
+            addFlightPlansToPlan,
+            allAssets,
+            allRequirements,
+            addAssets,
+            addCRs,
+            removeAssets,
+            removeCRs
           }}
         >
 
