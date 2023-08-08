@@ -11,6 +11,8 @@ function Home() {
 
     const { plans, activePlanIndex, setActivePlanIndex, newPlan } = useContext(JAPContext)
 
+    const colors = ["yellow", "green", "blue", "orange", "red"]
+
     const location_data = [] as [string, [number, number]][]
     const flight_data = [] as [number, number][][]
 
@@ -64,14 +66,9 @@ function Home() {
                         })}
                         {flight_data.map((e, i) => {
                             return (
-                                <Polyline key={i} pathOptions={{ color: "black" }} positions={e}></Polyline>
+                                <Polyline key={i} pathOptions={{ color: colors[i%colors.length] }} positions={e}></Polyline>
                             )
                         })}
-                        {/* <Polyline pathOptions={{ color: "yellow" }} positions={[[48.33432035, 7.88272955], [47.98731115, 7.79642005]]}></Polyline>
-                        <Polyline pathOptions={{ color: "green" }} positions={[[49.0158491, 8.40953385], [47.98731115, 7.79642005]]}></Polyline>
-                        <Polyline pathOptions={{ color: "blue" }} positions={[[48.4747585, 7.94506255], [49.4057284, 8.68361415]]}></Polyline>
-                        <Polyline pathOptions={{ color: "orange" }} positions={[[48.33432035, 7.88272955], [49.4057284, 8.68361415]]}></Polyline>
-                        <Polyline pathOptions={{ color: "red" }} positions={[[48.75732995, 8.21440805], [49.4057284, 8.68361415], [49.50004032, 8.50207514]]}></Polyline> */}
                     </MapContainer>
                 </Box>
             </Box>

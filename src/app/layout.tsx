@@ -16,9 +16,10 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import MailIcon from '@mui/icons-material/Mail';
 import MenuIcon from '@mui/icons-material/Menu';
+import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { Avatar } from '@mui/material';
+import { Avatar, Button } from '@mui/material';
 import next from 'next';
 import Link from 'next/link';
 import Head from 'next/head';
@@ -32,7 +33,6 @@ import { generateDataFromORBAT } from '@/constants';
 import { usePlan } from '@/hooks/usePlan';
 import { useData } from '@/hooks/useData';
 
-const drawerWidth = 240;
 export default function RootLayout({
   children,
 }: {
@@ -41,76 +41,90 @@ export default function RootLayout({
 
   const { getPlan, addCRsToPlan, removeCRsFromPlan, addAssetsToPlan, removeAssetsFromPlan, addTasksToPlan, addFlightPlansToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex } = usePlan()
   const { allAssets, allRequirements, addAssets, addCRs, removeAssets, removeCRs } = useData()
+  const [drawerWidth, setDrawerWidth] = React.useState<number>(240)
+  const [open, setOpen] = React.useState(true);
+
+  const handleToggleDrawer = () => {
+    setDrawerWidth(drawerWidth === 240 ? 40 : 240)
+    setOpen(!open)
+  }
 
   const drawer = (
     <div>
-      <Toolbar />
-      <Box sx={{ p: 1 }}>
-        <Avatar sx={{ mb: 2 }}>JD</Avatar>
-        <Typography variant='h5'>John Doe</Typography>
-        <Typography>john.doe@email.com</Typography>
+      <Box sx={{ display: "flex", justifyContent: "end" }}>
+        <IconButton onClick={handleToggleDrawer} sx={{p: 1}}>
+          {!open ? <MenuIcon /> : <MenuOpenIcon></MenuOpenIcon>}
+        </IconButton>
       </Box>
+      {open && <>
+        {/* <Toolbar /> */}
+        <Box sx={{ p: 2 }}>
+          <Avatar sx={{ mb: 2 }}>JD</Avatar>
+          <Typography variant='h5'>John Doe</Typography>
+          <Typography>john.doe@email.com</Typography>
+        </Box>
 
-      <Divider />
-      <Typography
-        variant="h6"
-        component="h6"
-        sx={{ textAlign: 'left', mt: 1, ml: 2 }}
-      >Planning:</Typography>
-      <List>
-        {['Requirements', 'Assets', 'Plans'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <Link href={text.toLowerCase()} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
-              <ListItemButton>
-                <ListItemIcon>
-                  <MailIcon />
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </Link>
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <Typography
-        variant="h6"
-        component="h6"
-        sx={{ textAlign: 'left', mt: 1, ml: 2 }}
-      >Allocation:</Typography>
-      <List>
-        {['Assesment', 'Map'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <Link href={text.toLowerCase()} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
-              <ListItemButton>
-                <ListItemIcon>
-                  <MailIcon />
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </Link>
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <Typography
-        variant="h6"
-        component="h6"
-        sx={{ textAlign: 'left', mt: 1, ml: 2 }}
-      >Generation:</Typography>
-      <List>
-        {['Create Requirement', 'Create Asset'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <Link href={text.toLowerCase().replaceAll(" ","")} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
-              <ListItemButton>
-                <ListItemIcon>
-                  <MailIcon />
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </Link>
-          </ListItem>
-        ))}
-      </List>
+        <Divider />
+        <Typography
+          variant="h6"
+          component="h6"
+          sx={{ textAlign: 'left', mt: 1, ml: 2 }}
+        >Planning:</Typography>
+        <List>
+          {['Requirements', 'Assets', 'Plans'].map((text, index) => (
+            <ListItem key={text} disablePadding>
+              <Link href={text.toLowerCase()} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <MailIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={text} />
+                </ListItemButton>
+              </Link>
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+        <Typography
+          variant="h6"
+          component="h6"
+          sx={{ textAlign: 'left', mt: 1, ml: 2 }}
+        >Allocation:</Typography>
+        <List>
+          {['Assesment', 'Map'].map((text, index) => (
+            <ListItem key={text} disablePadding>
+              <Link href={text.toLowerCase()} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <MailIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={text} />
+                </ListItemButton>
+              </Link>
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+        <Typography
+          variant="h6"
+          component="h6"
+          sx={{ textAlign: 'left', mt: 1, ml: 2 }}
+        >Generation:</Typography>
+        <List>
+          {['Create Requirement', 'Create Asset'].map((text, index) => (
+            <ListItem key={text} disablePadding>
+              <Link href={text.toLowerCase().replaceAll(" ", "")} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <MailIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={text} />
+                </ListItemButton>
+              </Link>
+            </ListItem>
+          ))}
+        </List>
+      </>}
     </div>
   );
 

@@ -156,6 +156,7 @@ export const useMiniZinc = () => {
 
         for (var i = 0; i < asset_len; i++) {
             const flightLocations = [];
+            flightLocations.push(plan.assets[i].Location);
             for (var j = 0; j < location_len; j++) {
                 for (var k = 0; k < location_len; k++) {
                     if (travel_array[asset_len*(j*location_len+k) + i] === '1') {
