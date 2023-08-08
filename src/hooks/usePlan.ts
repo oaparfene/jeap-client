@@ -27,7 +27,7 @@ export interface Asset {
     ID: number,
     UniquePlatformID: string,
     Description: string,
-    AvailableFrom: string,
+    AvailableFrom: Date,
     Sensor: string,
     Unit: string,
     Location: string,

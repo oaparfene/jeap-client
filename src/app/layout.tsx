@@ -84,7 +84,7 @@ export default function RootLayout({
             </ListItem>
           ))}
         </List>
-        <Divider />
+        {/* <Divider />
         <Typography
           variant="h6"
           component="h6"
@@ -103,7 +103,7 @@ export default function RootLayout({
               </Link>
             </ListItem>
           ))}
-        </List>
+        </List> */}
         <Divider />
         <Typography
           variant="h6"

@@ -1,14 +1,19 @@
 'use client'
 
 import { PlanSelector } from "@/components/PlanSelector"
-import { generateDataFromORBAT, Asset, crs } from "@/constants"
+import { generateDataFromORBAT, crs } from "@/constants"
 import { useContext, useEffect } from "react"
 import { JAPContext } from "../context"
-import { Alert, Box, Button, CircularProgress, Snackbar, Stack, Typography } from "@mui/material"
+import { Alert, Box, Button, CircularProgress, Snackbar, Stack, Tab, Tabs, Typography } from "@mui/material"
 import { DataGrid, GridColDef, GridRowId } from "@mui/x-data-grid"
 import { useState } from "react"
-import { Requirement } from "@/hooks/usePlan"
+import { Asset, Requirement } from "@/hooks/usePlan"
 import { useMiniZinc } from "@/hooks/useMiniZinc"
+import MapView from "@/components/MapView"
+import SynchMatrixView from "@/components/SynchMatrixView"
+import MapIcon from '@mui/icons-material/Map';
+import ViewTimelineIcon from '@mui/icons-material/ViewTimeline';
+import TableChartIcon from '@mui/icons-material/TableChart';
 
 const reqColumns: GridColDef[] = [
     {
@@ -205,6 +210,39 @@ const assetColumns: GridColDef[] = [
     },
 ]
 
+interface TabPanelProps {
+    children?: React.ReactNode;
+    index: number;
+    value: number;
+}
+
+function CustomTabPanel(props: TabPanelProps) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box sx={{ p: 0 }}>
+                    {children}
+                </Box>
+            )}
+        </div>
+    );
+}
+
+function a11yProps(index: number) {
+    return {
+        id: `simple-tab-${index}`,
+        'aria-controls': `simple-tabpanel-${index}`,
+    };
+}
+
 export default function Home() {
     const { addFlightPlansToPlan, addTasksToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex, removeAssetsFromPlan, removeCRsFromPlan } = useContext(JAPContext)
     const { prepareAllocation, loading, allocation, flightPlans } = useMiniZinc()
@@ -221,6 +259,52 @@ export default function Home() {
 
     const planReqs = plans[activePlanIndex] ? plans[activePlanIndex].requirements : []
     const planAssets = plans[activePlanIndex] ? plans[activePlanIndex].assets : []
+
+    const data_main: any = [
+        [
+            { type: "string", id: "Requirement" },
+            { type: "string", id: "Asset" },
+            { type: "date", id: "Start" },
+            { type: "date", id: "End" },
+        ]
+    ];
+
+    const data_inv: any = [
+        [
+            { type: "string", id: "Asset" },
+            { type: "string", id: "Requirement" },
+            { type: "date", id: "Start" },
+            { type: "date", id: "End" },
+        ]
+    ];
+
+    if (plans[activePlanIndex]) {
+        plans[activePlanIndex].allocation.forEach((task, i) => {
+            data_main.push(["CR" + task.Requirement_to_Collect, task.Asset_Used, task.Start, task.End])
+        })
+
+        plans[activePlanIndex].allocation.forEach((task, i) => {
+            data_inv.push([task.Asset_Used, "CR" + task.Requirement_to_Collect, task.Start, task.End])
+        })
+    }
+
+    const location_data = [] as [string, [number, number]][]
+    const flight_data = [] as [number, number][][]
+
+    if (plans[activePlanIndex]) {
+        plans[activePlanIndex].allocation.forEach((task, i) => {
+            location_data.push(['CR' + task.Requirement_to_Collect, [Number(task.Coordinates.split("N")[0]), Number(task.Coordinates.split(" ")[1].split("E")[0])]])
+        })
+
+        plans[activePlanIndex].flightPlans.forEach((flight, i) => {
+            if (flight.Flight_Path.length > 0) {
+                flight_data.push(flight.Flight_Path.map((e) => {
+                    return [Number(e.split("N")[0]), Number(e.split(" ")[1].split("E")[0])]
+                }
+                ))
+            }
+        })
+    }
 
     const removeReqsFromPlanHandler = () => {
         if (!plans[activePlanIndex]) return
@@ -277,82 +361,106 @@ export default function Home() {
         }
     }, [flightPlans])
 
+    const [tabValue, setTabValue] = useState<number>(0)
+
+    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+        setTabValue(newValue);
+    };
+
     return (
-        <Box sx={{ p: 8 }}>
+        <Box sx={{ px: 8, pb: 8, pt: 1 }}>
 
-            <Typography
-                variant="h4"
-                component="h4"
-                sx={{ textAlign: 'left', mt: 0, mb: 3 }}
-            >Collection Plans:</Typography>
+            <Tabs value={tabValue} onChange={handleTabChange} centered>
+                <Tab icon={<TableChartIcon />} label="tabular" {...a11yProps(0)} />
+                <Tab icon={<ViewTimelineIcon />} label="gantt" {...a11yProps(1)} />
+                <Tab icon={<MapIcon />} label="map" {...a11yProps(2)} />
+            </Tabs>
 
-            <PlanSelector plans={plans} newPlan={newPlan} activePlanIndex={activePlanIndex} setActivePlanIndex={setActivePlanIndex} />
-
-            <Box sx={{ display: 'flex', flexDir: 'row', justifyContent: 'space-between' }}>
+            <CustomTabPanel value={tabValue} index={0}>
 
                 <Typography
-                    variant="h6"
-                    component="h6"
+                    variant="h5"
+                    component="h5"
                     sx={{ textAlign: 'left', mt: 0, mb: 3 }}
-                >Plan Requirements:</Typography>
+                >Collection Plans:</Typography>
 
-                <Button variant='contained' sx={{ mb: 2 }} onClick={removeReqsFromPlanHandler}>Remove Selected Requirements</Button>
+                <PlanSelector plans={plans} newPlan={newPlan} activePlanIndex={activePlanIndex} setActivePlanIndex={setActivePlanIndex} />
 
-            </Box>
+                <Box sx={{ display: 'flex', flexDir: 'row', justifyContent: 'space-between' }}>
 
-            <Box sx={{ height: 650, width: '100%', mb: 8 }}>
-                <DataGrid
-                    rows={planReqs}
-                    getRowId={(row) => row.ID}
-                    columns={reqColumns}
-                    onSelectionModelChange={(newSelectedRows) => {
-                        console.log(newSelectedRows)
-                        setSelectedCRRows(newSelectedRows.map((e) => e.toString()))
-                        console.log(selectedCRRows)
-                        //setSelectedRows(newSelectedRows);
-                    }}
-                    selectionModel={selectedCRRows}
-                    rowsPerPageOptions={[5, 10, 20]}
-                    pageSize={pageSize}
-                    checkboxSelection
-                />
-            </Box>
-            
-            <Box sx={{ display: 'flex', flexDir: 'row', justifyContent: 'space-between' }}>
+                    <Typography
+                        variant="h6"
+                        component="h6"
+                        sx={{ textAlign: 'left', mt: 0, mb: 3 }}
+                    >Plan Requirements:</Typography>
 
-                <Typography
-                    variant="h6"
-                    component="h6"
-                    sx={{ textAlign: 'left', mt: 0, mb: 3 }}
-                >Plan Assets:</Typography>
+                    <Button variant='contained' sx={{ mb: 2 }} onClick={removeReqsFromPlanHandler}>Remove Selected Requirements</Button>
 
-                <Button variant='contained' sx={{ mb: 2 }} onClick={removeAssetsFromPlanHandler}>Remove Selected Assets</Button>
+                </Box>
 
-            </Box>
+                <Box sx={{ height: 650, width: '100%', mb: 8 }}>
+                    <DataGrid
+                        rows={planReqs}
+                        getRowId={(row) => row.ID}
+                        columns={reqColumns}
+                        onSelectionModelChange={(newSelectedRows) => {
+                            console.log(newSelectedRows)
+                            setSelectedCRRows(newSelectedRows.map((e) => e.toString()))
+                            console.log(selectedCRRows)
+                            //setSelectedRows(newSelectedRows);
+                        }}
+                        selectionModel={selectedCRRows}
+                        rowsPerPageOptions={[5, 10, 20]}
+                        pageSize={pageSize}
+                        checkboxSelection
+                    />
+                </Box>
 
-            <Box sx={{ height: 650, width: '100%' }}>
-                <DataGrid
-                    rows={planAssets}
-                    getRowId={(row) => row.ID}
-                    columns={assetColumns}
-                    onSelectionModelChange={(newSelectedRows) => {
-                        console.log(newSelectedRows)
-                        setSelectedAssetRows(newSelectedRows.map((e) => e.toString()))
-                        console.log(selectedAssetRows)
-                        //setSelectedRows(newSelectedRows);
-                    }}
-                    selectionModel={selectedAssetRows}
-                    rowsPerPageOptions={[5, 10, 20]}
-                    pageSize={pageSize}
-                    checkboxSelection
-                />
-            </Box>
+                <Box sx={{ display: 'flex', flexDir: 'row', justifyContent: 'space-between' }}>
 
-            <Stack direction='row' justifyContent='end' sx={{ mt: 2 }}>
-              <Button variant='outlined' sx={{ mr: 2 }} onClick={handleRequestAllocation}>Generate Plan{loading && <CircularProgress sx={{p:1}} />}</Button>
-              <Button variant='outlined' sx={{ mr: 2 }} onClick={() => {}}>Save Draft Plan</Button>
-              <Button variant='contained' sx={{ mr: 2 }} onClick={() => {}}>Publish Plan</Button>
-            </Stack>
+                    <Typography
+                        variant="h6"
+                        component="h6"
+                        sx={{ textAlign: 'left', mt: 0, mb: 3 }}
+                    >Plan Assets:</Typography>
+
+                    <Button variant='contained' sx={{ mb: 2 }} onClick={removeAssetsFromPlanHandler}>Remove Selected Assets</Button>
+
+                </Box>
+
+                <Box sx={{ height: 650, width: '100%' }}>
+                    <DataGrid
+                        rows={planAssets}
+                        getRowId={(row) => row.ID}
+                        columns={assetColumns}
+                        onSelectionModelChange={(newSelectedRows) => {
+                            console.log(newSelectedRows)
+                            setSelectedAssetRows(newSelectedRows.map((e) => e.toString()))
+                            console.log(selectedAssetRows)
+                            //setSelectedRows(newSelectedRows);
+                        }}
+                        selectionModel={selectedAssetRows}
+                        rowsPerPageOptions={[5, 10, 20]}
+                        pageSize={pageSize}
+                        checkboxSelection
+                    />
+                </Box>
+
+                <Stack direction='row' justifyContent='end' sx={{ mt: 2 }}>
+                    <Button variant='outlined' sx={{ mr: 2 }} onClick={handleRequestAllocation}>Generate Plan{loading && <CircularProgress sx={{ p: 1 }} />}</Button>
+                    <Button variant='outlined' sx={{ mr: 2 }} onClick={() => { }}>Save Draft Plan</Button>
+                    <Button variant='contained' sx={{ mr: 2 }} onClick={() => { }}>Publish Plan</Button>
+                </Stack>
+            </CustomTabPanel>
+
+            <CustomTabPanel value={tabValue} index={1}>
+                <SynchMatrixView title="Allocation Gantt View" data={[data_main, data_inv]}></SynchMatrixView>
+            </CustomTabPanel>
+
+            <CustomTabPanel value={tabValue} index={2}>
+                <MapView title="Flight Path View" locationData={location_data} pathData={flight_data}></MapView>
+            </CustomTabPanel>
+
             <Snackbar open={openCR} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
                 <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
                     Removed {amountOfCRsRemoved} Requirements from Plan {plans[activePlanIndex]?.name}

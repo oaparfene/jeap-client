@@ -1,3 +1,7 @@
+import { Asset } from "./hooks/usePlan";
+
+const today = new Date();
+
 export const crs = [
     {
         ID: 1,
@@ -10074,17 +10078,6 @@ export interface tempSystem {
     Capacity: string
 }
 
-export interface Asset {
-    ID: number,
-    UniquePlatformID: string,
-    Description: string,
-    Capacity: string,
-    Unit: string,
-    AvailableFrom: string,
-    Location: string,
-    Sensor: string
-}
-
 
 export const generateDataFromORBAT = (_orbat = orbat) => {
     if (!_orbat) return;
@@ -10105,7 +10098,7 @@ export const generateDataFromORBAT = (_orbat = orbat) => {
                         ID: data.length,
                         ...system,
                         Unit: entry['d2p1:MilitaryUnitName'][0].Name[0]._,
-                        AvailableFrom: start_time,
+                        AvailableFrom: new Date(Number(start_time.split("-")[0]), Number(start_time.split("-")[1]), Number(start_time.split("-")[2])),
                         Location:
                             location.Latitude[0]._ + 'N ' + location.Longitude[0]._ + 'E;',
                         Sensor: 'FMV'
@@ -10121,7 +10114,11 @@ export const generateDataFromORBAT = (_orbat = orbat) => {
                         ID: data.length,
                         ...system,
                         Unit: entry['d2p1:MilitaryUnitName'][0].Name[0]._,
-                        AvailableFrom: 'undefined',
+                        AvailableFrom: new Date(
+                            today.getFullYear(),
+                            today.getMonth(),
+                            today.getDate(),
+                        ),
                         Location: '53.120918N 17.978779E',
                         Sensor: 'GMTI'
                     });

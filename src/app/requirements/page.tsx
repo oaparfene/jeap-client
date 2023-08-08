@@ -1,12 +1,16 @@
 'use client'
 
 import { PlanSelector } from "@/components/PlanSelector"
-import { generateDataFromORBAT, Asset, crs } from "@/constants"
 import { useContext } from "react"
 import { JAPContext } from "../context"
-import { Alert, Box, Button, Snackbar, Typography } from "@mui/material"
+import { Alert, Box, Button, Snackbar, Tab, Tabs, Typography } from "@mui/material"
 import { DataGrid, GridColDef, GridRowId } from "@mui/x-data-grid"
 import { useState } from "react"
+import MapView from "@/components/MapView"
+import SynchMatrixView from "@/components/SynchMatrixView"
+import MapIcon from '@mui/icons-material/Map';
+import ViewTimelineIcon from '@mui/icons-material/ViewTimeline';
+import TableChartIcon from '@mui/icons-material/TableChart';
 
 const columns: GridColDef[] = [
     {
@@ -166,6 +170,39 @@ const columns: GridColDef[] = [
     },
 ];
 
+interface TabPanelProps {
+    children?: React.ReactNode;
+    index: number;
+    value: number;
+}
+
+function CustomTabPanel(props: TabPanelProps) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box sx={{ p: 0 }}>
+                    {children}
+                </Box>
+            )}
+        </div>
+    );
+}
+
+function a11yProps(index: number) {
+    return {
+        id: `simple-tab-${index}`,
+        'aria-controls': `simple-tabpanel-${index}`,
+    };
+}
+
 export default function Home() {
     const { allRequirements, addCRsToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex } = useContext(JAPContext)
     const [pageSize, setPageSize] = useState(10);
@@ -173,9 +210,46 @@ export default function Home() {
     const [amountOfAssetsAdded, setAmountOfAssetsAdded] = useState<number>(0)
     const [open, setOpen] = useState(false);
 
-    const rows = allRequirements.filter((cr) => !plans[activePlanIndex]?.requirements.find(req => req.ID === cr.ID ))
+    const rows = allRequirements.filter((cr) => !plans[activePlanIndex]?.requirements.find(req => req.ID === cr.ID))
 
-    console.log(allRequirements)
+    //console.log(allRequirements)
+
+    const data_main: any = [
+        [
+            { type: "string", id: "Requirement" },
+            { type: "string", id: "Asset" },
+            { type: "date", id: "Start" },
+            { type: "date", id: "End" },
+        ]
+    ];
+
+    const today = new Date();
+
+    if (plans[activePlanIndex]) {
+        plans[activePlanIndex].requirements.forEach((req, i) => {
+            data_main.push(["CR" + req.ID, '', new Date(
+                today.getFullYear(),
+                today.getMonth(),
+                today.getDate(),
+                Number(req.Coll_Start_Time.split(":")[0]),
+                Number(req.Coll_Start_Time.split(":")[1]),
+            ), new Date(
+                today.getFullYear(),
+                today.getMonth(),
+                today.getDate(),
+                Number(req.Coll_End_Time.split(":")[0]),
+                Number(req.Coll_End_Time.split(":")[1]),
+            )])
+        })
+    }
+
+    const location_data = [] as [string, [number, number]][]
+
+    if (plans[activePlanIndex]) {
+        plans[activePlanIndex].requirements.forEach((req, i) => {
+            location_data.push(['CR' + req.ID, [Number(req.Coordinates.split("N")[0]), Number(req.Coordinates.split(" ")[1].split("E")[0])]])
+        })
+    }
 
     const addToPlanHandler = () => {
         addCRsToPlan(selectedRows.map((id) => rows.find(asset => asset.ID.toString() === id)!))
@@ -193,37 +267,59 @@ export default function Home() {
         setOpen(false);
     };
 
+    const [tabValue, setTabValue] = useState<number>(0)
+
+    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+        setTabValue(newValue);
+    };
 
     return (
-        <Box sx={{ p: 8 }}>
+        <Box sx={{ px: 8, pb: 8, pt: 1 }}>
 
-            <Typography
-                variant="h5"
-                component="h5"
-                sx={{ textAlign: 'left', mt: 0, mb: 3 }}
-            >Collection Requirements:</Typography>
+            <Tabs value={tabValue} onChange={handleTabChange} centered>
+                <Tab icon={<TableChartIcon />} label="tabular" {...a11yProps(0)} />
+                <Tab icon={<ViewTimelineIcon />} label="gantt" {...a11yProps(1)} />
+                <Tab icon={<MapIcon />} label="map" {...a11yProps(2)} />
+            </Tabs>
 
-            <PlanSelector plans={plans} newPlan={newPlan} activePlanIndex={activePlanIndex} setActivePlanIndex={setActivePlanIndex} />
+            <CustomTabPanel value={tabValue} index={0}>
+                <Typography
+                    variant="h5"
+                    component="h5"
+                    sx={{ textAlign: 'left', mt: 0, mb: 3 }}
+                >Collection Requirements:</Typography>
 
-            <Button variant='contained' sx={{ mb: 2 }} onClick={addToPlanHandler}>Add Selection to Plan</Button>
+                <PlanSelector plans={plans} newPlan={newPlan} activePlanIndex={activePlanIndex} setActivePlanIndex={setActivePlanIndex} />
 
-            <Box sx={{ height: 650, width: '100%' }}>
-                <DataGrid
-                    rows={rows}
-                    getRowId={(row) => row.ID}
-                    columns={columns}
-                    onSelectionModelChange={(newSelectedRows) => {
-                        console.log(newSelectedRows)
-                        setSelectedRows(newSelectedRows.map((e) => e.toString()))
-                        console.log(selectedRows)
-                        //setSelectedRows(newSelectedRows);
-                    }}
-                    selectionModel={selectedRows}
-                    rowsPerPageOptions={[5, 10, 20]}
-                    pageSize={pageSize}
-                    checkboxSelection
-                />
-            </Box>
+                <Button variant='contained' sx={{ mb: 2 }} onClick={addToPlanHandler}>Add Selection to Plan</Button>
+
+                <Box sx={{ height: 650, width: '100%' }}>
+                    <DataGrid
+                        rows={rows}
+                        getRowId={(row) => row.ID}
+                        columns={columns}
+                        onSelectionModelChange={(newSelectedRows) => {
+                            console.log(newSelectedRows)
+                            setSelectedRows(newSelectedRows.map((e) => e.toString()))
+                            console.log(selectedRows)
+                            //setSelectedRows(newSelectedRows);
+                        }}
+                        selectionModel={selectedRows}
+                        rowsPerPageOptions={[5, 10, 20]}
+                        pageSize={pageSize}
+                        checkboxSelection
+                    />
+                </Box>
+            </CustomTabPanel>
+
+            <CustomTabPanel value={tabValue} index={1}>
+                <SynchMatrixView title="Requirement Collection Time View" data={[data_main]}></SynchMatrixView>
+            </CustomTabPanel>
+
+            <CustomTabPanel value={tabValue} index={2}>
+                <MapView title="Requirement Location View" locationData={location_data} pathData={[]}></MapView>
+            </CustomTabPanel>
+
             <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
                 <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
                     Added {amountOfAssetsAdded} Requirements to Plan {plans[activePlanIndex]?.name}
