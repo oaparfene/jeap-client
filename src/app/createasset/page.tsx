@@ -16,7 +16,7 @@ function Home() {
   const [location, setLocation] = useState("");
   const [sensor, setSensor] = useState("");
   const [unit, setUnit] = useState("");
-  const [availableFrom, setAvailableFrom] = useState("");
+  const [availableFrom, setAvailableFrom] = useState<Date>(Date.now() as unknown as Date);
 
   const { allAssets, addAssets } = useContext(JAPContext)
 
@@ -124,7 +124,7 @@ function Home() {
             variant="outlined"
             type={"datetime-local"}
             value={availableFrom}
-            onChange={(e) => setAvailableFrom(e.target.value)}
+            onChange={(e) => setAvailableFrom(new Date(e.target.value))}
           />
         </Box>
 
@@ -136,7 +136,7 @@ function Home() {
       </Box>
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
         <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-          Created Asset! Don't forget to add it to a plan.
+          Created Asset! Do not forget to add it to a plan.
         </Alert>
       </Snackbar>
     </Box>

@@ -330,7 +330,7 @@ function Home() {
       </Box>
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
         <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-          Created Requirement! Don't forget to add it to a plan.
+          Created Requirement! Do not forget to add it to a plan.
         </Alert>
       </Snackbar>
     </Box>
