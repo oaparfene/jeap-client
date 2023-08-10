@@ -1,9 +1,8 @@
 'use client'
 
 import { PlanSelector } from "@/components/PlanSelector"
-import { generateDataFromORBAT } from "@/constants"
 import { useContext } from "react"
-import { JAPContext } from "../context"
+import { JAPContext } from "../../context"
 import { Alert, Box, Button, Snackbar, Tab, Tabs, Typography } from "@mui/material"
 import { DataGrid, GridColDef, GridRowId } from "@mui/x-data-grid"
 import { useState } from "react"
@@ -12,23 +11,37 @@ import SynchMatrixView from "@/components/SynchMatrixView"
 import MapIcon from '@mui/icons-material/Map';
 import ViewTimelineIcon from '@mui/icons-material/ViewTimeline';
 import TableChartIcon from '@mui/icons-material/TableChart';
-import { Asset } from "@/hooks/usePlan"
 
 const columns: GridColDef[] = [
     {
-        field: 'UniquePlatformID',
+        field: 'ID',
         headerName: 'ID',
+        width: 20,
+    },
+    {
+        field: 'Operation',
+        headerName: 'Operation',
         width: 200,
     },
     {
-        field: 'Description',
-        headerName: 'Description',
-        width: 200,
-    },
-    {
-        field: 'Capacity',
-        headerName: 'Capacity',
+        field: 'Requester',
+        headerName: 'Requester',
         width: 100,
+    },
+    {
+        field: 'CR_Rank',
+        headerName: 'CR Rank',
+        width: 20,
+    },
+    {
+        field: 'Justification',
+        headerName: 'Justification',
+        width: 200,
+    },
+    {
+        field: 'Status',
+        headerName: 'Status',
+        width: 120,
     },
     {
         field: 'Location',
@@ -36,21 +49,126 @@ const columns: GridColDef[] = [
         width: 200,
     },
     {
-        field: 'Sensor',
-        headerName: 'Sensor',
+        field: 'Shape',
+        headerName: 'Shape',
         width: 100,
     },
     {
-        field: 'Unit',
-        headerName: 'Unit',
+        field: 'Location_Type',
+        headerName: 'Location Type',
+        width: 150,
+    },
+    {
+        field: 'Coordinates',
+        headerName: 'Coordinates',
         width: 200,
     },
     {
-        field: 'AvailableFrom',
-        headerName: 'AvailableFrom',
+        field: 'Circle_Radius',
+        headerName: 'Circle Radius',
+        width: 100,
+    },
+    {
+        field: 'Target_ID',
+        headerName: 'Target ID',
+        width: 150,
+    },
+    {
+        field: 'Location_Category',
+        headerName: 'Location Category',
         width: 200,
     },
-]
+    {
+        field: 'Coll_Start_Date',
+        headerName: 'Coll Start Date',
+        width: 100,
+    },
+    {
+        field: 'Coll_End_Date',
+        headerName: 'Coll End Date',
+        width: 100,
+    },
+    {
+        field: 'Coll_Start_Time',
+        headerName: 'Coll Start Time',
+        width: 100,
+    },
+    {
+        field: 'Coll_End_Time',
+        headerName: 'Coll End Time',
+        width: 100,
+    },
+    {
+        field: 'Recurrance',
+        headerName: 'Recurrance',
+        width: 100,
+    },
+    {
+        field: 'ISR_Role',
+        headerName: 'ISR Role',
+        width: 100,
+    },
+    {
+        field: 'Sensor_Visibility',
+        headerName: 'Sensor Visibility',
+        width: 100,
+    },
+    {
+        field: 'Required_Information',
+        headerName: 'Required Information',
+        width: 700,
+    },
+    {
+        field: 'Intel_Discipline',
+        headerName: 'Intel Discipline',
+        width: 100,
+    },
+    {
+        field: 'Exploitation_Requirement',
+        headerName: 'Exploitation Requirement',
+        width: 200,
+    },
+    {
+        field: 'ER_Remarks',
+        headerName: 'ER Remarks',
+        width: 200,
+    },
+    {
+        field: 'ER_Report_Frequency',
+        headerName: 'ER Report Frequency',
+        width: 200,
+    },
+    {
+        field: 'Required_Product',
+        headerName: 'Required Product',
+        width: 200,
+    },
+    {
+        field: 'RP_Remarks',
+        headerName: 'RP Remarks',
+        width: 200,
+    },
+    {
+        field: 'RP_Report_Frequency',
+        headerName: 'RP Report Frequency',
+        width: 200,
+    },
+    {
+        field: 'LTIOV',
+        headerName: 'LTIOV',
+        width: 200,
+    },
+    {
+        field: 'Latest_Report_Time',
+        headerName: 'Latest Report Time',
+        width: 200,
+    },
+    {
+        field: 'Reporting_Instructions',
+        headerName: 'Reporting Instructions',
+        width: 200,
+    },
+];
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -86,16 +204,15 @@ function a11yProps(index: number) {
 }
 
 export default function Home() {
-    const { allAssets, addAssetsToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex } = useContext(JAPContext)
+    const { allRequirements, addCRsToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex } = useContext(JAPContext)
     const [pageSize, setPageSize] = useState(10);
-    const [selectedRows, setSelectedRows] = useState<any[]>([])
+    const [selectedRows, setSelectedRows] = useState<string[]>([])
     const [amountOfAssetsAdded, setAmountOfAssetsAdded] = useState<number>(0)
     const [open, setOpen] = useState(false);
 
-    console.log('allAssets', allAssets)
+    const rows = allRequirements.filter((cr) => !plans[activePlanIndex]?.requirements.find(req => req.ID === cr.ID))
 
-    const allRows = allAssets
-    const rows = allRows.filter((asset) => !plans[activePlanIndex]?.assets.find(el => el.ID === asset.ID))
+    //console.log(allRequirements)
 
     const data_main: any = [
         [
@@ -106,16 +223,22 @@ export default function Home() {
         ]
     ];
 
+    const today = new Date();
+
     if (plans[activePlanIndex]) {
-        plans[activePlanIndex].assets.forEach((asset, i) => {
-            data_main.push([asset.UniquePlatformID, '', 
-            asset.AvailableFrom,
-            new Date(
-                asset.AvailableFrom.getFullYear(),
-                asset.AvailableFrom.getMonth(),
-                asset.AvailableFrom.getDate(),
-                0,
-                Number(asset.Capacity),
+        plans[activePlanIndex].requirements.forEach((req, i) => {
+            data_main.push(["CR" + req.ID, '', new Date(
+                today.getFullYear(),
+                today.getMonth(),
+                today.getDate(),
+                Number(req.Coll_Start_Time.split(":")[0]),
+                Number(req.Coll_Start_Time.split(":")[1]),
+            ), new Date(
+                today.getFullYear(),
+                today.getMonth(),
+                today.getDate(),
+                Number(req.Coll_End_Time.split(":")[0]),
+                Number(req.Coll_End_Time.split(":")[1]),
             )])
         })
     }
@@ -123,18 +246,13 @@ export default function Home() {
     const location_data = [] as [string, [number, number]][]
 
     if (plans[activePlanIndex]) {
-        plans[activePlanIndex].assets.forEach((asset, i) => {
-            location_data.push([asset.UniquePlatformID, [Number(asset.Location.split("N")[0]), Number(asset.Location.split(" ")[1].split("E")[0])]])
+        plans[activePlanIndex].requirements.forEach((req, i) => {
+            location_data.push(['CR' + req.ID, [Number(req.Coordinates.split("N")[0]), Number(req.Coordinates.split(" ")[1].split("E")[0])]])
         })
     }
 
     const addToPlanHandler = () => {
-        if (!plans[activePlanIndex]) return
-        console.log('selectedRows', selectedRows)
-        if (selectedRows.length === 0) return
-        const assetsToAdd = selectedRows.map((id) => rows.find(asset => asset.ID === id)) as Asset[]
-        console.log('assetsToAdd', assetsToAdd)
-        addAssetsToPlan(assetsToAdd)
+        addCRsToPlan(selectedRows.map((id) => rows.find(asset => asset.ID.toString() === id)!))
         console.log('plans', plans)
         setAmountOfAssetsAdded(selectedRows.length)
         setOpen(true);
@@ -169,9 +287,7 @@ export default function Home() {
                     variant="h5"
                     component="h5"
                     sx={{ textAlign: 'left', mt: 0, mb: 3 }}
-                >Collection Assets:</Typography>
-
-                <PlanSelector plans={plans} newPlan={newPlan} activePlanIndex={activePlanIndex} setActivePlanIndex={setActivePlanIndex} />
+                >Collection Requirements:</Typography>
 
                 <Button variant='contained' sx={{ mb: 2 }} onClick={addToPlanHandler}>Add Selection to Plan</Button>
 
@@ -182,7 +298,7 @@ export default function Home() {
                         columns={columns}
                         onSelectionModelChange={(newSelectedRows) => {
                             console.log(newSelectedRows)
-                            setSelectedRows(newSelectedRows)
+                            setSelectedRows(newSelectedRows.map((e) => e.toString()))
                             console.log(selectedRows)
                             //setSelectedRows(newSelectedRows);
                         }}
@@ -195,16 +311,16 @@ export default function Home() {
             </CustomTabPanel>
 
             <CustomTabPanel value={tabValue} index={1}>
-                <SynchMatrixView title="Asset Availability View" data={[data_main]}></SynchMatrixView>
+                <SynchMatrixView title="Requirement Collection Time View" data={[data_main]}></SynchMatrixView>
             </CustomTabPanel>
 
             <CustomTabPanel value={tabValue} index={2}>
-                <MapView title="Asset Location View" locationData={location_data} pathData={[]}></MapView>
+                <MapView title="Requirement Location View" locationData={location_data} pathData={[]}></MapView>
             </CustomTabPanel>
 
             <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
                 <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                    Added {amountOfAssetsAdded} Assets to Plan {plans[activePlanIndex]?.name}
+                    Added {amountOfAssetsAdded} Requirements to Plan {plans[activePlanIndex]?.name}
                 </Alert>
             </Snackbar>
         </Box>

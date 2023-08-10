@@ -14,7 +14,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import MailIcon from '@mui/icons-material/Mail';
+import FolderIcon from '@mui/icons-material/Folder';
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import Toolbar from '@mui/material/Toolbar';
@@ -76,7 +76,7 @@ export default function RootLayout({
               <Link href={text.toLowerCase()} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
                 <ListItemButton>
                   <ListItemIcon>
-                    <MailIcon />
+                    <FolderIcon />
                   </ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItemButton>
@@ -116,7 +116,7 @@ export default function RootLayout({
               <Link href={text.toLowerCase().replaceAll(" ", "")} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
                 <ListItemButton>
                   <ListItemIcon>
-                    <MailIcon />
+                    <FolderIcon />
                   </ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItemButton>
@@ -188,7 +188,9 @@ export default function RootLayout({
             addAssets,
             addCRs,
             removeAssets,
-            removeCRs
+            removeCRs,
+            mainDrawerWidth: drawerWidth,
+            setMainDrawerWidth: setDrawerWidth,
           }}
         >
 
