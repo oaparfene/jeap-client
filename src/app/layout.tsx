@@ -69,7 +69,7 @@ export default function RootLayout({
           variant="h6"
           component="h6"
           sx={{ textAlign: 'left', mt: 1, ml: 2 }}
-        >Planning:</Typography>
+        >Planning Context:</Typography>
         <List>
           {['Requirements', 'Assets', 'Plans'].map((text, index) => (
             <ListItem key={text} disablePadding>
