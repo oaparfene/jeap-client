@@ -2,9 +2,68 @@
 import { generateDataFromORBAT } from "@/constants";
 import { useData } from "@/hooks/useData";
 import { Asset } from "@/hooks/usePlan";
-import { Alert, Box, Button, Snackbar, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, FormControl, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, Snackbar, TextField, Theme, Typography, useTheme } from "@mui/material";
+import React, { Dispatch, ReactNode, SetStateAction } from "react";
 import { useContext, useState } from "react";
 import { JAPContext } from "../context";
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+const sensor_types = [
+  'EO',
+  'IR',
+  'SAR',
+  'GMTI',
+  'FMV'
+];
+
+export function MultipleSelect({ handleChange } : { handleChange: Dispatch<SetStateAction<string[]>> }) {
+  const [sensorName, setSensorName] = React.useState<string[]>([]);
+
+
+  return (
+    <div>
+      <FormControl sx={{ display: "flex"}}>
+        <InputLabel>Sensor</InputLabel>
+        <Select
+          labelId="demo-multiple-name-label"
+          id="demo-multiple-name"
+          multiple
+          value={sensorName}
+          onChange={(e) => {
+            const {
+              target: { value },
+            } = e;
+            setSensorName(
+              // On autofill we get a stringified value.
+              typeof value === 'string' ? value.split(',') : value);
+            handleChange(typeof value === 'string' ? value.split(',') : value)
+          }}
+          input={<OutlinedInput label="Name" />}
+          MenuProps={MenuProps}
+        >
+          {sensor_types.map((sensor) => (
+            <MenuItem
+              key={sensor}
+              value={sensor}
+            >
+              {sensor}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </div>
+  );
+}
 
 function Home() {
 
@@ -14,7 +73,7 @@ function Home() {
   const [description, setDescription] = useState("");
   const [capacity, setCapacity] = useState("");
   const [location, setLocation] = useState("");
-  const [sensor, setSensor] = useState("");
+  const [sensor, setSensor] = useState<string[]>([]);
   const [unit, setUnit] = useState("");
   const [availableFrom, setAvailableFrom] = useState<Date>(Date.now() as unknown as Date);
 
@@ -35,7 +94,7 @@ function Home() {
       Description: description,
       Capacity: capacity,
       Location: location,
-      Sensor: sensor,
+      Sensor: typeof sensor === "string" ? sensor : sensor.toString(),
       Unit: unit,
       AvailableFrom: availableFrom,
     }
@@ -90,15 +149,8 @@ function Home() {
           value={location}
           onChange={(e) => setLocation(e.target.value)}
         />
-        <TextField
-          id="sensor"
-          required
-          label="Sensor"
-          variant="outlined"
-          placeholder="FMV"
-          value={sensor}
-          onChange={(e) => setSensor(e.target.value)}
-        />
+        <MultipleSelect handleChange={setSensor} />
+
         {/* Location, Shape, LocationType */}
         <TextField
           id="unit"
