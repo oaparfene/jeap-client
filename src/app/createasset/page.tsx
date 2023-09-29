@@ -1,4 +1,5 @@
 "use client";
+import XMLUpload from "@/components/XMLUpload";
 import { generateDataFromORBAT } from "@/constants";
 import { useData } from "@/hooks/useData";
 import { Asset } from "@/hooks/usePlan";

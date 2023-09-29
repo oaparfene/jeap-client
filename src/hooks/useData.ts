@@ -1,3 +1,4 @@
+import { EventAssets } from "@/5gConstants";
 import { crs, generateDataFromORBAT } from "@/constants";
 import { useEffect, useState } from "react";
 import { Asset, Requirement } from "./usePlan";
@@ -8,7 +9,8 @@ export const useData = () => {
     const [allAssets, setAllAssets] = useState<Asset[]>([]);
 
     useEffect(() => {
-        setAllAssets(generateDataFromORBAT()!)
+        //setAllAssets(generateDataFromORBAT()!)
+        setAllAssets(EventAssets)
         setAllRequirements(crs)
     }, [])
 

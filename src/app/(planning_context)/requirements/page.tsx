@@ -28,51 +28,51 @@ const columns: GridColDef[] = [
         headerName: 'Requester',
         width: 100,
     },
-    {
-        field: 'CR_Rank',
-        headerName: 'CR Rank',
-        width: 20,
-    },
-    {
-        field: 'Justification',
-        headerName: 'Justification',
-        width: 200,
-    },
-    {
-        field: 'Status',
-        headerName: 'Status',
-        width: 120,
-    },
-    {
-        field: 'Location',
-        headerName: 'Location',
-        width: 200,
-    },
-    {
-        field: 'Shape',
-        headerName: 'Shape',
-        width: 100,
-    },
-    {
-        field: 'Location_Type',
-        headerName: 'Location Type',
-        width: 150,
-    },
+    // {
+    //     field: 'CR_Rank',
+    //     headerName: 'CR Rank',
+    //     width: 20,
+    // },
+    // {
+    //     field: 'Justification',
+    //     headerName: 'Justification',
+    //     width: 200,
+    // },
+    // {
+    //     field: 'Status',
+    //     headerName: 'Status',
+    //     width: 120,
+    // },
+    // {
+    //     field: 'Location',
+    //     headerName: 'Location',
+    //     width: 200,
+    // },
+    // {
+    //     field: 'Shape',
+    //     headerName: 'Shape',
+    //     width: 100,
+    // },
+    // {
+    //     field: 'Location_Type',
+    //     headerName: 'Location Type',
+    //     width: 150,
+    // },
     {
         field: 'Coordinates',
         headerName: 'Coordinates',
         width: 200,
     },
-    {
-        field: 'Circle_Radius',
-        headerName: 'Circle Radius',
-        width: 100,
-    },
-    {
-        field: 'Target_ID',
-        headerName: 'Target ID',
-        width: 150,
-    },
+    // {
+    //     field: 'Circle_Radius',
+    //     headerName: 'Circle Radius',
+    //     width: 100,
+    // },
+    // {
+    //     field: 'Target_ID',
+    //     headerName: 'Target ID',
+    //     width: 150,
+    // },
     {
         field: 'Location_Category',
         headerName: 'Location Category',
@@ -103,16 +103,16 @@ const columns: GridColDef[] = [
         headerName: 'Recurrance',
         width: 100,
     },
-    {
-        field: 'ISR_Role',
-        headerName: 'ISR Role',
-        width: 100,
-    },
-    {
-        field: 'Sensor_Visibility',
-        headerName: 'Sensor Visibility',
-        width: 100,
-    },
+    // {
+    //     field: 'ISR_Role',
+    //     headerName: 'ISR Role',
+    //     width: 100,
+    // },
+    // {
+    //     field: 'Sensor_Visibility',
+    //     headerName: 'Sensor Visibility',
+    //     width: 100,
+    // },
     {
         field: 'Required_Information',
         headerName: 'Required Information',
@@ -143,31 +143,31 @@ const columns: GridColDef[] = [
         headerName: 'Required Product',
         width: 200,
     },
-    {
-        field: 'RP_Remarks',
-        headerName: 'RP Remarks',
-        width: 200,
-    },
-    {
-        field: 'RP_Report_Frequency',
-        headerName: 'RP Report Frequency',
-        width: 200,
-    },
+    // {
+    //     field: 'RP_Remarks',
+    //     headerName: 'RP Remarks',
+    //     width: 200,
+    // },
+    // {
+    //     field: 'RP_Report_Frequency',
+    //     headerName: 'RP Report Frequency',
+    //     width: 200,
+    // },
     {
         field: 'LTIOV',
         headerName: 'LTIOV',
         width: 200,
     },
-    {
-        field: 'Latest_Report_Time',
-        headerName: 'Latest Report Time',
-        width: 200,
-    },
-    {
-        field: 'Reporting_Instructions',
-        headerName: 'Reporting Instructions',
-        width: 200,
-    },
+    // {
+    //     field: 'Latest_Report_Time',
+    //     headerName: 'Latest Report Time',
+    //     width: 200,
+    // },
+    // {
+    //     field: 'Reporting_Instructions',
+    //     headerName: 'Reporting Instructions',
+    //     width: 200,
+    // },
 ];
 
 interface TabPanelProps {
