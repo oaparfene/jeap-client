@@ -14,7 +14,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import MailIcon from '@mui/icons-material/Mail';
+import FolderIcon from '@mui/icons-material/Folder';
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import Toolbar from '@mui/material/Toolbar';
@@ -32,6 +32,7 @@ import { InformationRequirementType } from '@/types/main/informationRequirementT
 import { generateDataFromORBAT } from '@/constants';
 import { usePlan } from '@/hooks/usePlan';
 import { useData } from '@/hooks/useData';
+import css from 'styled-jsx/css'
 
 export default function RootLayout({
   children,
@@ -69,14 +70,14 @@ export default function RootLayout({
           variant="h6"
           component="h6"
           sx={{ textAlign: 'left', mt: 1, ml: 2 }}
-        >Planning:</Typography>
+        >Planning Context:</Typography>
         <List>
           {['Requirements', 'Assets', 'Plans'].map((text, index) => (
             <ListItem key={text} disablePadding>
               <Link href={text.toLowerCase()} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
                 <ListItemButton>
                   <ListItemIcon>
-                    <MailIcon />
+                    <FolderIcon />
                   </ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItemButton>
@@ -116,7 +117,7 @@ export default function RootLayout({
               <Link href={text.toLowerCase().replaceAll(" ", "")} style={{ textDecoration: 'none', color: 'black', width: '100%' }}>
                 <ListItemButton>
                   <ListItemIcon>
-                    <MailIcon />
+                    <FolderIcon />
                   </ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItemButton>
@@ -188,7 +189,9 @@ export default function RootLayout({
             addAssets,
             addCRs,
             removeAssets,
-            removeCRs
+            removeCRs,
+            mainDrawerWidth: drawerWidth,
+            setMainDrawerWidth: setDrawerWidth,
           }}
         >
 

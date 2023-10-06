@@ -3,7 +3,7 @@
 import { PlanSelector } from "@/components/PlanSelector"
 import { generateDataFromORBAT } from "@/constants"
 import { useContext } from "react"
-import { JAPContext } from "../context"
+import { JAPContext } from "../../context"
 import { Alert, Box, Button, Snackbar, Tab, Tabs, Typography } from "@mui/material"
 import { DataGrid, GridColDef, GridRowId } from "@mui/x-data-grid"
 import { useState } from "react"
@@ -170,8 +170,6 @@ export default function Home() {
                     component="h5"
                     sx={{ textAlign: 'left', mt: 0, mb: 3 }}
                 >Collection Assets:</Typography>
-
-                <PlanSelector plans={plans} newPlan={newPlan} activePlanIndex={activePlanIndex} setActivePlanIndex={setActivePlanIndex} />
 
                 <Button variant='contained' sx={{ mb: 2 }} onClick={addToPlanHandler}>Add Selection to Plan</Button>
 

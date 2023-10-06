@@ -159,9 +159,9 @@ export const useMiniZinc = () => {
             flightLocations.push(plan.assets[i].Location);
             for (var j = 0; j < location_len; j++) {
                 for (var k = 0; k < location_len; k++) {
-                    if (travel_array[asset_len*(j*location_len+k) + i] === '1') {
+                    if (travel_array[asset_len * (j * location_len + k) + i] === '1') {
                         flightLocations.push(_locationList[j]);
-                    }       
+                    }
                 }
             }
             _flightPlans.push({
@@ -384,6 +384,9 @@ export const useMiniZinc = () => {
             console.log("data: ", data)
             const _allocation = MZNResult_to_AllocationObject(plan, data)
             setAllocation(_allocation)
+        }).catch((err) => {
+            console.log(err)
+            setLoading(false)
         })
     }
 

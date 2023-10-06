@@ -3,7 +3,7 @@
 import { PlanSelector } from "@/components/PlanSelector"
 import { generateDataFromORBAT, crs } from "@/constants"
 import { useContext, useEffect } from "react"
-import { JAPContext } from "../context"
+import { JAPContext } from "../../context"
 import { Alert, Box, Button, CircularProgress, Snackbar, Stack, Tab, Tabs, Typography } from "@mui/material"
 import { DataGrid, GridColDef, GridRowId } from "@mui/x-data-grid"
 import { useState } from "react"
@@ -383,8 +383,6 @@ export default function Home() {
                     component="h5"
                     sx={{ textAlign: 'left', mt: 0, mb: 3 }}
                 >Collection Plans:</Typography>
-
-                <PlanSelector plans={plans} newPlan={newPlan} activePlanIndex={activePlanIndex} setActivePlanIndex={setActivePlanIndex} />
 
                 <Box sx={{ display: 'flex', flexDir: 'row', justifyContent: 'space-between' }}>
 

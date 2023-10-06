@@ -1,3 +1,4 @@
+import { EventAssets } from "@/5gConstants";
 import { crs, generateDataFromORBAT } from "@/constants";
 import { useEffect, useState } from "react";
 import { Asset, Requirement } from "./usePlan";
@@ -8,7 +9,26 @@ export const useData = () => {
     const [allAssets, setAllAssets] = useState<Asset[]>([]);
 
     useEffect(() => {
-        setAllAssets(generateDataFromORBAT()!)
+        //setAllAssets(generateDataFromORBAT()!)
+        fetch('http://localhost:8090/api/collections/Assets/records').then(res => res.json().then(data => {
+            setAllAssets(data.items.map((item: any, index: number) => {
+                return {
+                    ID: index,
+                    UniquePlatformID: item.UniquePlatformID,
+                    Description: item.Description,
+                    AvailableFrom: new Date(item.AvailableFrom),
+                    Sensor: item.Sensor,
+                    Unit: item.Unit,
+                    Location: item.Location,
+                    Capacity: item.Capacity
+                }
+            }))
+            console.log(data)
+        })).catch(err => {
+            console.log(err)
+            setAllAssets(EventAssets)
+        })
+
         setAllRequirements(crs)
     }, [])
 

@@ -5,6 +5,8 @@ import { GeographicAreaOfInterestType } from "@/types/main/geographicAreaOfInter
 import { Plan, Asset, Requirement, Task, FlightPlan } from "@/hooks/usePlan";
 
 export type JAPContextType = {
+    mainDrawerWidth: number,
+    setMainDrawerWidth: (width: number) => void,
     plans: Plan[],
     getPlan: () => Plan,
     allAssets: Asset[],
@@ -38,6 +40,8 @@ export type JCAPContextType = {
 }
 
 export const JAPContext = createContext<JAPContextType>({
+    mainDrawerWidth: 240,
+    setMainDrawerWidth: (width: number) => { },
     plans: [],
     getPlan: () => { return { name: 'No Plan', assets: [], requirements: [], allocation: [], flightPlans: [] } },
     allAssets: [],

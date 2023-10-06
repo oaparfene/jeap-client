@@ -1,4 +1,5 @@
 "use client";
+import XMLUpload from "@/components/XMLUpload";
 import { Requirement } from "@/hooks/usePlan";
 import { Alert, Box, Button, Snackbar, TextField, Typography } from "@mui/material";
 import { useContext, useState } from "react";
@@ -324,8 +325,8 @@ function Home() {
           </Box>
         </Box>
       </Box>
-      <Box sx={{ display: "flex", justifyContent: "end", m: "12px" }}>
-
+      <Box sx={{ display: "flex", justifyContent: "between", m: "12px", width: "100%", gap: "4px" }}>
+        <XMLUpload />
         <Button variant='contained' sx={{ mr: 2 }} onClick={handleCreateRequirement}>Create</Button>
       </Box>
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
