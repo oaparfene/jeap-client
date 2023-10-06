@@ -126,6 +126,9 @@ function XMLUpload() {
               addCRs([activeCR])
               setOpenNewCR(false)
             }}>Upload CR</Button>
+            <Button variant='contained' sx={{ mb: 2 }} onClick={() => {
+              setOpenNewCR(false)
+            }}>Cancel</Button>
           </Stack>
 
 
