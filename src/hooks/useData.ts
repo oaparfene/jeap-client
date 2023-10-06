@@ -10,7 +10,25 @@ export const useData = () => {
 
     useEffect(() => {
         //setAllAssets(generateDataFromORBAT()!)
-        setAllAssets(EventAssets)
+        fetch('http://localhost:8090/api/collections/Assets/records').then(res => res.json().then(data => {
+            setAllAssets(data.items.map((item: any, index: number) => {
+                return {
+                    ID: index,
+                    UniquePlatformID: item.UniquePlatformID,
+                    Description: item.Description,
+                    AvailableFrom: new Date(item.AvailableFrom),
+                    Sensor: item.Sensor,
+                    Unit: item.Unit,
+                    Location: item.Location,
+                    Capacity: item.Capacity
+                }
+            }))
+            console.log(data)
+        })).catch(err => {
+            console.log(err)
+            setAllAssets(EventAssets)
+        })
+
         setAllRequirements(crs)
     }, [])
 

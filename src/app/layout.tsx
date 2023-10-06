@@ -32,6 +32,7 @@ import { InformationRequirementType } from '@/types/main/informationRequirementT
 import { generateDataFromORBAT } from '@/constants';
 import { usePlan } from '@/hooks/usePlan';
 import { useData } from '@/hooks/useData';
+import css from 'styled-jsx/css'
 
 export default function RootLayout({
   children,
