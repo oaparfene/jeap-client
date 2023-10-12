@@ -11,6 +11,7 @@ import SynchMatrixView from "@/components/SynchMatrixView"
 import MapIcon from '@mui/icons-material/Map';
 import ViewTimelineIcon from '@mui/icons-material/ViewTimeline';
 import TableChartIcon from '@mui/icons-material/TableChart';
+import { CustomReqsToolbar } from "@/components/ExcelExport"
 
 const columns: GridColDef[] = [
     {
@@ -306,6 +307,7 @@ export default function Home() {
                         rowsPerPageOptions={[5, 10, 20]}
                         pageSize={pageSize}
                         checkboxSelection
+                        components={{ Toolbar: CustomReqsToolbar }}
                     />
                 </Box>
             </CustomTabPanel>

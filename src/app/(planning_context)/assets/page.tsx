@@ -13,6 +13,7 @@ import MapIcon from '@mui/icons-material/Map';
 import ViewTimelineIcon from '@mui/icons-material/ViewTimeline';
 import TableChartIcon from '@mui/icons-material/TableChart';
 import { Asset } from "@/hooks/usePlan"
+import { CustomAssetsToolbar } from "@/components/ExcelExport"
 
 const columns: GridColDef[] = [
     {
@@ -188,6 +189,7 @@ export default function Home() {
                         rowsPerPageOptions={[5, 10, 20]}
                         pageSize={pageSize}
                         checkboxSelection
+                        components={{ Toolbar: CustomAssetsToolbar }}
                     />
                 </Box>
             </CustomTabPanel>
