@@ -1,4 +1,4 @@
-import { EventAssets } from "@/5gConstants";
+import { EventAssets, EventRequirements } from "@/5gConstants";
 import { crs, generateDataFromORBAT } from "@/constants";
 import { useEffect, useState } from "react";
 import { Asset, Requirement } from "./usePlan";
@@ -29,7 +29,7 @@ export const useData = () => {
             setAllAssets(EventAssets)
         })
 
-        setAllRequirements(crs)
+        setAllRequirements(EventRequirements)
     }, [])
 
     const addAssets = (assetsToAdd: Asset[]) => {
