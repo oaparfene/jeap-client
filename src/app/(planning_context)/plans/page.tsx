@@ -16,6 +16,11 @@ import MapIcon from '@mui/icons-material/Map';
 import ViewTimelineIcon from '@mui/icons-material/ViewTimeline';
 import TableChartIcon from '@mui/icons-material/TableChart';
 import { CustomReqsToolbar, CustomAssetsToolbar } from "@/components/ExcelExport";
+import dynamic from 'next/dynamic';
+
+const ClientSideMapView = dynamic(() => import('../../../components/MapView'), {
+  ssr: false,
+});
 
 
 const reqColumns: GridColDef[] = [
@@ -461,7 +466,7 @@ export default function Home() {
             </CustomTabPanel>
 
             <CustomTabPanel value={tabValue} index={2}>
-                <MapView title="Flight Path View" locationData={location_data} pathData={flight_data}></MapView>
+                <ClientSideMapView title="Flight Path View" locationData={location_data} pathData={flight_data}></ClientSideMapView>
             </CustomTabPanel>
 
             <Snackbar open={openCR} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
