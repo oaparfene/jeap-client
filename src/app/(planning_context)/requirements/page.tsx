@@ -11,6 +11,12 @@ import SynchMatrixView from "@/components/SynchMatrixView"
 import MapIcon from '@mui/icons-material/Map';
 import ViewTimelineIcon from '@mui/icons-material/ViewTimeline';
 import TableChartIcon from '@mui/icons-material/TableChart';
+import { CustomReqsToolbar } from "@/components/ExcelExport"
+import dynamic from 'next/dynamic';
+
+const ClientSideMapView = dynamic(() => import('../../../components/MapView'), {
+  ssr: false,
+});
 
 const columns: GridColDef[] = [
     {
@@ -306,6 +312,7 @@ export default function Home() {
                         rowsPerPageOptions={[5, 10, 20]}
                         pageSize={pageSize}
                         checkboxSelection
+                        components={{ Toolbar: CustomReqsToolbar }}
                     />
                 </Box>
             </CustomTabPanel>
@@ -315,7 +322,7 @@ export default function Home() {
             </CustomTabPanel>
 
             <CustomTabPanel value={tabValue} index={2}>
-                <MapView title="Requirement Location View" locationData={location_data} pathData={[]}></MapView>
+                <ClientSideMapView title="Requirement Location View" locationData={location_data} pathData={[]}></ClientSideMapView>
             </CustomTabPanel>
 
             <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>

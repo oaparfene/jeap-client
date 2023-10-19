@@ -3,6 +3,10 @@ import { Box, Typography } from "@mui/material";
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import { LatLngExpression } from "leaflet";
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+import L from 'leaflet';
+//import './style.css';
 
 interface MapViewProps {
     title: string
@@ -11,10 +15,16 @@ interface MapViewProps {
 }
 
 function MapView({ title, locationData, pathData }: MapViewProps) {
+    let DefaultIcon = L.icon({
+        iconUrl: icon.src,
+        shadowUrl: iconShadow.src
+    });
+
+    L.Marker.prototype.options.icon = DefaultIcon;
 
     const colors = ["yellow", "green", "blue", "orange", "red"]
 
-    if (typeof window == 'undefined') {
+    if (typeof window === 'undefined') {
         return <></>
     } else
         return (
@@ -43,7 +53,7 @@ function MapView({ title, locationData, pathData }: MapViewProps) {
                         })}
                         {pathData.map((e, i) => {
                             return (
-                                <Polyline key={i} pathOptions={{ color: colors[i%colors.length] }} positions={e}></Polyline>
+                                <Polyline key={i} pathOptions={{ color: colors[i % colors.length] }} positions={e}></Polyline>
                             )
                         })}
                     </MapContainer>

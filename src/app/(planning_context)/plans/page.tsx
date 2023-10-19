@@ -1,11 +1,12 @@
 'use client'
 
 import { PlanSelector } from "@/components/PlanSelector"
+import * as XLSX from 'xlsx';
 import { generateDataFromORBAT, crs } from "@/constants"
 import { useContext, useEffect } from "react"
 import { JAPContext } from "../../context"
-import { Alert, Box, Button, CircularProgress, Snackbar, Stack, Tab, Tabs, Typography } from "@mui/material"
-import { DataGrid, GridColDef, GridRowId } from "@mui/x-data-grid"
+import { Alert, Box, Button, CircularProgress, MenuItem, Snackbar, Stack, Tab, Tabs, Typography } from "@mui/material"
+import { DataGrid, GridColDef, gridFilteredSortedRowIdsSelector, GridRowId, GridToolbar, GridToolbarContainer, GridToolbarExportContainer, gridVisibleColumnFieldsSelector, useGridApiContext } from "@mui/x-data-grid"
 import { useState } from "react"
 import { Asset, Requirement } from "@/hooks/usePlan"
 import { useMiniZinc } from "@/hooks/useMiniZinc"
@@ -14,6 +15,13 @@ import SynchMatrixView from "@/components/SynchMatrixView"
 import MapIcon from '@mui/icons-material/Map';
 import ViewTimelineIcon from '@mui/icons-material/ViewTimeline';
 import TableChartIcon from '@mui/icons-material/TableChart';
+import { CustomReqsToolbar, CustomAssetsToolbar } from "@/components/ExcelExport";
+import dynamic from 'next/dynamic';
+
+const ClientSideMapView = dynamic(() => import('../../../components/MapView'), {
+  ssr: false,
+});
+
 
 const reqColumns: GridColDef[] = [
     {
@@ -411,6 +419,7 @@ export default function Home() {
                         rowsPerPageOptions={[5, 10, 20]}
                         pageSize={pageSize}
                         checkboxSelection
+                        components={{ Toolbar: CustomReqsToolbar }}
                     />
                 </Box>
 
@@ -441,6 +450,7 @@ export default function Home() {
                         rowsPerPageOptions={[5, 10, 20]}
                         pageSize={pageSize}
                         checkboxSelection
+                        components={{ Toolbar: CustomAssetsToolbar }}
                     />
                 </Box>
 
@@ -456,7 +466,7 @@ export default function Home() {
             </CustomTabPanel>
 
             <CustomTabPanel value={tabValue} index={2}>
-                <MapView title="Flight Path View" locationData={location_data} pathData={flight_data}></MapView>
+                <ClientSideMapView title="Flight Path View" locationData={location_data} pathData={flight_data}></ClientSideMapView>
             </CustomTabPanel>
 
             <Snackbar open={openCR} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
