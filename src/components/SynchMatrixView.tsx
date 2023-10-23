@@ -9,9 +9,11 @@ interface SynchMatrixViewProps {
         type: string
         id: string
     }[])[][]
+    crsCollected?: number
+    totalCRs?: number
 }
 
-function SynchMatrixView({ title, data }: SynchMatrixViewProps) {
+function SynchMatrixView({ title, data, crsCollected, totalCRs }: SynchMatrixViewProps) {
 
   return (
     <Box sx={{ p: 0 }}>
@@ -25,9 +27,16 @@ function SynchMatrixView({ title, data }: SynchMatrixViewProps) {
         >
           {title}
         </Typography>
+        {!!crsCollected && <Typography
+          variant="h6"
+          component="h6"
+          sx={{ textAlign: 'left', mt: 0, mb: 3 }}
+        >
+          {crsCollected + "/" + totalCRs + " CRs collected"}
+        </Typography>}
         {data.map((e, i) => {
             return (
-                <Chart key={i} chartType="Timeline" data={e} width="100%" height="500px" options={{ timeline: { groupByRowLabel: true } }} />
+                <Chart key={i} chartType="Timeline" data={e} width="100%" height={(e.length * 41 + 30).toString() + "px"} options={{ timeline: { groupByRowLabel: true } }} />
             )
         })}
       </Box>

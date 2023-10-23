@@ -233,7 +233,7 @@ export const useMiniZinc = () => {
         }
         mzndata += (assetList[assetlen - 1].UniquePlatformID.replace(/ /g, "_") + '};\n\n');
         //
-        mzndata += 'INTELL = {HUMINT, IMINT, MASINT, ACINT, OSINT, SIGINT, EW};\n\n';
+        mzndata += 'INTELL = {EO, IR, MTI, SAR, FMV, SIGINT, ELINT};\n\n';
         //
         mzndata += "NAI = {'" + [...new Set(crlocations)].toString().replaceAll(",", "', '") + "'};\n\n";
         // for (var i = 0; i < crlen-1; i++)
@@ -307,15 +307,30 @@ export const useMiniZinc = () => {
             mzndata += (crs[i].Coll_End_Time.split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) - crs[i].Coll_Start_Time.split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) + ', ');
         mzndata += (crs[crlen - 1].Coll_End_Time.split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) - crs[crlen - 1].Coll_Start_Time.split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) + '];\n\n');
         //
+        const sensorTypeArray = ['EO', 'IR', 'MTI', 'SAR', 'FMV', 'SIGINT', 'ELINT']
         mzndata += 'sensor = ['
         for (var j = 0; j < 7; j++) {
             mzndata += '| ';
-            for (var i = 0; i < assetlen - 1; i++)
-                mzndata += '1, ';
-            if (j === 6)
-                mzndata += '1|];\n\n'
-            else
-                mzndata += '1\n'
+            for (var i = 0; i < assetlen - 1; i++) {
+                if (assetList[i].Sensor.includes(sensorTypeArray[j]))
+                    mzndata += '1, ';
+                else
+                    mzndata += '0, ';
+            }
+            if (j === 6) {
+
+                if (assetList[assetlen - 1].Sensor.includes(sensorTypeArray[j]))
+                    mzndata += '1|];\n\n'
+                else
+                    mzndata += '0|];\n\n'
+            }
+            else {
+
+                if (assetList[assetlen - 1].Sensor.includes(sensorTypeArray[j]))
+                    mzndata += '1\n'
+                else
+                    mzndata += '0\n'
+            }
         }
         //
         mzndata += 'capacity = ['
@@ -382,12 +397,120 @@ export const useMiniZinc = () => {
         })
         response.text().then((data) => {
             console.log("data: ", data)
-            const _allocation = MZNResult_to_AllocationObject(plan, data)
+            const _allocation = MZNResultToAllocationObject(plan, data)
+            //const _allocation = MZNResult_to_AllocationObject(plan, data)
             setAllocation(_allocation)
         }).catch((err) => {
             console.log(err)
             setLoading(false)
         })
+    }
+
+    const MZNResultToAllocationObject = (_plan: Plan, _data: string) => {
+
+        console.log(_data)
+
+        const parsedData = JSON.parse(_data.split("{\"type\": \"status\"")[0])
+        console.log("parsed Data: ", parsedData)
+
+        const base = parsedData.output.dzn
+
+        const [collectionStart, collectionDuration, ctlBinary, assetUsed, travelMatrix, crCollected] = base.split(";")
+        console.log("collectionStart: ", collectionStart)
+        console.log("collectionDuration: ", collectionDuration)
+        console.log("ctlBinary: ", ctlBinary)
+        //console.log("assetUsed: ", assetUsed)
+        console.log("travelMatrix: ", travelMatrix)
+        //console.log("crCollected: ", crCollected)
+
+        const collectionStartArray = collectionStart
+            .replace(/allocated_collection_start = \[|\]/g, '')
+            .replace(/CR\d*: /g, '')
+            .split(', ')
+            .map((entry: string) =>
+                Number(entry)
+            )
+        console.log("collectionStartArray: ", collectionStartArray)
+
+        const collectionDurationArray = collectionDuration
+            .replace(/allocated_collection_duration = \[|\]/g, '')
+            .replace(/CR\d*: /g, '')
+            .split(', ')
+            .map((entry: string) =>
+                Number(entry)
+            )
+        console.log("collectionDurationArray: ", collectionDurationArray)
+
+        const ctlBinaryArray = ctlBinary.match(/( [0-1])/g).map((entry: string) => Number(entry))
+
+        let tasks: Task[] = [];
+        const len = _plan.assets.length;
+        console.log(len);
+        const today = new Date();
+        var count = 0;
+        for (var i = 0; i < ctlBinaryArray.length; i++) {
+            if (ctlBinaryArray[i] === 1) {
+                const startMins: number = collectionStartArray[Math.floor(i / len)];
+                const durationMins: number = collectionDurationArray[Math.floor(i / len)];
+                tasks.push({
+                    ID: count++,
+                    Asset_Used: _plan.assets[i % len].UniquePlatformID,
+                    Coordinates: _plan.requirements[Math.floor(i / len)].Coordinates,
+                    Requirement_to_Collect: _plan.requirements[Math.floor(i / len)].ID.toString(),
+                    Start: new Date(
+                        today.getFullYear(),
+                        today.getMonth(),
+                        today.getDate(),
+                        Math.floor(startMins / 60),
+                        startMins % 60
+                    ),
+                    End: new Date(
+                        today.getFullYear(),
+                        today.getMonth(),
+                        today.getDate(),
+                        Math.floor((startMins + durationMins) / 60),
+                        (startMins + durationMins) % 60
+                    )
+                });
+            }
+        }
+        console.log("tasks: ", tasks);
+
+        const travelMatrixArray = travelMatrix.split("[")[1].match(/[0-1]/g).map((entry: string) => Number(entry))
+
+        let _flightPlans: FlightPlan[] = [];
+        const _locationList = [...new Set(_plan.requirements.map((requirement) => requirement.Coordinates.split(";")[0])), ...new Set(_plan.assets.map((asset) => asset.Location))]
+        const location_len = _locationList.length;
+        const asset_len = travelMatrixArray.length / location_len ** 2;
+        console.log(location_len);
+        var count = 0;
+
+        for (var i = 0; i < asset_len; i++) {
+            const flightLocations = [];
+            flightLocations.push(_plan.assets[i].Location);
+            for (var j = 0; j < location_len; j++) {
+                for (var k = 0; k < location_len; k++) {
+                    if (travelMatrixArray[asset_len * (j * location_len + k) + i] === 1) {
+                        flightLocations.push(_locationList[j]);
+                    }
+                }
+            }
+            _flightPlans.push({
+                ID: count++,
+                Asset_Used: _plan.assets[i].UniquePlatformID,
+                Flight_Path: [...flightLocations],
+            });
+        }
+
+        console.log("flightplans: ", _flightPlans);
+        setFlightPlans(_flightPlans)
+
+        setLoading(false)
+
+
+        return tasks
+
+
     }
 
     return { prepareAllocation, allocation, flightPlans, loading }

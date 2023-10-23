@@ -71,6 +71,11 @@ export default function RootLayout({
         newPlan(name)
     }
 
+    React.useEffect(() => {
+        if (plans.length === 0)
+            newPlan("5G Defence")
+    }, [])
+
     const drawer = (
         <div>
             <Box sx={{ display: "flex", justifyContent: "end" }}>

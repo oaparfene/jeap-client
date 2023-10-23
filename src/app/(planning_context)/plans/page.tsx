@@ -34,71 +34,71 @@ const reqColumns: GridColDef[] = [
         headerName: 'Operation',
         width: 200,
     },
-    {
-        field: 'Requester',
-        headerName: 'Requester',
-        width: 100,
-    },
-    {
-        field: 'CR_Rank',
-        headerName: 'CR Rank',
-        width: 20,
-    },
-    {
-        field: 'Justification',
-        headerName: 'Justification',
-        width: 200,
-    },
-    {
-        field: 'Status',
-        headerName: 'Status',
-        width: 120,
-    },
+    // {
+    //     field: 'Requester',
+    //     headerName: 'Requester',
+    //     width: 100,
+    // },
+    // {
+    //     field: 'CR_Rank',
+    //     headerName: 'CR Rank',
+    //     width: 20,
+    // },
+    // {
+    //     field: 'Justification',
+    //     headerName: 'Justification',
+    //     width: 200,
+    // },
+    // {
+    //     field: 'Status',
+    //     headerName: 'Status',
+    //     width: 120,
+    // },
     {
         field: 'Location',
         headerName: 'Location',
         width: 200,
     },
-    {
-        field: 'Shape',
-        headerName: 'Shape',
-        width: 100,
-    },
-    {
-        field: 'Location_Type',
-        headerName: 'Location Type',
-        width: 150,
-    },
+    // {
+    //     field: 'Shape',
+    //     headerName: 'Shape',
+    //     width: 100,
+    // },
+    // {
+    //     field: 'Location_Type',
+    //     headerName: 'Location Type',
+    //     width: 150,
+    // },
     {
         field: 'Coordinates',
         headerName: 'Coordinates',
         width: 200,
     },
-    {
-        field: 'Circle_Radius',
-        headerName: 'Circle Radius',
-        width: 100,
-    },
-    {
-        field: 'Target_ID',
-        headerName: 'Target ID',
-        width: 150,
-    },
-    {
-        field: 'Location_Category',
-        headerName: 'Location Category',
-        width: 200,
-    },
-    {
-        field: 'Coll_Start_Date',
-        headerName: 'Coll Start Date',
-        width: 100,
-    },
-    {
-        field: 'Coll_End_Date',
-        headerName: 'Coll End Date',
-        width: 100,
-    },
+    // {
+    //     field: 'Circle_Radius',
+    //     headerName: 'Circle Radius',
+    //     width: 100,
+    // },
+    // {
+    //     field: 'Target_ID',
+    //     headerName: 'Target ID',
+    //     width: 150,
+    // },
+    // {
+    //     field: 'Location_Category',
+    //     headerName: 'Location Category',
+    //     width: 200,
+    // },
+    // {
+    //     field: 'Coll_Start_Date',
+    //     headerName: 'Coll Start Date',
+    //     width: 100,
+    // },
+    // {
+    //     field: 'Coll_End_Date',
+    //     headerName: 'Coll End Date',
+    //     width: 100,
+    // },
     {
         field: 'Coll_Start_Time',
         headerName: 'Coll Start Time',
@@ -109,21 +109,21 @@ const reqColumns: GridColDef[] = [
         headerName: 'Coll End Time',
         width: 100,
     },
-    {
-        field: 'Recurrance',
-        headerName: 'Recurrance',
-        width: 100,
-    },
-    {
-        field: 'ISR_Role',
-        headerName: 'ISR Role',
-        width: 100,
-    },
-    {
-        field: 'Sensor_Visibility',
-        headerName: 'Sensor Visibility',
-        width: 100,
-    },
+    // {
+    //     field: 'Recurrance',
+    //     headerName: 'Recurrance',
+    //     width: 100,
+    // },
+    // {
+    //     field: 'ISR_Role',
+    //     headerName: 'ISR Role',
+    //     width: 100,
+    // },
+    // {
+    //     field: 'Sensor_Visibility',
+    //     headerName: 'Sensor Visibility',
+    //     width: 100,
+    // },
     {
         field: 'Required_Information',
         headerName: 'Required Information',
@@ -134,51 +134,51 @@ const reqColumns: GridColDef[] = [
         headerName: 'Intel Discipline',
         width: 100,
     },
-    {
-        field: 'Exploitation_Requirement',
-        headerName: 'Exploitation Requirement',
-        width: 200,
-    },
-    {
-        field: 'ER_Remarks',
-        headerName: 'ER Remarks',
-        width: 200,
-    },
-    {
-        field: 'ER_Report_Frequency',
-        headerName: 'ER Report Frequency',
-        width: 200,
-    },
+    // {
+    //     field: 'Exploitation_Requirement',
+    //     headerName: 'Exploitation Requirement',
+    //     width: 200,
+    // },
+    // {
+    //     field: 'ER_Remarks',
+    //     headerName: 'ER Remarks',
+    //     width: 200,
+    // },
+    // {
+    //     field: 'ER_Report_Frequency',
+    //     headerName: 'ER Report Frequency',
+    //     width: 200,
+    // },
     {
         field: 'Required_Product',
         headerName: 'Required Product',
         width: 200,
     },
-    {
-        field: 'RP_Remarks',
-        headerName: 'RP Remarks',
-        width: 200,
-    },
-    {
-        field: 'RP_Report_Frequency',
-        headerName: 'RP Report Frequency',
-        width: 200,
-    },
+    // {
+    //     field: 'RP_Remarks',
+    //     headerName: 'RP Remarks',
+    //     width: 200,
+    // },
+    // {
+    //     field: 'RP_Report_Frequency',
+    //     headerName: 'RP Report Frequency',
+    //     width: 200,
+    // },
     {
         field: 'LTIOV',
         headerName: 'LTIOV',
         width: 200,
     },
-    {
-        field: 'Latest_Report_Time',
-        headerName: 'Latest Report Time',
-        width: 200,
-    },
-    {
-        field: 'Reporting_Instructions',
-        headerName: 'Reporting Instructions',
-        width: 200,
-    },
+    // {
+    //     field: 'Latest_Report_Time',
+    //     headerName: 'Latest Report Time',
+    //     width: 200,
+    // },
+    // {
+    //     field: 'Reporting_Instructions',
+    //     headerName: 'Reporting Instructions',
+    //     width: 200,
+    // },
 ];
 const assetColumns: GridColDef[] = [
     {
@@ -462,7 +462,7 @@ export default function Home() {
             </CustomTabPanel>
 
             <CustomTabPanel value={tabValue} index={1}>
-                <SynchMatrixView title="Allocation Gantt View" data={[data_main, data_inv]}></SynchMatrixView>
+                <SynchMatrixView title="Allocation Gantt View" data={[data_main, data_inv]} crsCollected={plans[activePlanIndex].allocation.length} totalCRs={plans[activePlanIndex].requirements.length}></SynchMatrixView>
             </CustomTabPanel>
 
             <CustomTabPanel value={tabValue} index={2}>

@@ -22,7 +22,7 @@ function MapView({ title, locationData, pathData }: MapViewProps) {
 
     L.Marker.prototype.options.icon = DefaultIcon;
 
-    const colors = ["yellow", "green", "blue", "orange", "red"]
+    const colors = ["yellow", "green", "blue", "orange", "red", "purple", "black", "white", "brown", "pink", "gray"]
 
     if (typeof window === 'undefined') {
         return <></>

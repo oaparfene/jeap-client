@@ -6,7 +6,7 @@ export const EventAssets: Asset[] = [
         UniquePlatformID: "F-35",
         Description: "F-35 Lightning II",
         AvailableFrom: new Date(23, 10, 2023),
-        Sensor: "EO, IR, SAR",
+        Sensor: "EO, IR, SAR, MTI, SIGINT, ELINT, FMV",
         Unit: "1st Recon Unit",
         Location: "61.042497N 28.1418E",
         Capacity: "24"
@@ -16,7 +16,7 @@ export const EventAssets: Asset[] = [
         UniquePlatformID: "RQ-9",
         Description: "RQ-9 Reaper",
         AvailableFrom: new Date(23, 10, 2023),
-        Sensor: "EO, IR",
+        Sensor: "EO, IR, FMV",
         Unit: "1st Recon Unit",
         Location: "61.042497N 28.1418E",
         Capacity: "24"
@@ -26,7 +26,7 @@ export const EventAssets: Asset[] = [
         UniquePlatformID: "Tornado ECR",
         Description: "Tornado ECR (Electronic Combat/Reconnaissance)",
         AvailableFrom: new Date(23, 10, 2023),
-        Sensor: "EO, IR",
+        Sensor: "EO, IR, FMV",
         Unit: "1st Recon Unit",
         Location: "61.042497N 28.1418E",
         Capacity: "24"
@@ -36,7 +36,7 @@ export const EventAssets: Asset[] = [
         UniquePlatformID: "RQ-4A",
         Description: "RQ-4A Global Hawk",
         AvailableFrom: new Date(23, 10, 2023),
-        Sensor: "EO, IR, SAR, GMTI",
+        Sensor: "EO, IR, SAR, MTI, FMV",
         Unit: "1st Recon Unit",
         Location: "61.042497N 28.1418E",
         Capacity: "24"
@@ -46,7 +46,7 @@ export const EventAssets: Asset[] = [
         UniquePlatformID: "RQ-4D",
         Description: "RQ-4D Global Hawk",
         AvailableFrom: new Date(23, 10, 2023),
-        Sensor: "EO, IR, SAR",
+        Sensor: "EO, IR, SAR, FMV",
         Unit: "1st Recon Unit",
         Location: "61.042497N 28.1418E",
         Capacity: "24"
@@ -56,7 +56,7 @@ export const EventAssets: Asset[] = [
         UniquePlatformID: "MQ-1B",
         Description: "MQ-1B Predator",
         AvailableFrom: new Date(23, 10, 2023),
-        Sensor: "EO, IR, SAR",
+        Sensor: "EO, IR, SAR, FMV",
         Unit: "1st Recon Unit",
         Location: "61.042497N 28.1418E",
         Capacity: "24"
@@ -66,7 +66,57 @@ export const EventAssets: Asset[] = [
         UniquePlatformID: "Lanza LTR 35",
         Description: "Lanza LTR 35 (Light Tactical Radar)",
         AvailableFrom: new Date(23, 10, 2023),
-        Sensor: "EW",
+        Sensor: "MTI, ELINT",
+        Unit: "1st Recon Unit",
+        Location: "61.042497N 28.1418E",
+        Capacity: "24"
+    },
+    {
+        ID: 8,
+        UniquePlatformID: "EF-2000",
+        Description: "EF-2000 Typhoon (Stormshadow)",
+        AvailableFrom: new Date(23, 10, 2023),
+        Sensor: "EO, IR, FMV",
+        Unit: "1st Recon Unit",
+        Location: "61.042497N 28.1418E",
+        Capacity: "24"
+    },
+    {
+        ID: 9,
+        UniquePlatformID: "RQ-1B",
+        Description: "RQ-1B Predator",
+        AvailableFrom: new Date(23, 10, 2023),
+        Sensor: "EO, IR, FMV",
+        Unit: "1st Recon Unit",
+        Location: "61.042497N 28.1418E",
+        Capacity: "24"
+    },
+    {
+        ID: 10,
+        UniquePlatformID: "VERA-NG",
+        Description: "VERA-NG (VHF and UHF ESM)",
+        AvailableFrom: new Date(23, 10, 2023),
+        Sensor: "MTI, ELINT",
+        Unit: "1st Recon Unit",
+        Location: "61.042497N 28.1418E",
+        Capacity: "24"
+    },
+    {
+        ID: 11,
+        UniquePlatformID: "Aquila",
+        Description: "Aquila Commercial Drone ",
+        AvailableFrom: new Date(23, 10, 2023),
+        Sensor: "EO, IR, FMV",
+        Unit: "1st Recon Unit",
+        Location: "61.042497N 28.1418E",
+        Capacity: "24"
+    },
+    {
+        ID: 12,
+        UniquePlatformID: "Autel",
+        Description: "Autel Commercial Drone ",
+        AvailableFrom: new Date(23, 10, 2023),
+        Sensor: "EO, IR, FMV",
         Unit: "1st Recon Unit",
         Location: "61.042497N 28.1418E",
         Capacity: "24"
