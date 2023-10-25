@@ -1,17 +1,73 @@
 'use client'
 import { Box, Typography } from "@mui/material";
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import { LatLngExpression } from "leaflet";
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import L from 'leaflet';
+import { useEffect } from "react";
+import { toPng } from 'html-to-image';
+import { saveAs } from "file-saver"
 //import './style.css';
 
 interface MapViewProps {
     title: string
     locationData: [string, [number, number]][]
     pathData: [string, [number, number][]][]
+}
+
+interface FitBoundsProps {
+    markerCoords: [number, number][]
+    polylineCoords: [number, number][][]
+}
+
+function FitBounds({ markerCoords, polylineCoords }: FitBoundsProps) {
+    const map = useMap();
+
+    useEffect(() => {
+        let coordinates = [];
+
+        // Collect coordinates from markers
+        for (let marker of markerCoords) {
+            coordinates.push(marker);
+        }
+
+        // Collect coordinates from polylines
+        for (let polyline of polylineCoords) {
+            coordinates = coordinates.concat(polyline);
+        }
+
+        if (coordinates.length > 0) {
+            let bounds = new L.LatLngBounds(coordinates);
+            map.fitBounds(bounds);
+        }
+    }, [map, markerCoords, polylineCoords]);
+
+    // useEffect(() => {
+    //     const mapNode = document.getElementById('map');
+    //     setTimeout(
+    //         () => {
+
+    //             toPng(mapNode!)
+    //                 .then(dataUrl => {
+    //                     const img = new Image();
+    //                     img.src = dataUrl;
+    //                     //document.body.appendChild(img);  // This line is for testing; you can remove it
+
+    //                     // To save the image data to a file, you might use a library such as FileSaver.js
+    //                     // For example:
+    //                     saveAs(dataUrl, 'map.png');
+    //                 })
+    //                 .catch(error => {
+    //                     console.error('Error capturing map:', error);
+    //                 });
+    //         }, 1000
+    //     )
+
+    // }, [])
+
+    return null;
 }
 
 function MapView({ title, locationData, pathData }: MapViewProps) {
@@ -38,21 +94,21 @@ function MapView({ title, locationData, pathData }: MapViewProps) {
                     >
                         {title}
                     </Typography>
-                    <MapContainer style={{ height: '900px', width: '80wh' }} center={[48.69282575, 8.14527]} zoom={5} scrollWheelZoom={true}>
+                    <MapContainer id="map" style={{ height: '900px', width: '80wh' }} center={[48.69282575, 8.14527]} zoom={12} scrollWheelZoom={true}>
                         <TileLayer
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         />
                         {locationData.map((e) => {
                             return (
                                 <Marker key={e.toString()} position={e[1] as LatLngExpression}
-                                eventHandlers={{
-                                    mouseover: (e) => {
-                                        e.target.openPopup()
-                                    },
-                                    mouseout: (e) => {
-                                        e.target.closePopup()
-                                    }
-                                }}>
+                                    eventHandlers={{
+                                        mouseover: (e) => {
+                                            e.target.openPopup()
+                                        },
+                                        mouseout: (e) => {
+                                            e.target.closePopup()
+                                        }
+                                    }}>
                                     <Popup>
                                         <h4 style={{
                                             whiteSpace: "pre-wrap",
@@ -79,6 +135,7 @@ function MapView({ title, locationData, pathData }: MapViewProps) {
                                 ></Polyline>
                             )
                         })}
+                        <FitBounds markerCoords={locationData.map((e) => e[1])} polylineCoords={pathData.map((e) => e[1])} />
                     </MapContainer>
                 </Box>
             </Box>

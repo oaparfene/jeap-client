@@ -15,8 +15,9 @@ import SynchMatrixView from "@/components/SynchMatrixView"
 import MapIcon from '@mui/icons-material/Map';
 import ViewTimelineIcon from '@mui/icons-material/ViewTimeline';
 import TableChartIcon from '@mui/icons-material/TableChart';
-import { CustomReqsToolbar, CustomAssetsToolbar } from "@/components/ExcelExport";
+import { CustomReqsToolbar, CustomAssetsToolbar, handleExportPlan } from "@/components/ExcelExport";
 import dynamic from 'next/dynamic';
+import { toPng } from "html-to-image";
 
 const ClientSideMapView = dynamic(() => import('../../../components/MapView'), {
     ssr: false,
@@ -301,7 +302,7 @@ export default function Home() {
 
     if (plans[activePlanIndex]) {
         plans[activePlanIndex].allocation.forEach((task, i) => {
-            location_data.push(['CR' + task.Requirement_to_Collect + " " + plans[activePlanIndex].requirements[Number(task.Requirement_to_Collect)-1].Intel_Discipline + " " + task.Asset_Used + " at " + task.Start.getHours() + ":" + (task.Start.getMinutes() === 0 ? '00' : task.Start.getMinutes().toString()) + " - " + task.End.getHours() + ":" + (task.End.getMinutes() === 0 ? '00' : task.End.getMinutes().toString()), [Number(task.Coordinates.split("N")[0]), Number(task.Coordinates.split(" ")[1].split("E")[0])]])
+            location_data.push(['CR' + task.Requirement_to_Collect + " " + plans[activePlanIndex].requirements[Number(task.Requirement_to_Collect) - 1].Intel_Discipline + " " + task.Asset_Used + " at " + task.Start.getHours() + ":" + (task.Start.getMinutes() === 0 ? '00' : task.Start.getMinutes().toString()) + " - " + task.End.getHours() + ":" + (task.End.getMinutes() === 0 ? '00' : task.End.getMinutes().toString()), [Number(task.Coordinates.split("N")[0]), Number(task.Coordinates.split(" ")[1].split("E")[0])]])
         })
 
         plans[activePlanIndex].flightPlans.forEach((flight, i) => {
@@ -386,11 +387,17 @@ export default function Home() {
 
             <CustomTabPanel value={tabValue} index={0}>
 
-                <Typography
-                    variant="h5"
-                    component="h5"
-                    sx={{ textAlign: 'left', mt: 0, mb: 3 }}
-                >Collection Plans:</Typography>
+                <Box sx={{ display: 'flex', flexDir: 'row', justifyContent: 'space-between' }}>
+                    <Typography
+                        variant="h5"
+                        component="h5"
+                        sx={{ textAlign: 'left', mt: 0, mb: 3 }}
+                    >Collection Plans:</Typography>
+                    <Button variant="contained" sx={{ m: 1 }} onClick={() => {
+                        handleExportPlan(plans[activePlanIndex])
+                    }}>Download Plan</Button>
+                </Box>
+
 
                 <Box sx={{ display: 'flex', flexDir: 'row', justifyContent: 'space-between' }}>
 
@@ -467,6 +474,15 @@ export default function Home() {
             </CustomTabPanel>
 
             <CustomTabPanel value={tabValue} index={2}>
+                <Box sx={{ display: 'flex', flexDir: 'row', justifyContent: 'end' }}>
+                    <Button variant="contained" sx={{ m: 1 }} onClick={() => {
+                        toPng(document.getElementById('map')!)
+                            .then(dataUrl => {
+                                console.log(dataUrl)
+                                handleExportPlan(plans[activePlanIndex], dataUrl)
+                            })
+                    }}>Download Plan</Button>
+                </Box>
                 <ClientSideMapView title="Flight Path View" locationData={location_data} pathData={flight_data}></ClientSideMapView>
             </CustomTabPanel>
 
