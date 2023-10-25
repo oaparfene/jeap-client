@@ -121,6 +121,26 @@ export const EventAssets: Asset[] = [
         Location: "61.042497N 28.1418E",
         Capacity: "24"
     },
+    {
+        ID: 13,
+        UniquePlatformID: "AWACS",
+        Description: "AWACS (Airborne Warning and Control System)",
+        AvailableFrom: new Date(23, 10, 2023),
+        Sensor: "SIGINT, ELINT",
+        Unit: "1st Recon Unit",
+        Location: "61.042497N 28.1418E",
+        Capacity: "24"
+    },
+    {
+        ID: 14,
+        UniquePlatformID: "F-16",
+        Description: "F-16 Fighting Falcon",
+        AvailableFrom: new Date(23, 10, 2023),
+        Sensor: "EO, IR, SAR, FMV",
+        Unit: "1st Recon Unit",
+        Location: "61.042497N 28.1418E",
+        Capacity: "24"
+    },
 ]
 
 export const EventRequirements: Requirement[] = [

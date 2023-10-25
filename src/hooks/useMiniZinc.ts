@@ -1,5 +1,6 @@
 import { FlightPlan, Plan, Requirement, Task } from "./usePlan"
-import { useState } from "react"
+import { useContext, useState } from "react"
+import { SettingsContext } from "@/app/context"
 
 export const useMiniZinc = () => {
 
@@ -7,6 +8,8 @@ export const useMiniZinc = () => {
     const [loading, setLoading] = useState<boolean>(false)
 
     const [flightPlans, setFlightPlans] = useState<FlightPlan[]>([])
+
+    const { MZNAPIURL, MZNSolverEngine } = useContext(SettingsContext)
 
 
     const generateCostMatrix = (plan: Plan) => {
@@ -386,7 +389,7 @@ export const useMiniZinc = () => {
         mzndata += costMatrix[costMatrix.length - 1][costMatrix.length - 1] + '|];\n\n'
 
         console.log(mzndata);
-        const response = await fetch("http://localhost:5000", {
+        const response = await fetch(MZNAPIURL + "/" + MZNSolverEngine.toLowerCase(), {
             method: "POST",
             mode: "cors",
             headers: {

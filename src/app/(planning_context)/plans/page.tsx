@@ -462,7 +462,7 @@ export default function Home() {
             </CustomTabPanel>
 
             <CustomTabPanel value={tabValue} index={1}>
-                <SynchMatrixView title="Allocation Gantt View" data={[data_main, data_inv]} crsCollected={plans[activePlanIndex].allocation.length} totalCRs={plans[activePlanIndex].requirements.length}></SynchMatrixView>
+                <SynchMatrixView title="Allocation Gantt View" data={[data_main, data_inv]} crsCollected={plans[activePlanIndex]?.allocation.length} totalCRs={plans[activePlanIndex]?.requirements.length}></SynchMatrixView>
             </CustomTabPanel>
 
             <CustomTabPanel value={tabValue} index={2}>

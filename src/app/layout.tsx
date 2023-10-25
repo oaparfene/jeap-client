@@ -23,7 +23,7 @@ import { Avatar, Button } from '@mui/material';
 import next from 'next';
 import Link from 'next/link';
 import Head from 'next/head';
-import { JCAPContext } from './context'
+import { JCAPContext, SettingsContext } from './context'
 import { JAPContext } from './context';
 import { CollectionExploitationPlanType } from '@/types/main/collectionExploitationPlanType';
 import { createCMPlan, generateRandomTasks, addTasksToPEDPlan, generateRandomGAOIs, generateRandomTasksWithGAOI } from '@/lib/helpers';
@@ -32,18 +32,25 @@ import { InformationRequirementType } from '@/types/main/informationRequirementT
 import { generateDataFromORBAT } from '@/constants';
 import { usePlan } from '@/hooks/usePlan';
 import { useData } from '@/hooks/useData';
+import SettingsIcon from '@mui/icons-material/Settings';
 import css from 'styled-jsx/css'
-
+import { useRouter } from 'next/navigation';
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
 
+  const router = useRouter()
+
   const { getPlan, addCRsToPlan, removeCRsFromPlan, addAssetsToPlan, removeAssetsFromPlan, addTasksToPlan, addFlightPlansToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex } = usePlan()
   const { allAssets, allRequirements, addAssets, addCRs, removeAssets, removeCRs } = useData()
   const [drawerWidth, setDrawerWidth] = React.useState<number>(240)
   const [open, setOpen] = React.useState(true);
+
+  const [MZNSolverEngine, setMZNSolverEngine] = React.useState<string>("Gecode");
+  const [BackendAPIURL, setBackendAPIURL] = React.useState<string>("http://localhost:8090/api");
+  const [MZNAPIURL, setMZNAPIURL] = React.useState<string>("http://localhost:5000");
 
   const handleToggleDrawer = () => {
     setDrawerWidth(drawerWidth === 240 ? 40 : 240)
@@ -53,14 +60,16 @@ export default function RootLayout({
   const drawer = (
     <div>
       <Box sx={{ display: "flex", justifyContent: "end" }}>
-        <IconButton onClick={handleToggleDrawer} sx={{p: 1}}>
+        <IconButton onClick={handleToggleDrawer} sx={{ p: 1 }}>
           {!open ? <MenuIcon /> : <MenuOpenIcon></MenuOpenIcon>}
         </IconButton>
       </Box>
       {open && <>
         {/* <Toolbar /> */}
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: 2, width: "100%" }}>
+
           <Avatar sx={{ mb: 2 }}>JD</Avatar>
+
           <Typography variant='h5'>John Doe</Typography>
           <Typography>john.doe@email.com</Typography>
         </Box>
@@ -171,77 +180,102 @@ export default function RootLayout({
           setPEDPlans,
         }}
         > */}
-        <JAPContext.Provider
+        <SettingsContext.Provider
           value={{
-            getPlan,
-            plans,
-            newPlan,
-            activePlanIndex,
-            setActivePlanIndex,
-            addCRsToPlan,
-            addAssetsToPlan,
-            removeCRsFromPlan,
-            removeAssetsFromPlan,
-            addTasksToPlan,
-            addFlightPlansToPlan,
-            allAssets,
-            allRequirements,
-            addAssets,
-            addCRs,
-            removeAssets,
-            removeCRs,
-            mainDrawerWidth: drawerWidth,
-            setMainDrawerWidth: setDrawerWidth,
-          }}
-        >
+            MZNSolverEngine,
+            setMZNSolverEngine,
+            BackendAPIURL,
+            setBackendAPIURL,
+            MZNAPIURL,
+            setMZNAPIURL,
 
-          <Box sx={{ display: 'flex' }}>
-            <CssBaseline />
-            <AppBar
-              position="fixed"
-              sx={{
-                width: { sm: `calc(100% - ${drawerWidth}px)` },
-                ml: { sm: `${drawerWidth}px` },
-              }}
-            >
-              <Toolbar>
+          }}>
+          <JAPContext.Provider
+            value={{
+              getPlan,
+              plans,
+              newPlan,
+              activePlanIndex,
+              setActivePlanIndex,
+              addCRsToPlan,
+              addAssetsToPlan,
+              removeCRsFromPlan,
+              removeAssetsFromPlan,
+              addTasksToPlan,
+              addFlightPlansToPlan,
+              allAssets,
+              allRequirements,
+              addAssets,
+              addCRs,
+              removeAssets,
+              removeCRs,
+              mainDrawerWidth: drawerWidth,
+              setMainDrawerWidth: setDrawerWidth,
+            }}
+          >
+
+            <Box sx={{ display: 'flex' }}>
+              <CssBaseline />
+              <AppBar
+                position="fixed"
+                sx={{
+                  width: { sm: `calc(100% - ${drawerWidth}px)` },
+                  ml: { sm: `${drawerWidth}px` },
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <Toolbar>
+                  <IconButton
+                    color="inherit"
+                    edge="start"
+                    sx={{ mr: 2, display: { sm: 'none' } }}
+                  >
+                    <MenuIcon />
+                  </IconButton>
+                  <Typography variant="h6" noWrap component="div">
+                    JCAP
+                  </Typography>
+                </Toolbar>
                 <IconButton
                   color="inherit"
                   edge="start"
-                  sx={{ mr: 2, display: { sm: 'none' } }}
+                  onClick={() => {
+                    router.push("/settings")
+                  }
+                  }
                 >
-                  <MenuIcon />
+                  <SettingsIcon />
                 </IconButton>
-                <Typography variant="h6" noWrap component="div">
-                  JCAP
-                </Typography>
-              </Toolbar>
-            </AppBar>
-            <Box
-              component="nav"
-              sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-              aria-label="mailbox folders"
-            >
-              <Drawer
-                variant="permanent"
-                sx={{
-                  display: { xs: 'none', sm: 'block' },
-                  '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-                }}
-                open
+              </AppBar>
+              <Box
+                component="nav"
+                sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+                aria-label="mailbox folders"
               >
-                {drawer}
-              </Drawer>
+                <Drawer
+                  variant="permanent"
+                  sx={{
+                    display: { xs: 'none', sm: 'block' },
+                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                  }}
+                  open
+                >
+                  {drawer}
+                </Drawer>
+              </Box>
+              <Box
+                component="main"
+                sx={{ flexGrow: 1, p: 0, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+              >
+                <Toolbar />
+                {children}
+              </Box>
             </Box>
-            <Box
-              component="main"
-              sx={{ flexGrow: 1, p: 0, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
-            >
-              <Toolbar />
-              {children}
-            </Box>
-          </Box>
-        </JAPContext.Provider>
+          </JAPContext.Provider>
+        </SettingsContext.Provider>
         {/* </JCAPContext.Provider> */}
       </body>
     </html>

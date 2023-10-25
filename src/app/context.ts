@@ -39,6 +39,15 @@ export type JCAPContextType = {
     setPEDPlans: (plans: Array<CollectionExploitationPlanType>) => void
 }
 
+export type SettingsContextType = {
+    BackendAPIURL: string,
+    setBackendAPIURL: (url: string) => void,
+    MZNAPIURL: string,
+    setMZNAPIURL: (url: string) => void,
+    MZNSolverEngine: string,
+    setMZNSolverEngine: (engine: string) => void,
+}
+
 export const JAPContext = createContext<JAPContextType>({
     mainDrawerWidth: 240,
     setMainDrawerWidth: (width: number) => { },
@@ -72,4 +81,13 @@ export const JCAPContext =  createContext<JCAPContextType>({
     setActivePlan: (plan: CollectionExploitationPlanType) => plan,
     setCMPlans: (plans: Array<CollectionExploitationPlanType>) => plans,
     setPEDPlans: (plans: Array<CollectionExploitationPlanType>) => plans
+})
+
+export const SettingsContext = createContext<SettingsContextType>({
+    BackendAPIURL: 'http://localhost:8090/api',
+    setBackendAPIURL: (url: string) => { },
+    MZNAPIURL: 'http://localhost:5000',
+    setMZNAPIURL: (url: string) => { },
+    MZNSolverEngine: 'gecode',
+    setMZNSolverEngine: (engine: string) => { }
 })
