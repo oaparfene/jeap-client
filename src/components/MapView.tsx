@@ -123,7 +123,6 @@ function MapView({ title, locationData, pathData }: MapViewProps) {
                         {pathData.map((e, i) => {
                             return (
                                 <Polyline key={i} pathOptions={{ color: colors[i % colors.length] }} positions={e[1] as LatLngExpression[]}
-                                    children={<Popup>{e[0]}</Popup>}
                                     eventHandlers={{
                                         mouseover: (e) => {
                                             e.target.openPopup()
@@ -132,7 +131,7 @@ function MapView({ title, locationData, pathData }: MapViewProps) {
                                             e.target.closePopup()
                                         }
                                     }}
-                                ></Polyline>
+                                ><Popup>{e[0]}</Popup></Polyline>
                             )
                         })}
                         <FitBounds markerCoords={locationData.map((e) => e[1])} polylineCoords={pathData.map((e) => e[1])} />
