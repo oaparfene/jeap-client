@@ -11,7 +11,7 @@ import L from 'leaflet';
 interface MapViewProps {
     title: string
     locationData: [string, [number, number]][]
-    pathData: [number, number][][]
+    pathData: [string, [number, number][]][]
 }
 
 function MapView({ title, locationData, pathData }: MapViewProps) {
@@ -22,7 +22,7 @@ function MapView({ title, locationData, pathData }: MapViewProps) {
 
     L.Marker.prototype.options.icon = DefaultIcon;
 
-    const colors = ["yellow", "green", "blue", "orange", "red", "purple", "black", "white", "brown", "pink", "gray"]
+    const colors = ["#5e97f6", "#db4437", "#f2a600", "#0f9d58", "#ab47bc", "#00acc1", "#ff7043", "#9e9d24", "#5c6bc0", "#f06292", "#00796b", "#c2185b"]
 
     if (typeof window === 'undefined') {
         return <></>
@@ -44,16 +44,39 @@ function MapView({ title, locationData, pathData }: MapViewProps) {
                         />
                         {locationData.map((e) => {
                             return (
-                                <Marker key={e.toString()} position={e[1] as LatLngExpression}>
+                                <Marker key={e.toString()} position={e[1] as LatLngExpression}
+                                eventHandlers={{
+                                    mouseover: (e) => {
+                                        e.target.openPopup()
+                                    },
+                                    mouseout: (e) => {
+                                        e.target.closePopup()
+                                    }
+                                }}>
                                     <Popup>
-                                        {e[0].toString().replace("_", " ")}
+                                        <h4 style={{
+                                            whiteSpace: "pre-wrap",
+                                        }}>
+
+                                            {e[0].toString().replace("_", " ")}
+                                        </h4>
                                     </Popup>
                                 </Marker>
                             )
                         })}
                         {pathData.map((e, i) => {
                             return (
-                                <Polyline key={i} pathOptions={{ color: colors[i % colors.length] }} positions={e}></Polyline>
+                                <Polyline key={i} pathOptions={{ color: colors[i % colors.length] }} positions={e[1] as LatLngExpression[]}
+                                    children={<Popup>{e[0]}</Popup>}
+                                    eventHandlers={{
+                                        mouseover: (e) => {
+                                            e.target.openPopup()
+                                        },
+                                        mouseout: (e) => {
+                                            e.target.closePopup()
+                                        }
+                                    }}
+                                ></Polyline>
                             )
                         })}
                     </MapContainer>

@@ -19,7 +19,7 @@ import { CustomReqsToolbar, CustomAssetsToolbar } from "@/components/ExcelExport
 import dynamic from 'next/dynamic';
 
 const ClientSideMapView = dynamic(() => import('../../../components/MapView'), {
-  ssr: false,
+    ssr: false,
 });
 
 
@@ -297,19 +297,19 @@ export default function Home() {
     }
 
     const location_data = [] as [string, [number, number]][]
-    const flight_data = [] as [number, number][][]
+    const flight_data = [] as [string, [number, number][]][]
 
     if (plans[activePlanIndex]) {
         plans[activePlanIndex].allocation.forEach((task, i) => {
-            location_data.push(['CR' + task.Requirement_to_Collect, [Number(task.Coordinates.split("N")[0]), Number(task.Coordinates.split(" ")[1].split("E")[0])]])
+            location_data.push(['CR' + task.Requirement_to_Collect + " " + plans[activePlanIndex].requirements[Number(task.Requirement_to_Collect)-1].Intel_Discipline + " " + task.Asset_Used + " at " + task.Start.getHours() + ":" + (task.Start.getMinutes() === 0 ? '00' : task.Start.getMinutes().toString()) + " - " + task.End.getHours() + ":" + (task.End.getMinutes() === 0 ? '00' : task.End.getMinutes().toString()), [Number(task.Coordinates.split("N")[0]), Number(task.Coordinates.split(" ")[1].split("E")[0])]])
         })
 
         plans[activePlanIndex].flightPlans.forEach((flight, i) => {
             if (flight.Flight_Path.length > 0) {
-                flight_data.push(flight.Flight_Path.map((e) => {
+                flight_data.push([flight.Asset_Used, flight.Flight_Path.map((e) => {
                     return [Number(e.split("N")[0]), Number(e.split(" ")[1].split("E")[0])]
                 }
-                ))
+                )])
             }
         })
     }
@@ -462,7 +462,8 @@ export default function Home() {
             </CustomTabPanel>
 
             <CustomTabPanel value={tabValue} index={1}>
-                <SynchMatrixView title="Allocation Gantt View" data={[data_main, data_inv]} crsCollected={plans[activePlanIndex]?.allocation.length} totalCRs={plans[activePlanIndex]?.requirements.length}></SynchMatrixView>
+                <SynchMatrixView title="Allocation Gantt View" data={[data_main]} crsCollected={plans[activePlanIndex]?.allocation.length} totalCRs={plans[activePlanIndex]?.requirements.length}></SynchMatrixView>
+                <SynchMatrixView title="" data={[data_inv]} colorByRowLabel></SynchMatrixView>
             </CustomTabPanel>
 
             <CustomTabPanel value={tabValue} index={2}>
