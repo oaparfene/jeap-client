@@ -54,151 +54,6 @@ export const useMiniZinc = () => {
         return deg * (Math.PI / 180)
     }
 
-    // transforms the response from MZN into a JS Object for display
-    const MZNResult_to_AllocationObject = (plan: Plan, _allocation: string) => {
-        let temp = _allocation
-            .replace(/=/g, ':')
-            .replace(/;/g, ',')
-            .replace(/travel/, '+')
-            .split('+')[0];
-        console.log(temp);
-        const base = temp;
-        // @ts-ignore
-        const collectionStart = /(?<=allocated_collection_start : array1d\(CR, \[).*(?=\]\),)/
-            .exec(base)[0]
-            .replace(/CR\d*: /g, '')
-            .split(', ')
-            .map((entry) => Number(entry));
-        // @ts-ignore
-        const collectionDuration = /(?<=allocated_collection_duration : array1d\(CR, \[).*(?=\]\),)/
-            .exec(base)[0]
-            .replace(/CR\d*: /g, '')
-            .split(', ')
-            .map((entry: string) => Number(entry));
-        // @ts-ignore
-        const assets = /(?<=asset_used : array1d\(ASSET, \[).*(?=\]\),)/
-            .exec(base)[0]
-            .replace(/: [01]/g, '')
-            .split(', ');
-
-        console.log(collectionStart)
-        console.log(collectionDuration)
-        console.log(assets)
-
-        let s = temp.replace(/ctl_binary : array2d\(CR, ASSET, \[|\]\),\nasset_used/g, ',+').split('+')[1];
-        console.log("s: ", s)
-        const re = /[01](?=,)/g;
-
-        var m;
-        var ctl_binary_array = [];
-        do {
-            m = re.exec(s);
-            if (m) ctl_binary_array.push(m[0]);
-        } while (m);
-
-        console.log(ctl_binary_array) // ok
-
-        //console.log(results)
-        //console.log(typeof(_allocation))
-
-        let tasks: Task[] = [];
-        const len = plan.assets.length;
-        console.log(len);
-        const today = new Date();
-        var count = 0;
-        for (var i = 0; i < ctl_binary_array.length; i++) {
-            if (ctl_binary_array[i] === '1') {
-                const startMins = collectionStart[Math.floor(i / len)];
-                const durationMins = collectionDuration[Math.floor(i / len)];
-                tasks.push({
-                    ID: count++,
-                    Asset_Used: plan.assets[i % len].UniquePlatformID,
-                    Coordinates: plan.requirements[Math.floor(i / len)].Coordinates,
-                    Requirement_to_Collect: plan.requirements[Math.floor(i / len)].ID.toString(),
-                    Start: new Date(
-                        today.getFullYear(),
-                        today.getMonth(),
-                        today.getDate(),
-                        Math.floor(startMins / 60),
-                        startMins % 60
-                    ),
-                    End: new Date(
-                        today.getFullYear(),
-                        today.getMonth(),
-                        today.getDate(),
-                        Math.floor((startMins + durationMins) / 60),
-                        (startMins + durationMins) % 60
-                    )
-                });
-            }
-        }
-        console.log("tasks: ", tasks);
-
-        //
-
-        const temp2 = _allocation
-        let _s = temp2.replace(/travel = array3d\(.*, \[|\]\)\;\ncr_collected/g, ',+').split('+')[1];
-        console.log("_s: ", _s)
-        const _re = /[01](?=,)/g;
-
-        var _m;
-        var travel_array = [];
-        do {
-            _m = _re.exec(_s);
-            if (_m) travel_array.push(_m[0]);
-        } while (_m);
-
-        console.log(travel_array) // ok
-
-        let _flightPlans: FlightPlan[] = [];
-        const _locationList = [...new Set(plan.requirements.map((requirement) => requirement.Coordinates.split(";")[0])), ...new Set(plan.assets.map((asset) => asset.Location))]
-        const location_len = _locationList.length;
-        const asset_len = travel_array.length / location_len ** 2;
-        console.log(location_len);
-        var count = 0;
-
-        for (var i = 0; i < asset_len; i++) {
-            const flightLocations = [];
-            flightLocations.push(plan.assets[i].Location);
-            for (var j = 0; j < location_len; j++) {
-                for (var k = 0; k < location_len; k++) {
-                    if (travel_array[asset_len * (j * location_len + k) + i] === '1') {
-                        flightLocations.push(_locationList[j]);
-                    }
-                }
-            }
-            _flightPlans.push({
-                ID: count++,
-                Asset_Used: plan.assets[i].UniquePlatformID,
-                Flight_Path: [...flightLocations],
-            });
-        }
-
-        // for (var i = 0; i < travel_array.length; i = i + location_len ** 2) {
-        //     const flightLocations = [];
-        //     for (var j = 0; j < location_len ** 2; j++) {
-        //         if (travel_array[i + j] === '1') {
-        //             flightLocations.push(_locationList[Math.floor(j / location_len)]);
-        //             flightLocations.push(_locationList[Math.floor(j % location_len)]);
-        //         }
-        //     }
-
-        //     _flightPlans.push({
-        //         ID: count++,
-        //         Asset_Used: plan.assets[i / (location_len**2)].UniquePlatformID,
-        //         Flight_Path: flightLocations,
-        //     });
-
-        // }
-        console.log("flightplans: ", _flightPlans);
-        setFlightPlans(_flightPlans)
-
-        //
-
-        //setAllocation(tasks)
-        setLoading(false)
-        return tasks;
-    }
 
     const prepareAllocation = async (plan: Plan) => {
         setLoading(true)
@@ -292,23 +147,23 @@ export const useMiniZinc = () => {
         //
         mzndata += 'required_start_time = ['
         for (var i = 0; i < crlen - 1; i++)
-            mzndata += (crs[i].Coll_Start_Time.split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) + ', ');
-        mzndata += (crs[crlen - 1].Coll_Start_Time.split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) + '];\n\n');
+            mzndata += (crs[i].Coll_Start_Time.split("T")[1].split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) + ', ');
+        mzndata += (crs[crlen - 1].Coll_Start_Time.split("T")[1].split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) + '];\n\n');
         //
         mzndata += 'required_duration = ['
         for (var i = 0; i < crlen - 1; i++)
-            mzndata += (crs[i].Coll_End_Time.split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) - crs[i].Coll_Start_Time.split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) + ', ');
-        mzndata += (crs[crlen - 1].Coll_End_Time.split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) - crs[crlen - 1].Coll_Start_Time.split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) + '];\n\n');
+            mzndata += (crs[i].Coll_End_Time.split("T")[1].split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) - crs[i].Coll_Start_Time.split("T")[1].split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) + ', ');
+        mzndata += (crs[crlen - 1].Coll_End_Time.split("T")[1].split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) - crs[crlen - 1].Coll_Start_Time.split("T")[1].split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) + '];\n\n');
         //
         mzndata += 'ops_start_time = ['
         for (var i = 0; i < crlen - 1; i++)
-            mzndata += (crs[i].Coll_Start_Time.split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) + ', ');
-        mzndata += (crs[crlen - 1].Coll_Start_Time.split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) + '];\n\n');
+            mzndata += (crs[i].Coll_Start_Time.split("T")[1].split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) + ', ');
+        mzndata += (crs[crlen - 1].Coll_Start_Time.split("T")[1].split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) + '];\n\n');
         //
         mzndata += 'ops_duration = ['
         for (var i = 0; i < crlen - 1; i++)
-            mzndata += (crs[i].Coll_End_Time.split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) - crs[i].Coll_Start_Time.split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) + ', ');
-        mzndata += (crs[crlen - 1].Coll_End_Time.split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) - crs[crlen - 1].Coll_Start_Time.split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) + '];\n\n');
+            mzndata += (crs[i].Coll_End_Time.split("T")[1].split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) - crs[i].Coll_Start_Time.split("T")[1].split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) + ', ');
+        mzndata += (crs[crlen - 1].Coll_End_Time.split("T")[1].split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) - crs[crlen - 1].Coll_Start_Time.split("T")[1].split(":").reduce((prev, curr) => Number(prev) * 60 + Number(curr), 0) + '];\n\n');
         //
         const sensorTypeArray = ['EO', 'IR', 'MTI', 'SAR', 'FMV', 'SIGINT', 'ELINT']
         mzndata += 'sensor = ['

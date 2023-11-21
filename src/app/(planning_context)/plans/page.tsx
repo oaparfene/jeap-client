@@ -302,7 +302,7 @@ export default function Home() {
 
     if (plans[activePlanIndex]) {
         plans[activePlanIndex].allocation.forEach((task, i) => {
-            location_data.push(['CR' + task.Requirement_to_Collect + " " + plans[activePlanIndex].requirements[Number(task.Requirement_to_Collect) - 1].Intel_Discipline + " " + task.Asset_Used + " at " + task.Start.getHours() + ":" + (task.Start.getMinutes() === 0 ? '00' : task.Start.getMinutes().toString()) + " - " + task.End.getHours() + ":" + (task.End.getMinutes() === 0 ? '00' : task.End.getMinutes().toString()), [Number(task.Coordinates.split("N")[0]), Number(task.Coordinates.split(" ")[1].split("E")[0])]])
+            location_data.push(['CR' + task.Requirement_to_Collect + " " + plans[activePlanIndex].requirements[Number(task.Requirement_to_Collect) - 0].Intel_Discipline + " " + task.Asset_Used + " at " + task.Start.getHours() + ":" + (task.Start.getMinutes() === 0 ? '00' : task.Start.getMinutes().toString()) + " - " + task.End.getHours() + ":" + (task.End.getMinutes() === 0 ? '00' : task.End.getMinutes().toString()), [Number(task.Coordinates.split("N")[0]), Number(task.Coordinates.split(" ")[1].split("E")[0])]])
         })
 
         plans[activePlanIndex].flightPlans.forEach((flight, i) => {

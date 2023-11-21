@@ -119,7 +119,7 @@ export default function Home() {
             new Date(
                 asset.AvailableFrom.getFullYear(),
                 asset.AvailableFrom.getMonth(),
-                asset.AvailableFrom.getDate(),
+                asset.AvailableFrom.getDate() + 1,
                 0,
                 Number(asset.Capacity),
             )])

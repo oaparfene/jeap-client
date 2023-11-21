@@ -1,5 +1,6 @@
 "use client";
 import XMLUpload from "@/components/XMLUpload";
+import { useData } from "@/hooks/useData";
 import { Requirement } from "@/hooks/usePlan";
 import { Alert, Box, Button, Snackbar, TextField, Typography } from "@mui/material";
 import { useContext, useState } from "react";
@@ -27,11 +28,12 @@ function Home() {
   const [requiredProduct, setRequiredProduct] = useState("");
   const [reportFrequency, setReportFrequency] = useState("");
   const [recurrance, setRecurrance] = useState("");
-  const [maxClassification, setMaxClassification] = useState("");
+  const [maxClassification, setMaxClassification] = useState("NU");
   const [reportingInstructions, setReportingInstructions] = useState("");
   const [remarks, setRemarks] = useState("");
 
   const { allRequirements, addCRs } = useContext(JAPContext)
+  const { uploadCRtoBackend } = useData()
 
   console.log(collEndTime);
 
@@ -43,9 +45,9 @@ function Home() {
     setOpen(false);
   };
 
-  const handleCreateRequirement = () => {
+  const handleCreateRequirement = async () => {
     const newCR: Requirement = {
-      ID: allRequirements.length + 1,
+      ID: allRequirements.length,
       Operation: operation,
       Requester: requester,
       CR_Rank: CR_Rank,
@@ -69,6 +71,7 @@ function Home() {
       ER_Remarks: remarks,
     }
     addCRs([newCR])
+    await uploadCRtoBackend(newCR)
     setOpen(true);
   }
 
@@ -103,7 +106,6 @@ function Home() {
         />
         <TextField
           id="cr_rank"
-          required
           label="CR Rank"
           variant="outlined"
           placeholder="CR Rank"
@@ -112,7 +114,6 @@ function Home() {
         />
         <TextField
           id="justification"
-          required
           label="Justification"
           variant="outlined"
           placeholder="Supports PIR 1"
@@ -121,7 +122,6 @@ function Home() {
         />
         <TextField
           id="status"
-          required
           label="Status"
           variant="outlined"
           placeholder="Approved"
@@ -140,7 +140,6 @@ function Home() {
         />
         <TextField
           id="target_id"
-          required
           label="Target ID"
           variant="outlined"
           placeholder="1234AA0000"
@@ -149,7 +148,6 @@ function Home() {
         />
         <TextField
           id="location_category"
-          required
           label="Location Category"
           variant="outlined"
           placeholder="46.220588N 24.108810E"
@@ -158,7 +156,6 @@ function Home() {
         />
         <TextField
           id="sensor_visibility"
-          required
           label="Sensor Visibility"
           variant="outlined"
           placeholder="LOW"
@@ -190,12 +187,13 @@ function Home() {
           onChange={(e) => setIntelDiscipline(e.target.value)}
         >
           <option value=""></option>
-          <option value="IMINT">IMINT</option>
+          <option value="FMV">FMV</option>
+          <option value="EO">EO</option>
+          <option value="IR">IR</option>
+          <option value="SAR">SAR</option>
+          <option value="MTI">MTI</option>
           <option value="SIGINT">SIGINT</option>
-          <option value="HUMINT">HUMINT</option>
-          <option value="MASINT">MASINT</option>
-          <option value="OSINT">OSINT</option>
-          <option value="OSINT">ELINT</option>
+          <option value="ELINT">ELINT</option>
         </TextField>
         <TextField
           id="required_product"
@@ -208,7 +206,6 @@ function Home() {
         />
         <TextField
           id="report_frequency"
-          required
           label="Report Frequency"
           variant="outlined"
           placeholder="POST MISSION"
@@ -217,7 +214,6 @@ function Home() {
         />
         <TextField
           id="recurrance"
-          required
           label="Recurrance"
           variant="outlined"
           placeholder="none"
@@ -246,7 +242,6 @@ function Home() {
         </TextField>
         <TextField
           id="remarks"
-          required
           label="Remarks"
           variant="outlined"
           placeholder="none"
@@ -257,7 +252,6 @@ function Home() {
           sx={{ gridColumn: "1 / span 3" }}
           multiline
           id="reporting_instructions"
-          required
           label="Reporting Instructions"
           variant="outlined"
           placeholder="Send copy of report to..."

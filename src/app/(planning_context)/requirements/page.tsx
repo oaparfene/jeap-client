@@ -237,14 +237,14 @@ export default function Home() {
                 today.getFullYear(),
                 today.getMonth(),
                 today.getDate(),
-                Number(req.Coll_Start_Time.split(":")[0]),
-                Number(req.Coll_Start_Time.split(":")[1]),
+                Number(req.Coll_Start_Time.split("T")[1].split(":")[0]),
+                Number(req.Coll_Start_Time.split("T")[1].split(":")[1]),
             ), new Date(
                 today.getFullYear(),
                 today.getMonth(),
                 today.getDate(),
-                Number(req.Coll_End_Time.split(":")[0]),
-                Number(req.Coll_End_Time.split(":")[1]),
+                Number(req.Coll_End_Time.split("T")[1].split(":")[0]),
+                Number(req.Coll_End_Time.split("T")[1].split(":")[1]),
             )])
         })
     }

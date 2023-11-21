@@ -49,7 +49,7 @@ export default function RootLayout({
   const [open, setOpen] = React.useState(true);
 
   const [MZNSolverEngine, setMZNSolverEngine] = React.useState<string>("Gecode");
-  const [BackendAPIURL, setBackendAPIURL] = React.useState<string>("http://localhost:8090/api");
+  const [BackendAPIURL, setBackendAPIURL] = React.useState<string>("http://localhost:8090");
   const [MZNAPIURL, setMZNAPIURL] = React.useState<string>("http://localhost:5000");
 
   const handleToggleDrawer = () => {

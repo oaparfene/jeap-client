@@ -84,7 +84,7 @@ export const JCAPContext =  createContext<JCAPContextType>({
 })
 
 export const SettingsContext = createContext<SettingsContextType>({
-    BackendAPIURL: 'http://localhost:8090/api',
+    BackendAPIURL: 'http://localhost:8090',
     setBackendAPIURL: (url: string) => { },
     MZNAPIURL: 'http://localhost:5000',
     setMZNAPIURL: (url: string) => { },
