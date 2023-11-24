@@ -1,6 +1,6 @@
 "use client";
 import XMLUpload from "@/components/XMLUpload";
-import { useData } from "@/hooks/useData";
+import { PreRequirement, useData } from "@/hooks/useData";
 import { Requirement } from "@/hooks/usePlan";
 import { Alert, Box, Button, Snackbar, TextField, Typography } from "@mui/material";
 import { useContext, useState } from "react";
@@ -46,7 +46,7 @@ function Home() {
   };
 
   const handleCreateRequirement = async () => {
-    const newCR: Requirement = {
+    const newCR: PreRequirement = {
       ID: allRequirements.length,
       Operation: operation,
       Requester: requester,
@@ -70,8 +70,12 @@ function Home() {
       Reporting_Instructions: reportingInstructions,
       ER_Remarks: remarks,
     }
-    addCRs([newCR])
-    await uploadCRtoBackend(newCR)
+    const CR_ID = await uploadCRtoBackend(newCR)
+    const fullNewCR: Requirement = {
+      db_id: CR_ID,
+      ...newCR
+    }
+    addCRs([fullNewCR])
     setOpen(true);
   }
 

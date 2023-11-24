@@ -52,7 +52,7 @@ export const JAPContext = createContext<JAPContextType>({
     mainDrawerWidth: 240,
     setMainDrawerWidth: (width: number) => { },
     plans: [],
-    getPlan: () => { return { name: 'No Plan', assets: [], requirements: [], allocation: [], flightPlans: [] } },
+    getPlan: () => { return { db_id: "", name: 'No Plan', assets: [], requirements: [], allocation: [], flightPlans: [] } },
     allAssets: [],
     allRequirements: [],
     addAssets: (assetsToAdd: Asset[]) => { },

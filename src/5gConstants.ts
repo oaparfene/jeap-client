@@ -1,6 +1,7 @@
+import { PreAsset, PreRequirement } from "./hooks/useData";
 import { Asset, Requirement } from "./hooks/usePlan";
 
-export const EventAssets: Asset[] = [
+export const EventAssets: PreAsset[] = [
     {
         ID: 1,
         UniquePlatformID: "F-35",
@@ -143,7 +144,7 @@ export const EventAssets: Asset[] = [
     },
 ]
 
-export const EventRequirements: Requirement[] = [
+export const EventRequirements: PreRequirement[] = [
     {
         ID: 1,
         Operation: "5G",

@@ -1,7 +1,7 @@
 "use client";
 import { MultipleSelect } from "@/components/MultipleSelect";
 import { generateDataFromORBAT } from "@/constants";
-import { useData } from "@/hooks/useData";
+import { PreAsset, useData } from "@/hooks/useData";
 import { Asset } from "@/hooks/usePlan";
 import { Alert, Box, Button, FormControl, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, Snackbar, TextField, Theme, Typography, useTheme } from "@mui/material";
 import React, { Dispatch, ReactNode, SetStateAction } from "react";
@@ -20,6 +20,7 @@ function Home() {
   const [sensor, setSensor] = useState<string[]>([]);
   const [unit, setUnit] = useState("");
   const [availableFrom, setAvailableFrom] = useState<Date>(Date.now() as unknown as Date);
+  const { uploadAssetToBackend } = useData()
 
   const { allAssets, addAssets } = useContext(JAPContext)
 
@@ -32,7 +33,7 @@ function Home() {
   };
 
   const handleCreateAsset = async () => {
-    const newAsset: Asset = {
+    const newAsset: PreAsset = {
       ID: allAssets.length,
       UniquePlatformID: name,
       Description: description,
@@ -42,7 +43,13 @@ function Home() {
       Unit: unit,
       AvailableFrom: availableFrom,
     }
-    await addAssets([newAsset])
+    const assetID = await uploadAssetToBackend(newAsset)
+
+    const fullNewAsset: Asset = {
+      db_id: assetID,
+      ...newAsset
+    }
+    await addAssets([fullNewAsset])
     setOpen(true);
   }
 

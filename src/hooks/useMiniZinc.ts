@@ -1,6 +1,7 @@
 import { FlightPlan, Plan, Requirement, Task } from "./usePlan"
 import { useContext, useState } from "react"
 import { SettingsContext } from "@/app/context"
+import { PreFlightPlan, PreTask, useData } from "./useData"
 
 export const useMiniZinc = () => {
 
@@ -10,6 +11,7 @@ export const useMiniZinc = () => {
     const [flightPlans, setFlightPlans] = useState<FlightPlan[]>([])
 
     const { MZNAPIURL, MZNSolverEngine } = useContext(SettingsContext)
+    const { saveTask, saveFlightPlan } = useData()
 
 
     const generateCostMatrix = (plan: Plan) => {
@@ -253,9 +255,9 @@ export const useMiniZinc = () => {
             },
             body: mzndata.toString()
         })
-        response.text().then((data) => {
+        response.text().then(async (data) => {
             console.log("data: ", data)
-            const _allocation = MZNResultToAllocationObject(plan, data)
+            const _allocation = await MZNResultToAllocationObject(plan, data)
             //const _allocation = MZNResult_to_AllocationObject(plan, data)
             setAllocation(_allocation)
         }).catch((err) => {
@@ -264,7 +266,7 @@ export const useMiniZinc = () => {
         })
     }
 
-    const MZNResultToAllocationObject = (_plan: Plan, _data: string) => {
+    const MZNResultToAllocationObject = async (_plan: Plan, _data: string) => {
 
         console.log(_data)
 
@@ -310,11 +312,12 @@ export const useMiniZinc = () => {
             if (ctlBinaryArray[i] === 1) {
                 const startMins: number = collectionStartArray[Math.floor(i / len)];
                 const durationMins: number = collectionDurationArray[Math.floor(i / len)];
-                tasks.push({
+                console.log("req db id: ", _plan.requirements[Math.floor(i / len)].db_id)
+                const tempTask: PreTask = {
                     ID: count++,
                     Asset_Used: _plan.assets[i % len].UniquePlatformID,
                     Coordinates: _plan.requirements[Math.floor(i / len)].Coordinates,
-                    Requirement_to_Collect: _plan.requirements[Math.floor(i / len)].ID.toString(),
+                    Requirement_to_Collect: _plan.requirements[Math.floor(i / len)].db_id,
                     Start: new Date(
                         today.getFullYear(),
                         today.getMonth(),
@@ -329,7 +332,12 @@ export const useMiniZinc = () => {
                         Math.floor((startMins + durationMins) / 60),
                         (startMins + durationMins) % 60
                     )
-                });
+                }
+                const tempTaskID = await saveTask(tempTask)
+                tasks.push({
+                    db_id: tempTaskID,
+                    ...tempTask
+                })
             }
         }
         console.log("tasks: ", tasks);
@@ -353,11 +361,16 @@ export const useMiniZinc = () => {
                     }
                 }
             }
-            _flightPlans.push({
+            const tempFlightPlan: PreFlightPlan = {
                 ID: count++,
                 Asset_Used: _plan.assets[i].UniquePlatformID,
                 Flight_Path: [...flightLocations],
-            });
+            }
+            const tempFlightPlanID = await saveFlightPlan(tempFlightPlan)
+            _flightPlans.push({
+                db_id: tempFlightPlanID,
+                ...tempFlightPlan
+            })
         }
 
         console.log("flightplans: ", _flightPlans);

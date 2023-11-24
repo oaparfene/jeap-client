@@ -117,11 +117,6 @@ export default function Home() {
             data_main.push([asset.UniquePlatformID, '', 
             asset.AvailableFrom,
             new Date(
-                asset.AvailableFrom.getFullYear(),
-                asset.AvailableFrom.getMonth(),
-                asset.AvailableFrom.getDate() + 1,
-                0,
-                Number(asset.Capacity),
             )])
         })
     }

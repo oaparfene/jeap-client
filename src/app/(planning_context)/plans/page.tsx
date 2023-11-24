@@ -18,6 +18,7 @@ import TableChartIcon from '@mui/icons-material/TableChart';
 import { CustomReqsToolbar, CustomAssetsToolbar, handleExportPlan } from "@/components/ExcelExport";
 import dynamic from 'next/dynamic';
 import { toPng } from "html-to-image";
+import { useData } from "@/hooks/useData";
 
 const ClientSideMapView = dynamic(() => import('../../../components/MapView'), {
     ssr: false,
@@ -263,6 +264,7 @@ export default function Home() {
     const [openCR, setOpenCR] = useState(false);
     const [openAsset, setOpenAsset] = useState(false);
     const [openAllocation, setOpenAllocation] = useState(false);
+    const { savePlan } = useData()
 
     console.log('plans', plans)
 
@@ -302,7 +304,7 @@ export default function Home() {
 
     if (plans[activePlanIndex]) {
         plans[activePlanIndex].allocation.forEach((task, i) => {
-            location_data.push(['CR' + task.Requirement_to_Collect + " " + plans[activePlanIndex].requirements[Number(task.Requirement_to_Collect) - 0].Intel_Discipline + " " + task.Asset_Used + " at " + task.Start.getHours() + ":" + (task.Start.getMinutes() === 0 ? '00' : task.Start.getMinutes().toString()) + " - " + task.End.getHours() + ":" + (task.End.getMinutes() === 0 ? '00' : task.End.getMinutes().toString()), [Number(task.Coordinates.split("N")[0]), Number(task.Coordinates.split(" ")[1].split("E")[0])]])
+            location_data.push(['CR' + plans[activePlanIndex].requirements.find(e => e.db_id === task.Requirement_to_Collect)?.ID /*+ " " + plans[activePlanIndex].requirements.find(e => e.db_id === task.Requirement_to_Collect)?.Intel_Discipline + " " + task.Asset_Used + " at " + task.Start.getHours() + ":" + (task.Start.getMinutes() === 0 ? '00' : task.Start.getMinutes().toString()) + " - " + task.End.getHours() + ":" + (task.End.getMinutes() === 0 ? '00' : task.End.getMinutes().toString())*/, [Number(task.Coordinates.split("N")[0]), Number(task.Coordinates.split(" ")[1].split("E")[0])]])
         })
 
         plans[activePlanIndex].flightPlans.forEach((flight, i) => {
@@ -354,6 +356,12 @@ export default function Home() {
             setOpenAllocation(true)
         }
         )
+    }
+
+    const handleSavePlan = () => {
+        console.log('handleSavePlan')
+        if (!plans[activePlanIndex]) return
+        savePlan(plans[activePlanIndex])
     }
 
     useEffect(() => {
@@ -463,7 +471,9 @@ export default function Home() {
 
                 <Stack direction='row' justifyContent='end' sx={{ mt: 2 }}>
                     <Button variant='outlined' sx={{ mr: 2 }} onClick={handleRequestAllocation}>Generate Plan{loading && <CircularProgress sx={{ p: 1 }} />}</Button>
-                    <Button variant='outlined' sx={{ mr: 2 }} onClick={() => { }}>Save Draft Plan</Button>
+                    <Button variant='outlined' sx={{ mr: 2 }} onClick={() => {
+                        handleSavePlan()
+                     }}>Save Draft Plan</Button>
                     <Button variant='contained' sx={{ mr: 2 }} onClick={() => { }}>Publish Plan</Button>
                 </Stack>
             </CustomTabPanel>

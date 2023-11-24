@@ -1,3 +1,4 @@
+import { PreAsset } from "./hooks/useData";
 import { Asset } from "./hooks/usePlan";
 
 const today = new Date();
@@ -10081,7 +10082,7 @@ export interface tempSystem {
 
 export const generateDataFromORBAT = (_orbat = orbat) => {
     if (!_orbat) return;
-    var data: Asset[] = [];
+    var data: PreAsset[] = [];
     for (let entry of _orbat.OrbatDocument.Units) {
         if (entry['d2p1:UnitLocatedAt']) {
             var location_id =

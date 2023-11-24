@@ -43,14 +43,19 @@ export default function RootLayout({
 
   const router = useRouter()
 
-  const { getPlan, addCRsToPlan, removeCRsFromPlan, addAssetsToPlan, removeAssetsFromPlan, addTasksToPlan, addFlightPlansToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex } = usePlan()
-  const { allAssets, allRequirements, addAssets, addCRs, removeAssets, removeCRs } = useData()
+  const { getPlan, addCRsToPlan, removeCRsFromPlan, addAssetsToPlan, removeAssetsFromPlan, addTasksToPlan, addFlightPlansToPlan, plans, newPlan, activePlanIndex, setActivePlanIndex, setPlans } = usePlan()
+  const { allAssets, allRequirements, addAssets, addCRs, removeAssets, removeCRs, allPlans } = useData()
   const [drawerWidth, setDrawerWidth] = React.useState<number>(240)
   const [open, setOpen] = React.useState(true);
 
   const [MZNSolverEngine, setMZNSolverEngine] = React.useState<string>("Gecode");
   const [BackendAPIURL, setBackendAPIURL] = React.useState<string>("http://localhost:8090");
   const [MZNAPIURL, setMZNAPIURL] = React.useState<string>("http://localhost:5000");
+
+  React.useEffect(() => {
+    setPlans(allPlans)
+  }, [allPlans])
+  
 
   const handleToggleDrawer = () => {
     setDrawerWidth(drawerWidth === 240 ? 40 : 240)

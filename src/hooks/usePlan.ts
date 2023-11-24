@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useData } from "./useData";
 
 export interface Plan {
+    db_id: string,
     name: string,
     assets: Asset[],
     requirements: Requirement[],
@@ -9,6 +11,7 @@ export interface Plan {
 }
 
 export interface Task {
+    db_id: string,
     ID: number,
     Asset_Used: string,
     Requirement_to_Collect: string,
@@ -18,12 +21,14 @@ export interface Task {
 }
 
 export interface FlightPlan {
+    db_id: string,
     ID: number,
     Asset_Used: string,
     Flight_Path: string[],
 }
 
 export interface Asset {
+    db_id: string,
     ID: number,
     UniquePlatformID: string,
     Description: string,
@@ -35,6 +40,7 @@ export interface Asset {
 }
 
 export interface Requirement {
+    db_id: string,
     ID: number,
     Operation: string,
     Requester: string,
@@ -73,14 +79,15 @@ export interface Requirement {
 export const usePlan = () => {
     const [plans, setPlans] = useState<Plan[]>([])
     const [activePlanIndex, setActivePlanIndex] = useState(0)
+    const { savePlan } = useData()
 
     const getPlan = () => {
         if (plans)
             return plans[activePlanIndex]
-        return { name: 'No Plan', assets: [], requirements: [], allocation: [], flightPlans: [] }
+        return { db_id: "", name: 'No Plan', assets: [], requirements: [], allocation: [], flightPlans: [] }
     }
 
-    const newPlan = (name: string) => {
+    const newPlan = async (name: string) => {
         const plan = {
             name: name,
             assets: [],
@@ -88,8 +95,17 @@ export const usePlan = () => {
             allocation: [],
             flightPlans: []
         }
+        const planId = await savePlan(plan)
+        const savedPlan = {
+            db_id: planId,
+            name: name,
+            assets: [],
+            requirements: [],
+            allocation: [],
+            flightPlans: []
+        }
         var tempPlans = plans
-        tempPlans.push(plan)
+        tempPlans.push(savedPlan)
         setPlans(tempPlans)
         setActivePlanIndex(tempPlans.length - 1)
         console.log('plans: ', plans)
@@ -100,6 +116,7 @@ export const usePlan = () => {
         var tempPlans = plans
         var plan = tempPlans[activePlanIndex]
         const updatedPlan = {
+            db_id: plan.db_id,
             name: plan.name,
             assets: plan.assets,
             requirements: [...new Set(plan.requirements.concat(CRsToAdd))],
@@ -114,6 +131,7 @@ export const usePlan = () => {
         var tempPlans = plans
         var plan = tempPlans[activePlanIndex]
         const updatedPlan = {
+            db_id: plan.db_id,
             name: plan.name,
             assets: plan.assets,
             requirements: plan.requirements.filter(el => !CRsToRemove.includes(el)),
@@ -129,6 +147,7 @@ export const usePlan = () => {
         var plan = tempPlans[activePlanIndex]
         console.log('plan', plan)
         const updatedPlan = {
+            db_id: plan.db_id,
             name: plan.name,
             assets: addAssetsWithNoDuplicates(plan.assets, assetsToAdd) ,
             requirements: plan.requirements,
@@ -143,6 +162,7 @@ export const usePlan = () => {
         var tempPlans = plans
         var plan = tempPlans[activePlanIndex]
         const updatedPlan = {
+            db_id: plan.db_id,
             name: plan.name,
             assets: plan.assets.filter(el => !assetsToRemove.includes(el)),
             requirements: plan.requirements,
@@ -157,6 +177,7 @@ export const usePlan = () => {
         var tempPlans = plans
         var plan = tempPlans[activePlanIndex]
         const updatedPlan = {
+            db_id: plan.db_id,
             name: plan.name,
             assets: plan.assets,
             requirements: plan.requirements,
@@ -171,6 +192,7 @@ export const usePlan = () => {
         var tempPlans = plans
         var plan = tempPlans[activePlanIndex]
         const updatedPlan = {
+            db_id: plan.db_id,
             name: plan.name,
             assets: plan.assets,
             requirements: plan.requirements,
@@ -198,6 +220,7 @@ export const usePlan = () => {
 
     return {
         plans,
+        setPlans,
         getPlan,
         addAssetsToPlan,
         removeAssetsFromPlan,

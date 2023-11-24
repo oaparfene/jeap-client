@@ -6,6 +6,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { Requirement } from '@/hooks/usePlan';
 import { JAPContext } from '@/app/context';
 import { Modal, Box, Stack, Typography, TextField } from '@mui/material';
+import { PreRequirement, useData } from '@/hooks/useData';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -35,20 +36,21 @@ function XMLUpload() {
   const { allRequirements, addCRs } = useContext(JAPContext)
   const [openNewCR, setOpenNewCR] = useState(false);
   const [activeCR, setActiveCR] = useState<Requirement | null>(null);
+  const { uploadCRtoBackend } = useData()
 
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
       const reader = new FileReader()
       reader.onload = (e) => {
         const xml = e.target?.result
-        parseString(xml, function (err: any, payload: any) {
+        parseString(xml, async function (err: any, payload: any) {
           console.log(payload)
           const result = payload.CollectionRequirement
           const coordPoint = result.GeographicAreaOfInterestReference[0].GeographicAreaOfInterest[0]["d3p1:GeographicArea"][0]["d3p1:Point"][0]
           console.log(coordPoint)
-          const CR_To_Add: Requirement = {
+          const temp_CR_To_Add: PreRequirement = {
             ID: allRequirements.length + 1,
             Operation: "5G",
             Requester: result.Originator[0].Requestor[0],
@@ -61,6 +63,11 @@ function XMLUpload() {
             Intel_Discipline: result.IntelCollectionDiscipline[0],
             Required_Product: "ISREXREP",
             Recurrance: "",
+          }
+          const temp_CR_ID = await uploadCRtoBackend(temp_CR_To_Add)
+          const CR_To_Add: Requirement = {
+            ...temp_CR_To_Add,
+            db_id: temp_CR_ID
           }
           setActiveCR(CR_To_Add)
           setOpenNewCR(true)
